@@ -1,0 +1,25 @@
+---
+- include: packages.yml
+  tags:
+    - preservicaservice
+    - preservicaservice-packages
+
+- include: user.yml
+  tags:
+    - preservicaservice
+    - preservicaservice-user
+
+- include: app.yml
+  tags:
+    - preservicaservice
+    - preservicaservice-app
+
+- include: systemd.yml
+  tags:
+    - preservicaservice
+    - preservicaservice-systemd
+
+- include: logs.yml
+  tags:
+    - preservicaservice
+    - preservicaservice-logs

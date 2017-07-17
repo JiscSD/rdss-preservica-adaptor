@@ -1,0 +1,31 @@
+---
+driver:
+  name: vagrant
+  synced_folders:
+    - ['.', '/home/preservicaservice/app']
+
+# for more options check
+# https://github.com/neillturner/kitchen-ansible/blob/master/provisioner_options.md
+provisioner:
+  playbook: provisioning/setup.yml
+  name: ansible_playbook
+  roles_path: provisioning/roles
+  hosts: workers
+  ansible_verbose: true
+  require_chef_for_busser: false
+  require_ruby_for_busser: true
+  additional_copy_path:
+   - "provisioning"
+  requirements_path: provisioning/requirements.yml
+
+platforms:
+  - name: ubuntu-17.04-zesty
+    driver_config:
+      box: ubuntu/zesty64
+
+suites:
+  - name: default
+
+verifier:
+  name: busser
+  ruby_bindir: '/usr/bin'

@@ -1,0 +1,45 @@
+{
+	"build_systems":
+	[
+		{
+			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+			"name": "Anaconda Python Builder",
+			"selector": "source.python",
+			"shell_cmd": "\"python\" -u \"$file\""
+		}
+	],
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				"*.coverage",
+				"*.log",
+				"*.bak",
+				"*.sublime*"
+			],
+			"folder_exclude_patterns":
+			[
+				"*.egg-info",
+				"__pycache__",
+				".cache",
+				"build",
+				"external",
+				".env.provisioning",
+				"env",
+				"tmp",
+				".tmp",
+				".vagrant",
+				".kitchen",
+				"node_modules",
+				"bower_components"
+			],
+			"path": "."
+		}
+	],
+	"settings":
+	{
+		"test_command": "pytest -q tests",
+		"test_virtualenv": "env"
+	}
+}

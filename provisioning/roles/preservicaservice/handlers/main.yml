@@ -1,0 +1,9 @@
+---
+- name: restart preservica service
+  command: systemctl restart preservicaservice
+
+- name: reload systemd config
+  command: systemctl daemon-reload
+
+- name: restart rsyslog
+  command: systemctl restart rsyslog

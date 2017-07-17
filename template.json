@@ -1,0 +1,98 @@
+{
+  "variables": {
+    "git_branch": "{{env `GIT_BRANCH`}}",
+    "git_commit": "{{env `GIT_COMMIT`}}",
+    "enviornment": "{{env `ENVIRONMENT`}}",
+    "box": "ubuntu/zesty64",
+    "project": "preservica-service",
+    "service": "rdss",
+    "owner": "alan.mackenzie@digirati.com",
+    "costcentre": "RDSS"
+  },
+  "builders": [
+    {
+      "name": "{{user `project`}}",
+      "type": "amazon-ebs",
+      "region": "eu-west-2",
+      "source_ami": "ami-167f6972",
+      "instance_type": "t2.small",
+      "ssh_username": "ubuntu",
+      "ami_name": "{{user `project`}}-{{isotime | clean_ami_name}}",
+      "ami_description": "{{user `git_commit`}}",
+      "tags": {
+        "name": "{{user `project`}}-{{user `enviornment`}}-ami",
+        "owner": "{{user `owner`}}",
+        "enviornment": "{{user `enviornment`}}",
+        "project": "{{user `project`}}",
+        "service": "{{user `service`}}",
+        "costcentre": "{{user `costcentre`}}"
+      },
+      "run_tags": {
+        "name": "{{user `project`}}-{{user `enviornment`}}-packer-builder",
+        "owner": "{{user `owner`}}",
+        "enviornment": "{{user `enviornment`}}",
+        "project": "{{user `project`}}",
+        "service": "{{user `service`}}",
+        "shutdowntime": "19:00",
+        "costcentre": "{{user `costcentre`}}"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "mkdir /tmp/app"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "preservicaservice",
+      "destination": "/tmp/app/preservicaservice"
+    },
+    {
+      "type": "file",
+      "source": "config",
+      "destination": "/tmp/app/config"
+    },
+    {
+      "type": "file",
+      "source": "bin",
+      "destination": "/tmp/app/bin"
+    },
+    {
+      "type": "file",
+      "source": "requirements.txt",
+      "destination": "/tmp/app/requirements.txt"
+    },
+    {
+      "type": "file",
+      "source": "setup.py",
+      "destination": "/tmp/app/setup.py"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo adduser preservicaservice --disabled-password --gecos \"\"",
+        "sudo mv /tmp/app /home/preservicaservice/app",
+        "sudo chown -R preservicaservice:preservicaservice /home/preservicaservice/app",
+        "sudo find /home/preservicaservice/app"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo add-apt-repository -y ppa:ansible/ansible",
+        "sudo apt-get update -y",
+        "sudo apt-get install -y ansible"
+      ]
+    },
+    {
+      "type": "ansible-local",
+      "command": "PYTHONUNBUFFERED=1 ansible-playbook --extra-vars=\"ansible_become=true\"",
+      "playbook_file": "provisioning/setup.yml",
+      "playbook_dir": "provisioning/roles",
+      "galaxy_file": "provisioning/requirements.yml"
+    }
+  ]
+}

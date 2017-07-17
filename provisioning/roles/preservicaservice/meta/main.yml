@@ -1,0 +1,16 @@
+galaxy_info:
+  description: Preservica service
+
+  license: Apache2
+
+  min_ansible_version: 1.2
+
+  platforms:
+   - name: Ubuntu
+     versions:
+     - zesty
+
+dependencies:
+  - { role: tersmitten.locales, locales_present: 'en_US.UTF-8', locales_default: { lang: en_US.UTF-8 } }
+  - { role: adriagalin.timezone, ag_timezone: Etc/UTC }
+  - { role: tersmitten.ntp }

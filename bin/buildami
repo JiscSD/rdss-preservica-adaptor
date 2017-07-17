@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -e
+
+
+buildPacker() {
+  (set -o pipefail; packer build \
+      -machine-readable template.json 2>&1 | tee "$packerLogFile" )
+}
+
+
+
+build() {
+  local packerLogDir='packer_logs'
+  local packerLogFile="$packerLogDir/build.log"
+  local AMI
+
+  mkdir -p "$packerLogDir"
+  (set -o pipefail; packer build \
+      -machine-readable template.json 2>&1 | tee "$packerLogFile" )
+
+  if ! buildPacker; then
+    echo 'Failed to build AMI'
+    return 1
+  fi
+
+  AMI=$(sed s'/.*\(ami-.*\)/\1/' $packerLogFile | sed s'/\(.*\)).*/\1/' | grep ^ami | awk '{print $0}' | sort | uniq -c | sort -rn | head -1 | awk '{print $2}')
+  if [[ -z $AMI ]]; then
+    echo 'Failed to build AMI'
+    return 1
+  fi
+  echo "{\"instance_ami\": \"$AMI\"}" > "$DEPLOY_VAR_FILE"
+}
+
+
+if [[ -z "$DEPLOY_VAR_FILE" ]]; then
+  echo "\$DEPLOY_VAR_FILE var not defined"
+  exit 1
+fi
+
+if [[ -z "$ENVIRONMENT" ]]; then
+  echo "\$ENVIRONMENT var not defined"
+  exit 1
+fi
+
+GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+export GIT_BRANCH
+if [[ -z "$GIT_BRANCH" ]]; then
+  echo "\$GIT_BRANCH var not defined"
+  exit 1
+fi
+
+GIT_COMMIT=$(git log --format="%H" -n 1)
+export GIT_COMMIT
+if [[ -z "$GIT_COMMIT" ]]; then
+  echo "\$GIT_COMMIT var not defined"
+  exit 1
+fi
+
+build
+exit $?

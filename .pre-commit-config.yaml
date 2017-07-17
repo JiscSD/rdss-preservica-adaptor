@@ -1,0 +1,42 @@
+-   repo: https://github.com/kintoandar/pre-commit.git
+    sha: v0.0.2
+    hooks:
+    -   id: terraform_validate
+
+-   repo: https://github.com/antonbabenko/pre-commit-terraform.git
+    sha: v1.1.0
+    hooks:
+    -   id: terraform_fmt
+
+-   repo: git://github.com/pre-commit/pre-commit-hooks
+    sha: 46251c9523506b68419aefdf5ff6ff2fbc4506a4
+    hooks:
+    -   id: autopep8-wrapper
+    -   id: check-added-large-files
+    -   id: check-case-conflict
+    -   id: check-json
+    -   id: check-merge-conflict
+    -   id: check-yaml
+    -   id: debug-statements
+    -   id: detect-private-key
+    -   id: double-quote-string-fixer
+    -   id: end-of-file-fixer
+    -   id: forbid-new-submodules
+    -   id: requirements-txt-fixer
+
+-   repo: git@github.com:detailyang/pre-commit-shell.git
+    sha: 1.0.1
+    hooks:
+        - id: shell-lint
+          files: bin\/(?!run)
+
+-   repo: git@github.com:willthames/ansible-lint.git
+    sha: v3.4.13
+    hooks:
+    -   id: ansible-lint
+        name: Ansible-lint
+        description: This hook runs ansible-lint.
+        entry: ansible-lint
+        language: python
+        files: provisioning\/.*\.(yaml|yml)$
+        exclude: provisioning\/vars/.*$

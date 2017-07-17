@@ -1,0 +1,15 @@
+---
+
+- name: setup env
+  pip:
+    requirements: '{{preservicaservice_install_path}}/requirements.txt'
+    virtualenv: '{{preservicaservice_install_path}}/.env.provisioning'
+    virtualenv_command: '/usr/bin/python3.6 -m venv'
+
+- name: install package to env
+  pip:
+    chdir: '{{preservicaservice_install_path}}'
+    extra_args: '-e'
+    name: '.'
+    virtualenv: '{{preservicaservice_install_path}}/.env.provisioning'
+    virtualenv_command: '/usr/bin/python3.6 -m venv'

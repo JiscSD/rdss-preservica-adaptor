@@ -1,0 +1,15 @@
+[Unit]
+Description=Preservica service
+
+[Service]
+Type=simple
+WorkingDirectory={{preservicaservice_install_path}}
+# should be absolute path, hence using wrapper
+ExecStart={{preservicaservice_install_path}}/bin/run
+KillMode=process
+Restart=on-failure
+EnvironmentFile={{preservicaservice_systemd_env_filepath}}
+
+
+[Install]
+WantedBy=multi-user.target

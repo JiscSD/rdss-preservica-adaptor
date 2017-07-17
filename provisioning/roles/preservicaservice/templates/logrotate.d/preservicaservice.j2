@@ -1,0 +1,15 @@
+{{preservicaservice_syslog_file}}
+{
+  daily
+  rotate 30
+  missingok
+  compress
+  delaycompress
+  copytruncate
+  notifempty
+
+  # stock rsyslog behaviour on debian 9
+  postrotate
+    invoke-rc.d rsyslog rotate > /dev/null
+  endscript
+}

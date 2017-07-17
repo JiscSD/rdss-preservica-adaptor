@@ -1,0 +1,21 @@
+---
+- name: install logrotate config
+  template:
+    src: logrotate.d/preservicaservice.j2
+    dest: /etc/logrotate.d/preservicaservice
+    mode: 0644
+
+- name: make sure folder for log exists
+  file:
+    path: '{{preservicaservice_syslog_folder}}'
+    state: directory
+    owner: syslog
+    group: adm
+
+- name: install rsyslog config
+  template:
+    src: rsyslog.d/preservicaservice.j2
+    dest: /etc/rsyslog.d/70-preservicaservice.conf
+    mode: 0644
+  notify:
+    - restart rsyslog
