@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+DEPLOY_VAR_FILE=$(readlink -f "$DEPLOY_VAR_FILE")
+
 if [[ -z "$DEPLOY_VAR_FILE" ]]; then
   echo "\$DEPLOY_VAR_FILE var not defined"
   exit 1

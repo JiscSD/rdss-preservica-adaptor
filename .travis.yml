@@ -3,7 +3,7 @@ sudo: required
 language: python
 env:
   global:
-    - TERRAFORM_VERSION=0.9.9
+    - TERRAFORM_VERSION=0.9.11
 
 python:
   - "3.6.1"
@@ -13,7 +13,7 @@ python:
 addons:
   apt:
     sources:
-      - debian-sid # get shellcheck from debian repo
+      - debian-sid
     packages:
       - shellcheck
 

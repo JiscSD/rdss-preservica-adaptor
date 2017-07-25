@@ -42,8 +42,18 @@
     {
       "type": "shell",
       "inline": [
+        "ssh-keygen -b 2048 -t rsa -f /tmp/packer-ssh-key -q -N \"\"",
+        "cat /tmp/packer-ssh-key.pub >> /home/ubuntu/.ssh/authorized_keys",
+        "chmod 600 /home/ubuntu/.ssh/authorized_keys",
+        "curl http://169.254.169.254/latest/meta-data/public-ipv4",
         "mkdir /tmp/app"
       ]
+    },
+    {
+      "type": "file",
+      "direction": "download",
+      "source": "/tmp/packer-ssh-key",
+      "destination": "packer-ssh-key"
     },
     {
       "type": "file",
@@ -93,6 +103,28 @@
       "playbook_file": "provisioning/setup.yml",
       "playbook_dir": "provisioning/roles",
       "galaxy_file": "provisioning/requirements.yml"
+    },
+    {
+      "type": "shell-local",
+      "command": "test -d spec || ln -s test/integration/default/serverspec ./spec"
+    },
+    {
+      "type": "shell-local",
+      "command": "chmod 600 packer-ssh-key"
+    },
+    {
+      "type": "shell-local",
+      "command": "egrep -m1 -o '[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}' packer_logs/build.log > packer-ip"
+    },
+    {
+      "type": "shell-local",
+      "command": "export SSH_USER=ubuntu && export SSH_KEY=packer-ssh-key && export TARGET_HOST=`cat packer-ip` && rake spec"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo rm -rf /home/ubuntu/"
+      ]
     }
   ]
 }

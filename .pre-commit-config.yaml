@@ -8,7 +8,7 @@
     hooks:
     -   id: terraform_fmt
 
--   repo: git://github.com/pre-commit/pre-commit-hooks
+-   repo: https://github.com/pre-commit/pre-commit-hooks.git
     sha: 46251c9523506b68419aefdf5ff6ff2fbc4506a4
     hooks:
     -   id: autopep8-wrapper
@@ -24,13 +24,13 @@
     -   id: forbid-new-submodules
     -   id: requirements-txt-fixer
 
--   repo: git@github.com:detailyang/pre-commit-shell.git
+-   repo: https://github.com/detailyang/pre-commit-shell.git
     sha: 1.0.1
     hooks:
         - id: shell-lint
           files: bin\/(?!run)
 
--   repo: git@github.com:willthames/ansible-lint.git
+-   repo: https://github.com/willthames/ansible-lint.git
     sha: v3.4.13
     hooks:
     -   id: ansible-lint

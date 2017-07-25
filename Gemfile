@@ -7,4 +7,5 @@ group :development do
   gem 'test-kitchen'
   gem 'serverspec'
   gem 'net-ssh'
+  gem 'rake'
 end
