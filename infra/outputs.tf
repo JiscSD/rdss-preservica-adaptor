@@ -3,11 +3,11 @@ output "vpc_id" {
 }
 
 output "input_stream_id" {
-  value = "${module.input_stream.stream_id}"
+  value = "${data.aws_kinesis_stream.input_stream.id}"
 }
 
 output "input_stream_arn" {
-  value = "${module.input_stream.stream_arn}"
+  value = "${data.aws_kinesis_stream.input_stream.arn}"
 }
 
 output "autoscaling_group_id" {

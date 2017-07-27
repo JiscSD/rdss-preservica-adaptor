@@ -1,6 +1,7 @@
 # rdss-preservica-adaptor
 Adaptor service for publishing to Preservica.
 
+Note that the Preservica Adaptor will attempt to read from a Kinesis Stream created by the Message Broker component. Therefore, the Message Broker MUST be deployed to the target environment BEFORE this component.
 
 ## Service Information
 Preservica DOI records are created/updated/removed based upon the [message payloads](https://github.com/JiscRDSS/rdss-message-api-docs/tree/master/messages/metadata) published to the input kinesis stream. Records are uploaded to/removed from the UoJ Preservica autoupload S3 bucket.
@@ -9,7 +10,7 @@ Preservica DOI records are created/updated/removed based upon the [message paylo
 Python3.6. Uses the [AWS Kinesis Client Python Library](https://github.com/awslabs/amazon-kinesis-client-python).
 
 #### Flow
-1. Listens for Create/Update/Delete messages from the `rdss-preservica-adaptor-input-$ENVIRONMENT` kinesis stream using the [Java KCL daemon](https://github.com/awslabs/amazon-kinesis-client)
+1. Listens for Create/Update/Delete messages from the `shared_services_input_$ENVIRONMENT` kinesis stream using the [Java KCL daemon](https://github.com/awslabs/amazon-kinesis-client)
 2. Downloads files referenced in payload message and generates a zip bundle
 3. Uploads the zip bundle to the UoJ Preservica autoupload bucket `s3://uk.ac.jisc.alpha.researchdata.s3.uoj.autoupload`
 

@@ -22,19 +22,13 @@ module "vpc" {
   service              = "${var.service}"
 }
 
-module "input_stream" {
-  source      = "./modules/kinesis"
-  name        = "${var.input_stream_prefix}${terraform.env}"
-  environment = "${terraform.env}"
-  project     = "${var.project}"
-  owner       = "${var.owner}"
-  costcenter  = "${var.costcenter}"
-  service     = "${var.service}"
+data "aws_kinesis_stream" "input_stream" {
+  name = "shared_services_input_${terraform.env}"
 }
 
 module "iam_role" {
   source            = "./modules/iam_role"
-  input_stream_arn  = "${module.input_stream.stream_arn}"
+  input_stream_arn  = "${data.aws_kinesis_stream.input_stream.arn}"
   error_stream_arn  = "arn:aws:kinesis:*:*:stream/${var.error_stream_name}_${terraform.env}"
   upload_bucket_arn = "arn:aws:s3:::${var.upload_bucket}"
   dynamodb_arn      = "*"
