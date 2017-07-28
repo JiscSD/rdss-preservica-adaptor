@@ -65,6 +65,15 @@ def test_metadata_create_task():
                     'fileName': 'filename2',
                 }
             ],
+            'objectPublisher': [{
+                'organisation': {
+                    'organisationJiscId': 1,
+                    'organisationName': 'string',
+                    'organisationType': 1,
+                    'organisationAddress': 'string'
+                },
+                'role': 1
+            }]
         }
     })
     tasks_ = tasks_parser.record_to_task(record)
@@ -75,11 +84,13 @@ def test_metadata_create_task():
     assert isinstance(task, tasks.MetadataCreateTask)
     assert task.download_url.url == 's3://bucket/path/to/file'
     assert task.file_name == 'filename'
+    assert task.organisation_id == '1'
 
     task = tasks_[1]
     assert isinstance(task, tasks.MetadataCreateTask)
     assert task.download_url.url == 's3://bucket/path/to/file2'
     assert task.file_name == 'filename2'
+    assert task.organisation_id == '1'
 
 
 @pytest.mark.parametrize('body', [
@@ -126,6 +137,15 @@ def test_metadata_update_task():
                     'fileName': 'filename2',
                 }
             ],
+            'objectPublisher': [{
+                'organisation': {
+                    'organisationJiscId': 1,
+                    'organisationName': 'string',
+                    'organisationType': 1,
+                    'organisationAddress': 'string'
+                },
+                'role': 1
+            }]
         }
     })
     tasks_ = tasks_parser.record_to_task(record)
@@ -136,11 +156,13 @@ def test_metadata_update_task():
     assert isinstance(task, tasks.MetadataUpdateTask)
     assert task.download_url.url == 's3://bucket/path/to/file'
     assert task.file_name == 'filename'
+    assert task.organisation_id == '1'
 
     task = tasks_[1]
     assert isinstance(task, tasks.MetadataUpdateTask)
     assert task.download_url.url == 's3://bucket/path/to/file2'
     assert task.file_name == 'filename2'
+    assert task.organisation_id == '1'
 
 
 @pytest.mark.parametrize('body', [

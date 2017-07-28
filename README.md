@@ -11,7 +11,10 @@ Python3.6. Uses the [AWS Kinesis Client Python Library](https://github.com/awsla
 #### Flow
 1. Listens for Create/Update/Delete messages from the `rdss-preservica-adaptor-input-$ENVIRONMENT` kinesis stream using the [Java KCL daemon](https://github.com/awslabs/amazon-kinesis-client)
 2. Downloads files referenced in payload message and generates a zip bundle
-3. Uploads the zip bundle to the UoJ Preservica autoupload bucket `s3://uk.ac.jisc.alpha.researchdata.s3.uoj.autoupload`
+3. Uploads the zip bundle to the autoupload Preservica bucket for the organisation specified in the message payload - there is a map for `organisationID` to S3 bucket location for each organisation, see [`config/prod.py`](config/prod.py) for an example.
+
+#### Message Filtering
+The application ignores all requests which don't originate from organisations specified in the `organisationID` - S3 bucket map.
 
 #### Create/Update/Delete behaviour
 ##### Create

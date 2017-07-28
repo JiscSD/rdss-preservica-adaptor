@@ -3,6 +3,7 @@ import pytest
 
 from preservicaservice import errors
 from preservicaservice import tasks
+from preservicaservice.errors import MalformedBodyError
 from preservicaservice.s3_url import S3Url
 from .helpers import (
     assert_file_contents, assert_zip_contains,
@@ -14,7 +15,8 @@ from .helpers import (
 def task():
     yield tasks.BaseMetadataCreateTask(
         'baz.pdf',
-        S3Url('s3://bucket/prefix/foo')
+        S3Url('s3://bucket/prefix/foo'),
+        1
     )
 
 
@@ -38,7 +40,7 @@ def test_generate_meta(temp_file, task):
 def test_verify_limit(temp_file, size):
     with open(temp_file, 'w') as f:
         f.write(10 * 'a')
-    task = tasks.BaseMetadataCreateTask('foo', 'bar', size)
+    task = tasks.BaseMetadataCreateTask('foo', 'bar', {}, size)
     with pytest.raises(errors.UnderlyingSystemError):
         task.verify_file_size(temp_file)
 
@@ -79,3 +81,46 @@ def test_upload_no_override(task, temp_file):
 
     with pytest.raises(errors.ResourceAlreadyExistsError):
         task.upload_bundle(S3Url('s3://bucket/prefix/foo'), temp_file, False)
+
+
+@pytest.mark.parametrize('message, expected', [
+    ({
+        'messageBody': {
+            'objectPublisher': [{
+                'organisation': {
+                    'organisationJiscId': 1,
+                }
+            }]
+        }
+    }, 1),
+    ({
+        'messageBody': {
+            'objectPublisher': [{
+                'organisation': {
+                    'organisationJiscId': 1,
+                }
+            }, {
+                'organisation': {
+                    'organisationJiscId': 2,
+                }
+            }]
+        }
+    }, 1),
+])
+def test_require_organisation_id_succeeds(message, expected):
+    assert tasks.require_organisation_id(message) == str(expected)
+
+
+@pytest.mark.parametrize('message', [
+    {},
+    {'messageBody': {}},
+    {'messageBody': {'objectPublisher': {}}},
+    {'messageBody': {'objectPublisher': []}},
+    {'messageBody': {'objectPublisher': [{'organisation': ''}]}},
+    {'messageBody': {'objectPublisher': [
+        {'organisation': {'organisationJiscId': None}}
+    ]}}
+])
+def test_require_organisation_raises(message):
+    with pytest.raises(MalformedBodyError, match='organisationJiscId'):
+        tasks.require_organisation_id(message)

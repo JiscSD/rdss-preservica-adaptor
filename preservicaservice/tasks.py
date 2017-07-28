@@ -53,6 +53,8 @@ class BaseTask(abc.ABC):
         """ Run task 
         :param config: job environemnt config
         :type config: preservicaservice.config.Config
+        :return: True if message handled
+        :rtype: bool
         """
 
 
@@ -73,6 +75,25 @@ def require_non_empty_key_body(message, key):
         raise MalformedBodyError('missing {}'.format(key))
 
 
+def require_organisation_id(message):
+    try:
+        publishers = message['messageBody']['objectPublisher']
+        for publisher in publishers:
+            if not isinstance(publisher, dict):
+                continue
+            organisation = publisher.get('organisation', {})
+            value = organisation.get('organisationJiscId', '')
+            if not value:
+                continue
+            value = str(value).strip()
+            if not value:
+                continue
+            return value
+        raise MalformedBodyError('missing organisationJiscId')
+    except (KeyError, ValueError, TypeError, AttributeError):
+        raise MalformedBodyError('missing organisationJiscId')
+
+
 class BaseMetadataCreateTask(BaseTask):
     """
     Create and Update tasks are similar, basic implementation of both.
@@ -80,14 +101,17 @@ class BaseMetadataCreateTask(BaseTask):
     DEFAULT_FILE_SIZE_LIMIT = 4 * 1000 * 1000 * 1000
     UPLOAD_OVERRIDE = False
 
-    def __init__(self, file_name, download_url,
+    def __init__(self, file_name, download_url, organisation_id,
                  file_size_limit=DEFAULT_FILE_SIZE_LIMIT):
         self.file_name = file_name
         self.download_url = download_url
+        self.organisation_id = str(organisation_id)
         self.file_size_limit = file_size_limit
 
     @classmethod
     def build(cls, message):
+        organisation_id = require_organisation_id(message)
+
         try:
             objects = message['messageBody']['objectFile']
         except (KeyError, AttributeError, ValueError):
@@ -95,10 +119,12 @@ class BaseMetadataCreateTask(BaseTask):
         if not isinstance(objects, list):
             raise MalformedBodyError('expected objectFile as list')
 
-        return list(map(cls.build_one, objects))
+        return list(
+            map(lambda obj: cls.build_one(obj, organisation_id), objects)
+        )
 
     @classmethod
-    def build_one(cls, message):
+    def build_one(cls, message, organisation_id):
         url = message.get('fileStorageLocation')
         if not url:
             raise MalformedBodyError(
@@ -115,9 +141,14 @@ class BaseMetadataCreateTask(BaseTask):
         if not file_name:
             raise MalformedBodyError('empty fileName')
 
-        return cls(file_name, download_url)
+        return cls(file_name, download_url, organisation_id)
 
     def run(self, config):
+        upload_url = config.organisation_buckets.get(self.organisation_id)
+        if not upload_url:
+            # do nothing to message for unknown organisation
+            return False
+
         download_path = get_tmp_file()
         meta_path = get_tmp_file()
         zip_path = get_tmp_file()
@@ -127,7 +158,7 @@ class BaseMetadataCreateTask(BaseTask):
             self.verify_file_size(download_path)
             self.zip_bundle(zip_path, download_path, meta_path)
             self.upload_bundle(
-                config.upload_url,
+                upload_url,
                 zip_path,
                 self.UPLOAD_OVERRIDE
             )
@@ -135,6 +166,8 @@ class BaseMetadataCreateTask(BaseTask):
             for path in (download_path, meta_path, zip_path):
                 if os.path.exists(path):
                     os.unlink(path)
+
+        return True
 
     def download(self, download_path):
         """ Download given path from s3 to temp destination.

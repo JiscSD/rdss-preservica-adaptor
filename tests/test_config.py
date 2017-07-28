@@ -1,7 +1,6 @@
 import pytest
 
 from preservicaservice import config
-from preservicaservice import s3_url
 
 
 @pytest.mark.parametrize('env', [
@@ -53,7 +52,10 @@ def valid_config_arguments():
         input_stream_region='eu-west-2',
         error_stream_name='err',
         error_stream_region='eu-west-2',
-        upload_url=s3_url.S3Url('s3://upload/to')
+        organisation_buckets={
+            '1': 's3://upload/to/1',
+            '2': 's3://upload/to/2',
+        }
     )
 
 
@@ -64,11 +66,14 @@ def test_valid_config(valid_config_arguments):
     assert c.input_stream_region == arguments['input_stream_region']
     assert c.error_stream_name == arguments['error_stream_name']
     assert c.error_stream_region == arguments['error_stream_region']
-    assert c.upload_url.url == arguments['upload_url'].url
+    assert len(c.organisation_buckets) == 2
+    assert c.organisation_buckets['1'].url == arguments['organisation_buckets']['1']
+    assert c.organisation_buckets['2'].url == arguments['organisation_buckets']['2']
 
 
 @pytest.mark.parametrize('arguments,error', [
-    (dict(upload_url='http://upload/to'), 'upload_url'),
+    (dict(organisation_buckets={
+     'x': 'http://upload/to'}), 'organisation_buckets'),
     (dict(input_stream_name=' '), 'input_stream_name'),
     (dict(input_stream_name='ßßß'), 'input_stream_name'),
     (dict(input_stream_region='eu-north-2'), 'input_stream_region'),
