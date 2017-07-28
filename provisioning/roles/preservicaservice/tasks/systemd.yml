@@ -1,0 +1,21 @@
+---
+- name: make sure environment file exists
+  file:
+    path: '{{preservicaservice_systemd_env_filepath}}'
+    state: touch
+
+- name: install systemd unit
+  template:
+    src: systemd/preservicaservice.service.j2
+    dest: /lib/systemd/system/preservicaservice.service
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - reload systemd config
+
+- name: make sure systemd unit enabled
+  systemd:
+    name: preservicaservice
+    state: started
+    daemon_reload: yes

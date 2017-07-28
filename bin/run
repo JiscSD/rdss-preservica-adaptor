@@ -1,0 +1,7 @@
+#!/bin/bash
+
+exec 1> >(logger -s -t preservicaservice -p local0.info) 2>&1
+
+cd `dirname $0`/..
+. .env.provisioning/bin/activate
+exec `amazon_kclpy_helper.py --print_command --java /usr/bin/java --properties config/kcl.${ENVIRONMENT}.properties`

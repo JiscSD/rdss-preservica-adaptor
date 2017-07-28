@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -e
+
+####################
+# python3 + packer + terraform container
+# RUN TESTS
+#####################
+
+####################
+# python3 + packer + terraform container
+# ####################
+./bin/buildami
+
+####################
+# python3 + packer + terraform container
+####################
+./bin/deployterraform

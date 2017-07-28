@@ -1,0 +1,30 @@
+#!/bin/bash
+set -e
+
+if [[ -z "$DEPLOY_VAR_FILE" ]]; then
+  echo "\$DEPLOY_VAR_FILE var not defined"
+  exit 1
+fi
+
+if [[ -z "$ENVIRONMENT" ]]; then
+  echo "\$ENVIRONMENT var not defined"
+  exit 1
+fi
+
+CURRENT_DIR=$PWD
+cd "$CURRENT_DIR/infra" || exit 1
+if [[ ! -d .terraform ]]; then
+  terraform init
+fi
+if ! terraform env list 2>&1 | grep -qi "$ENVIRONMENT"; then
+  terraform env new "$ENVIRONMENT"
+fi
+terraform env select "$ENVIRONMENT"
+terraform get
+
+terraform destroy -force \
+  -var-file "$DEPLOY_VAR_FILE" \
+  -var "launch_in_public_subnet=$LAUNCH_IN_PUBLIC_SUBNET" \
+  -var "account_id=$ACCOUNT_ID"
+
+cd "$CURRENT_DIR" || exit 1

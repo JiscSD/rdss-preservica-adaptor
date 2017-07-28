@@ -1,0 +1,11 @@
+amazon_kclpy
+ansible-lint
+autopep8
+boto3
+lxml
+moto
+pep8
+pre-commit
+pytest
+pytest-cov
+PyYAML
