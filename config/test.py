@@ -1,4 +1,4 @@
-input_stream_name = 'rdss-preservica-adaptor-input-test'
+input_stream_name = 'shared_services_input_test'
 input_stream_region = 'eu-west-2'
 error_stream_name = 'message_error_test'
 error_stream_region = 'eu-west-2'
