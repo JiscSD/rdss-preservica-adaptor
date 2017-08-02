@@ -1,0 +1,117 @@
+{
+  "messageHeader": {
+    "messageId": "9e8f3cfc-29c2-11e7-93ae-92361f002671",
+    "messageType": "MetadataCreate",
+    "messageClass": "Command"
+  },
+  "messageBody": {
+    "objectUuid": "string",
+    "objectTitle": "string",
+    "objectContributor": [
+      1
+    ],
+    "objectDescription": "string",
+    "objectRights": [{
+      "rightsStatement": [
+        "string"
+      ],
+      "rightsHolder": [
+        "string"
+      ],
+      "licence": [{
+        "licenceName": "string",
+        "licenceIdentifier": "string"
+      }],
+      "access": [{
+        "accessType": 1,
+        "accessStatement": "string"
+      }]
+    }],
+    "objectDate": [{
+      "dateValue": "string",
+      "dateType": 1
+    }],
+    "objectResourceType": {},
+    "objectValue": 1,
+    "objectIdentifier": [{
+      "objectIdentifierValue": "string",
+      "objectIdentifierType": 1,
+      "relationType": 1
+    }],
+    "objectRelatedIdentifier": [{
+      "objectIdentifierValue": "string",
+      "objectIdentifierType": 1,
+      "relationType": 1
+    }],
+    "objectPublisher": [{
+      "organisation": {
+        "organisationJiscId": 1,
+        "organisationName": "string",
+        "organisationType": 1,
+        "organisationAddress": "string"
+      },
+      "role": 1
+    }],
+    "objectFile": [{
+      "fileUuid": "string",
+      "fileIdentifier": "string",
+      "fileName": "string",
+      "fileSize": 1,
+      "fileLabel": "string",
+      "fileDateCreated": {
+        "dateValue": "string",
+        "dateType": 1
+      },
+      "fileRights": {
+        "rightsStatement": [
+          "string"
+        ],
+        "rightsHolder": [
+          "string"
+        ],
+        "licence": [{
+          "licenceName": "string",
+          "licenceIdentifier": "string"
+        }],
+        "access": [{
+          "accessType": 1,
+          "accessStatement": "string"
+        }]
+      },
+      "fileChecksum": [{
+        "checksumUuid": "string",
+        "checksumType": 1,
+        "checksumValue": "string"
+      }],
+      "fileFormatType": "string",
+      "fileCompositionLevel": "string",
+      "fileHasMimeType": true,
+      "fileDate": [{
+        "dateValue": "string",
+        "dateType": 1
+      }],
+      "filePuid": [
+        "string"
+      ],
+      "fileUse": 1,
+      "preservationEvent": [{
+        "preservationEventValue": "string",
+        "preservationEventType": 1,
+        "preservationEventDetail": "string"
+      }],
+      "uploadStatus": 1,
+      "storageStatus": 1,
+      "fileSoftware": [{}],
+      "fileEquipment": {},
+      "fileLastDownload": {
+        "dateValue": "string",
+        "dateType": 1
+      },
+      "fileTechnicalAttributes": [
+        "string"
+      ],
+      "fileStorageLocation": "string",
+      "fileStorageType": 1
+    }]
+  }
+}

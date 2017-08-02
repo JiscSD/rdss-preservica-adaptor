@@ -67,14 +67,15 @@ class Config:
         input_stream_region,
         error_stream_name,
         error_stream_region,
-        upload_url
+        organisation_buckets,
     ):
         """
         :param str input_stream_name: kinesis input stream name
         :param str input_stream_region: kinesis input stream region
         :param str error_stream_name: kinesis error stream name
         :param str error_stream_region: kinesis error stream region
-        :param str upload_url: valid s3 url to upload files
+        :param organisation_buckets: mapping of S3 buckets
+        :type organisation_buckets: dict of (str => str)
         """
         self.input_stream_name = self.validate_stream_name(
             'input_stream_name',
@@ -93,18 +94,20 @@ class Config:
             error_stream_region
         )
 
-        if isinstance(upload_url, str):
+        def prepare_bucket_pair(item):
+            key, value = item
             try:
-                upload_url = S3Url.parse(upload_url)
+                url = S3Url.parse(value)
             except ValueError:
                 raise ConfigValidationError(
-                    'upload_url',
-                    'is not valid s3 url'
+                    'organisation_buckets',
+                    'bucket for {} is not valid s3 url'.format(key)
                 )
+            return str(key).strip(), url
 
-        if not isinstance(upload_url, S3Url):
-            raise ConfigValidationError('upload_url', 'is not valid s3 url')
-        self.upload_url = upload_url
+        self.organisation_buckets = dict(
+            map(prepare_bucket_pair, organisation_buckets.items())
+        )
 
     @staticmethod
     def validate_region(field, value):
@@ -150,7 +153,7 @@ class Config:
             raw.input_stream_region,
             raw.error_stream_name,
             raw.error_stream_region,
-            raw.upload_url
+            raw.organisation_buckets,
         )
 
 
