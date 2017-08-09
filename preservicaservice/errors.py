@@ -45,13 +45,13 @@ class BaseError(Exception):
     def export(self):
         return {
             'messageHeader': {
-                'messageType': 'Error'
+                'messageType': 'Error',
             },
             'messageBody': {
                 'code': self.code,
                 'message': _errors[self.code],
-                'details': self.details
-            }
+                'details': self.details,
+            },
         }
 
 

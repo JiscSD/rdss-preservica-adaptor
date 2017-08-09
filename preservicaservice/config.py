@@ -15,7 +15,7 @@ def get_config_path(file_name):
         os.path.abspath(os.path.dirname(__file__)),
         os.pardir,
         'config',
-        file_name
+        file_name,
     )
 
 
@@ -79,19 +79,19 @@ class Config:
         """
         self.input_stream_name = self.validate_stream_name(
             'input_stream_name',
-            input_stream_name
+            input_stream_name,
         )
         self.input_stream_region = self.validate_region(
             'input_stream_region',
-            input_stream_region
+            input_stream_region,
         )
         self.error_stream_name = self.validate_stream_name(
             'error_stream_name',
-            error_stream_name
+            error_stream_name,
         )
         self.error_stream_region = self.validate_region(
             'error_stream_region',
-            error_stream_region
+            error_stream_region,
         )
 
         def prepare_bucket_pair(item):
@@ -101,12 +101,12 @@ class Config:
             except ValueError:
                 raise ConfigValidationError(
                     'organisation_buckets',
-                    'bucket for {} is not valid s3 url'.format(key)
+                    'bucket for {} is not valid s3 url'.format(key),
                 )
             return str(key).strip(), url
 
         self.organisation_buckets = dict(
-            map(prepare_bucket_pair, organisation_buckets.items())
+            map(prepare_bucket_pair, organisation_buckets.items()),
         )
 
     @staticmethod
@@ -121,7 +121,7 @@ class Config:
         if value not in REGIONS:
             raise ConfigValidationError(
                 field,
-                '{} not valid region'.format(value)
+                '{} not valid region'.format(value),
             )
         return value
 
@@ -137,7 +137,7 @@ class Config:
         if not value or not re.match(r'[a-zA-Z0-9]+', value):
             raise ConfigValidationError(
                 field,
-                'stream name should match [a-zA-Z0-9]+'
+                'stream name should match [a-zA-Z0-9]+',
             )
         return value
 
@@ -205,5 +205,5 @@ def load_logger_from_yaml(config_path):
         raise ConfigError('failed to load yaml config, {}'.format(e))
     except Exception as e:
         raise ConfigError(
-            'unexpected error while loading yaml config, {}'.format(e)
+            'unexpected error while loading yaml config, {}'.format(e),
         )

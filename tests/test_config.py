@@ -3,12 +3,14 @@ import pytest
 from preservicaservice import config
 
 
-@pytest.mark.parametrize('env', [
-    'dev',
-    'uat',
-    'prod',
-    'test',
-])
+@pytest.mark.parametrize(
+    'env', [
+        'dev',
+        'uat',
+        'prod',
+        'test',
+    ],
+)
 def test_load_conf(env):
     conf = config.load_config(env)
     assert isinstance(conf, config.Config)
@@ -19,12 +21,14 @@ def test_load_conf_missing():
         config.load_config('xxx')
 
 
-@pytest.mark.parametrize('env', [
-    'dev',
-    'uat',
-    'prod',
-    'test',
-])
+@pytest.mark.parametrize(
+    'env', [
+        'dev',
+        'uat',
+        'prod',
+        'test',
+    ],
+)
 def test_load_logger(env):
     config.load_logger(env)
 
@@ -40,7 +44,7 @@ def test_load_logger_from_yaml_non_yaml(temp_file):
 
     with pytest.raises(
         config.ConfigError,
-        match='unexpected error while loading yaml'
+        match='unexpected error while loading yaml',
     ):
         config.load_logger_from_yaml(temp_file)
 
@@ -55,7 +59,7 @@ def valid_config_arguments():
         organisation_buckets={
             '1': 's3://upload/to/1',
             '2': 's3://upload/to/2',
-        }
+        },
     )
 
 
@@ -71,15 +75,20 @@ def test_valid_config(valid_config_arguments):
     assert c.organisation_buckets['2'].url == arguments['organisation_buckets']['2']
 
 
-@pytest.mark.parametrize('arguments,error', [
-    (dict(organisation_buckets={
-     'x': 'http://upload/to'}), 'organisation_buckets'),
-    (dict(input_stream_name=' '), 'input_stream_name'),
-    (dict(input_stream_name='ßßß'), 'input_stream_name'),
-    (dict(input_stream_region='eu-north-2'), 'input_stream_region'),
-    (dict(error_stream_name='-3'), 'error_stream_name'),
-    (dict(error_stream_region='eu-1'), 'error_stream_region'),
-])
+@pytest.mark.parametrize(
+    'arguments,error', [
+        (
+            dict(organisation_buckets={
+                'x': 'http://upload/to',
+            }), 'organisation_buckets',
+        ),
+        (dict(input_stream_name=' '), 'input_stream_name'),
+        (dict(input_stream_name='ßßß'), 'input_stream_name'),
+        (dict(input_stream_region='eu-north-2'), 'input_stream_region'),
+        (dict(error_stream_name='-3'), 'error_stream_name'),
+        (dict(error_stream_region='eu-1'), 'error_stream_region'),
+    ],
+)
 def test_config_validation(valid_config_arguments, arguments, error):
     valid_config_arguments.update(arguments)
     with pytest.raises(config.ConfigValidationError, match=error):

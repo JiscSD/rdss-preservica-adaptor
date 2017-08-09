@@ -1,14 +1,14 @@
--   repo: https://github.com/kintoandar/pre-commit.git
+-   repo: https://github.com/kintoandar/pre-commit
     sha: v0.0.2
     hooks:
     -   id: terraform_validate
 
--   repo: https://github.com/antonbabenko/pre-commit-terraform.git
+-   repo: https://github.com/antonbabenko/pre-commit-terraform
     sha: v1.1.0
     hooks:
     -   id: terraform_fmt
 
--   repo: https://github.com/pre-commit/pre-commit-hooks.git
+-   repo: https://github.com/pre-commit/pre-commit-hooks
     sha: 46251c9523506b68419aefdf5ff6ff2fbc4506a4
     hooks:
     -   id: autopep8-wrapper
@@ -24,13 +24,18 @@
     -   id: forbid-new-submodules
     -   id: requirements-txt-fixer
 
--   repo: https://github.com/detailyang/pre-commit-shell.git
+-   repo: https://github.com/asottile/add-trailing-comma
+    sha: v0.6.3
+    hooks:
+    -   id: add-trailing-comma
+
+-   repo: https://github.com/detailyang/pre-commit-shell
     sha: 1.0.1
     hooks:
         - id: shell-lint
           files: bin\/(?!run)
 
--   repo: https://github.com/willthames/ansible-lint.git
+-   repo: https://github.com/willthames/ansible-lint
     sha: v3.4.13
     hooks:
     -   id: ansible-lint

@@ -56,9 +56,11 @@ class RecordProcessor(kcl.RecordProcessorBase):
         """
         try:
             logger.debug('processing record %d', index)
-            tasks = record_to_task(record)
-            for task in tasks:
+            task = record_to_task(record, self.config)
+            if task:
                 task.run(self.config)
+            else:
+                logger.warning('no task out of message')
         except BaseError as e:
             logger.exception('error handling record')
             self.error_stream.put(e.export())
