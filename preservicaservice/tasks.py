@@ -357,7 +357,7 @@ class BaseMetadataCreateTask(BaseTask):
         except Exception as e:
             raise e
 
-    def run(self, config):
+    def run(self):
         zip_path = get_tmp_file()
         try:
             # message level meta

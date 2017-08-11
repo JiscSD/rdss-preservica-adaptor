@@ -39,7 +39,7 @@ def task(file_task1, file_task2):
 
 
 @moto.mock_s3
-def test_run_succeeds(temp_file, task, valid_config):
+def test_run_succeeds(temp_file, task):
     source_bucket = create_bucket('bucket')
     file1_contents = 'x' * 10000
     source_bucket.put_object(Key='the/prefix/foo.pdf', Body=file1_contents)
@@ -48,7 +48,7 @@ def test_run_succeeds(temp_file, task, valid_config):
 
     upload_bucket = create_bucket('upload')
 
-    task.run(valid_config)
+    task.run()
 
     upload_bucket.download_file('to/message_id.zip', temp_file)
 
@@ -90,16 +90,16 @@ def test_run_succeeds(temp_file, task, valid_config):
 
 
 @moto.mock_s3
-def test_run_on_missing_file(task, valid_config):
+def test_run_on_missing_file(task):
     create_bucket('bucket')
     create_bucket('upload')
 
     with pytest.raises(errors.ResourceNotFoundError):
-        task.run(valid_config)
+        task.run()
 
 
 @moto.mock_s3
-def test_run_no_override(task, valid_config):
+def test_run_no_override(task):
     source_bucket = create_bucket()
     source_bucket.put_object(Key='the/prefix/foo.pdf', Body='foo')
     source_bucket.put_object(Key='the/prefix/bar.pdf', Body='bar')
@@ -108,4 +108,4 @@ def test_run_no_override(task, valid_config):
     upload_bucket.put_object(Key='to/message_id.zip', Body='contents')
 
     with pytest.raises(errors.ResourceAlreadyExistsError):
-        task.run(valid_config)
+        task.run()

@@ -58,7 +58,7 @@ class RecordProcessor(kcl.RecordProcessorBase):
             logger.debug('processing record %d', index)
             task = record_to_task(record, self.config)
             if task:
-                task.run(self.config)
+                task.run()
             else:
                 logger.warning('no task out of message')
         except BaseError as e:
