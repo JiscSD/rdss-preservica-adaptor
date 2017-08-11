@@ -94,16 +94,8 @@ variable "input_stream_prefix" {
 }
 
 variable "error_stream_name" {
-  description = "Rrror stream name."
+  description = "Error stream name."
   default     = "message_error"
-}
-
-####################
-# S3 upload
-####################
-variable "upload_bucket" {
-  description = "S3 bucket name for upload."
-  default     = "uk.ac.jisc.alpha.researchdata.s3.uoj.autoupload"
 }
 
 ####################

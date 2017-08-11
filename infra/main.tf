@@ -30,7 +30,7 @@ module "iam_role" {
   source            = "./modules/iam_role"
   input_stream_arn  = "${data.aws_kinesis_stream.input_stream.arn}"
   error_stream_arn  = "arn:aws:kinesis:*:*:stream/${var.error_stream_name}_${terraform.env}"
-  upload_bucket_arn = "arn:aws:s3:::${var.upload_bucket}"
+  upload_bucket_arn = "arn:aws:s3:::preservica-44-api-${terraform.env}-autoupload"
   dynamodb_arn      = "*"
   environment       = "${terraform.env}"
   project           = "${var.project}"

@@ -2,6 +2,7 @@ amazon_kclpy
 ansible-lint
 autopep8
 boto3
+dicttoxml
 lxml
 moto
 pep8

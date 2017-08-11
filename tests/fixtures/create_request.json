@@ -1,49 +1,93 @@
 {
-  "messageHeader": {
-    "messageId": "9e8f3cfc-29c2-11e7-93ae-92361f002671",
-    "messageType": "MetadataCreate",
-    "messageClass": "Command"
-  },
-  "messageBody": {
-    "objectUuid": "string",
-    "objectTitle": "string",
-    "objectContributor": [
-      1
-    ],
-    "objectDescription": "string",
-    "objectRights": [{
+  "objectUuid": "string",
+  "objectTitle": "string",
+  "objectPersonRole": [
+    {
+      "person": {
+        "personUuid": "string",
+        "personIdentifier": [
+          {
+            "personIdentifierValue": "string",
+            "personIdentifierType": 1
+          }
+        ],
+        "personEntitlement": [
+          1
+        ],
+        "personOrganisation": [
+          {
+            "organisationJiscId": 1,
+            "organisationName": "string",
+            "organisationType": 1,
+            "organisationAddress": "string"
+          }
+        ],
+        "personAffiliation": [
+          1
+        ],
+        "personGivenName": "string",
+        "personCn": "string",
+        "personSn": "string",
+        "personTelephoneNumber": "string",
+        "personMail": "string",
+        "personOu": "string"
+      },
+      "role": 1
+    }
+  ],
+  "objectDescription": "string",
+  "objectRights": [
+    {
       "rightsStatement": [
         "string"
       ],
       "rightsHolder": [
         "string"
       ],
-      "licence": [{
-        "licenceName": "string",
-        "licenceIdentifier": "string"
-      }],
-      "access": [{
-        "accessType": 1,
-        "accessStatement": "string"
-      }]
-    }],
-    "objectDate": [{
+      "licence": [
+        {
+          "licenceName": "string",
+          "licenceIdentifier": "string"
+        }
+      ],
+      "access": [
+        {
+          "accessType": 1,
+          "accessStatement": "string"
+        }
+      ]
+    }
+  ],
+  "objectDate": [
+    {
       "dateValue": "string",
       "dateType": 1
-    }],
-    "objectResourceType": {},
-    "objectValue": 1,
-    "objectIdentifier": [{
-      "objectIdentifierValue": "string",
-      "objectIdentifierType": 1,
+    }
+  ],
+  "objectKeywords": [
+    "string"
+  ],
+  "objectCategory": [
+    "string"
+  ],
+  "objectResourceType": 1,
+  "objectValue": 1,
+  "objectIdentifier": [
+    {
+      "identifierValue": "string",
+      "identifierType": 1,
       "relationType": 1
-    }],
-    "objectRelatedIdentifier": [{
-      "objectIdentifierValue": "string",
-      "objectIdentifierType": 1,
+    }
+  ],
+  "objectRelatedIdentifier": [
+    {
+      "identifierValue": "string",
+      "identifierType": 1,
       "relationType": 1
-    }],
-    "objectPublisher": [{
+    }
+  ],
+  "objectOrganisationRole": [
+    {
       "organisation": {
         "organisationJiscId": 1,
         "organisationName": "string",
@@ -51,8 +95,17 @@
         "organisationAddress": "string"
       },
       "role": 1
-    }],
-    "objectFile": [{
+    }
+  ],
+  "objectPreservationEvent": [
+    {
+      "preservationEventValue": "string",
+      "preservationEventType": 1,
+      "preservationEventDetail": "string"
+    }
+  ],
+  "objectFile": [
+    {
       "fileUuid": "string",
       "fileIdentifier": "string",
       "fileName": "string",
@@ -69,40 +122,47 @@
         "rightsHolder": [
           "string"
         ],
-        "licence": [{
-          "licenceName": "string",
-          "licenceIdentifier": "string"
-        }],
-        "access": [{
-          "accessType": 1,
-          "accessStatement": "string"
-        }]
+        "licence": [
+          {
+            "licenceName": "string",
+            "licenceIdentifier": "string"
+          }
+        ],
+        "access": [
+          {
+            "accessType": 1,
+            "accessStatement": "string"
+          }
+        ]
       },
-      "fileChecksum": [{
-        "checksumUuid": "string",
-        "checksumType": 1,
-        "checksumValue": "string"
-      }],
+      "fileChecksum": [
+        {
+          "checksumType": 1,
+          "checksumValue": "string"
+        }
+      ],
       "fileFormatType": "string",
       "fileCompositionLevel": "string",
       "fileHasMimeType": true,
-      "fileDate": [{
-        "dateValue": "string",
-        "dateType": 1
-      }],
+      "fileDateModified": [
+        {
+          "dateValue": "string",
+          "dateType": 1
+        }
+      ],
       "filePuid": [
         "string"
       ],
       "fileUse": 1,
-      "preservationEvent": [{
-        "preservationEventValue": "string",
-        "preservationEventType": 1,
-        "preservationEventDetail": "string"
-      }],
-      "uploadStatus": 1,
-      "storageStatus": 1,
-      "fileSoftware": [{}],
-      "fileEquipment": {},
+      "filePreservationEvent": [
+        {
+          "preservationEventValue": "string",
+          "preservationEventType": 1,
+          "preservationEventDetail": "string"
+        }
+      ],
+      "fileUploadStatus": 1,
+      "fileStorageStatus": 1,
       "fileLastDownload": {
         "dateValue": "string",
         "dateType": 1
@@ -112,6 +172,6 @@
       ],
       "fileStorageLocation": "string",
       "fileStorageType": 1
-    }]
-  }
+    }
+  ]
 }

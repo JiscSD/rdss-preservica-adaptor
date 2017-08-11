@@ -4,5 +4,5 @@ error_stream_name = 'message_error_dev'
 error_stream_region = 'eu-west-2'
 
 organisation_buckets = {
-    '44': 's3://preservica-44-api-dev-autoupload'
+    '44': 's3://preservica-44-api-dev-autoupload',
 }

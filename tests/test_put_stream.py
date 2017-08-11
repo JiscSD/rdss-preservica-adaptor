@@ -3,14 +3,17 @@ import moto
 import pytest
 
 from preservicaservice import put_stream
-from preservicaservice.errors import (MaxMessageSendTriesError,
-                                      ResourceNotFoundError)
+from preservicaservice.errors import (
+    MaxMessageSendTriesError,
+    ResourceNotFoundError
+)
 
 
 def test_exponential_generator():
     expected = [200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200, 102400]
     for i, actual in enumerate(
-            put_stream.exponential_generator('x', ValueError, multiplier=100)):
+            put_stream.exponential_generator('x', ValueError, multiplier=100),
+    ):
         assert actual == expected.pop(0)
         if not expected:
             break
@@ -34,12 +37,12 @@ def test_put():
     shard_iterator = client.get_shard_iterator(
         StreamName='in',
         ShardId=shard_id,
-        ShardIteratorType='TRIM_HORIZON'
+        ShardIteratorType='TRIM_HORIZON',
     )
 
     resp = client.get_records(
         ShardIterator=shard_iterator['ShardIterator'],
-        Limit=10
+        Limit=10,
     )
 
     records = resp['Records']
@@ -61,7 +64,7 @@ def test_put_or_fail_missing_stream():
     client.delete_stream(StreamName='in')
     with pytest.raises(
         MaxMessageSendTriesError,
-        match='gave up writing data to stream in after 1 tries'
+        match='gave up writing data to stream in after 1 tries',
     ):
         stream.put_or_fail('{abc}')
 

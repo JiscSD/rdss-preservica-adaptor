@@ -5,7 +5,7 @@
     "messageClass": "Command"
   },
   "messageBody": {
-    "objectPublisher": [{
+    "objectOrganisationRole": [{
       "organisation": {
         "organisationJiscId": 44,
         "organisationName": "Cardiff",
