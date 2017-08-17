@@ -90,32 +90,33 @@ EOF
 }
 
 resource "aws_iam_role_policy" "upload" {
-  name = "${var.project}-${terraform.env}-upload-bucket"
-  role = "${aws_iam_role.role.id}"
-
-  policy = <<EOF
-{
-   "Version":"2012-10-17",
-   "Statement":[
-      {
-         "Effect":"Allow",
-         "Action":[
-            "s3:ListBucket",
-            "s3:GetBucketLocation"
-         ],
-         "Resource": "${var.upload_bucket_arn}"
-      },
-      {
-         "Effect":"Allow",
-         "Action":[
-            "s3:Put*",
-            "s3:Get*"
-         ],
-         "Resource": "${var.upload_bucket_arn}/*"
-      }
-   ]
+  name   = "${var.project}-${terraform.env}-upload-buckets"
+  role   = "${aws_iam_role.role.id}"
+  policy = "${data.aws_iam_policy_document.upload_buckets_policy.json}"
 }
-EOF
+
+data "aws_iam_policy_document" "upload_buckets_policy" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:ListBucket",
+      "s3:GetBucketLocation",
+    ]
+
+    resources = "${var.upload_buckets_arns}"
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:Put*",
+      "s3:Get*",
+    ]
+
+    resources = "${formatlist("%s/*", var.upload_buckets_arns)}"
+  }
 }
 
 resource "aws_iam_role_policy" "cloudwatch" {

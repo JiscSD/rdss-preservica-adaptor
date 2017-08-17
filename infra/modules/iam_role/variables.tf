@@ -14,8 +14,10 @@ variable "error_stream_arn" {
   description = "Error stream ARN."
 }
 
-variable "upload_bucket_arn" {
+variable "upload_buckets_arns" {
   description = "Upload bucket ARN."
+  type        = "list"
+  default     = []
 }
 
 variable "dynamodb_arn" {
