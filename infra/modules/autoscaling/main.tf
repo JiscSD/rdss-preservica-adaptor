@@ -39,7 +39,7 @@ resource "aws_launch_configuration" "config" {
 
 resource "aws_autoscaling_group" "group" {
   availability_zones        = "${var.availability_zones}"
-  name                      = "${var.project}-${terraform.env}-group"
+  name                      = "${var.project}-${terraform.env}-${aws_launch_configuration.config.name}-config"
   min_size                  = "${var.min_size}"
   max_size                  = "${var.max_size}"
   desired_capacity          = "${var.desired_capacity}"
@@ -48,6 +48,10 @@ resource "aws_autoscaling_group" "group" {
   force_delete              = "${var.force_delete}"
   launch_configuration      = "${aws_launch_configuration.config.name}"
   vpc_zone_identifier       = ["${var.vpc_zone_identifier}"]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   tag {
     key                 = "Name"

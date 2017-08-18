@@ -58,6 +58,27 @@ variable "key_name" {
 }
 
 ####################
+# upload buckets
+####################
+variable "upload_buckets_ids" {
+  description = "Upload bucket ARN."
+  type        = "list"
+
+  default = [
+    44,
+    1539,
+    1288,
+    280,
+    799,
+    747,
+    89,
+    854,
+    476,
+    471,
+  ]
+}
+
+####################
 # Autoscaling
 ####################
 variable "launch_in_public_subnet" {
