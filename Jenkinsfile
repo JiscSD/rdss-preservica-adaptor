@@ -21,6 +21,7 @@ pipeline {
         REGION = 'eu-west-2'
         ACCOUNT_ID = '458323522494'
         DEPLOY_VAR_FILE = "deploy_build_vars.json"
+        LAUNCH_IN_PUBLIC_SUBNET = "true"
     }
 
     stages {
