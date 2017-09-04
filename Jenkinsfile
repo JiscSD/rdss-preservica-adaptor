@@ -3,7 +3,7 @@ pipeline {
   agent none
   parameters {
     choice(
-      choices: 'dev\nuat\ntest\nprod',
+      choices: 'dev\nuat\nprod',
       description: 'Environment to deploy to',
       name: 'ENVIRONMENT'
     )
