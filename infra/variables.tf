@@ -135,8 +135,3 @@ variable "access_ip_whitelist" {
     "88.98.215.19/32",   #Mark Winterbottom
   ]
 }
-
-variable "bastion_ami" {
-  description = "AMI to use for the bastion instance"
-  default     = "ami-ed100689"
-}

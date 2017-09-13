@@ -81,11 +81,11 @@ variable "map_public_ip_on_launch" {
   default     = true
 }
 
-variable "bastion_ami" {
-  description = "AMI to use for the bastion instance"
-}
-
 variable "access_ip_whitelist" {
   description = "IP whitelist for access to bastion server"
   type        = "list"
+}
+
+variable "public_key" {
+  description = "The public key to access the bastion server"
 }

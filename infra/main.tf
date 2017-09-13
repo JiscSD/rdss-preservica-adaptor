@@ -10,6 +10,10 @@ terraform {
   }
 }
 
+data "template_file" "public_key" {
+  template = "${file("public-keys/${var.project}-${terraform.env}.pub")}"
+}
+
 module "vpc" {
   source               = "./modules/vpc"
   environment          = "${terraform.env}"
@@ -21,7 +25,7 @@ module "vpc" {
   costcenter           = "${var.costcenter}"
   service              = "${var.service}"
   access_ip_whitelist  = "${var.access_ip_whitelist}"
-  bastion_ami          = "${var.bastion_ami}"
+  public_key           = "${data.template_file.public_key.rendered}"
 }
 
 data "aws_kinesis_stream" "input_stream" {
