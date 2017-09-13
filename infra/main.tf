@@ -20,6 +20,8 @@ module "vpc" {
   owner                = "${var.owner}"
   costcenter           = "${var.costcenter}"
   service              = "${var.service}"
+  access_ip_whitelist  = "${var.access_ip_whitelist}"
+  bastion_ami          = "${var.bastion_ami}"
 }
 
 data "aws_kinesis_stream" "input_stream" {
@@ -46,16 +48,15 @@ module "autoscaling" {
   systemd_unit       = "${var.systemd_unit}"
 
   # https://github.com/hashicorp/terraform/issues/12453
-  vpc_zone_identifier         = ["${split(",", var.launch_in_public_subnet == "true" ? join(",", module.vpc.public_subnet_ids) : join(",", module.vpc.private_subnet_ids))}"]
-  associate_public_ip_address = "${var.launch_in_public_subnet}"
-  role_name                   = "${module.iam_role.role_name}"
-  min_size                    = "${var.autoscaling_min_size}"
-  max_size                    = "${var.autoscaling_max_size}"
-  desired_capacity            = "${var.autoscaling_desired_capacity}"
-  env_file_path               = "${var.autoscaling_env_file_path}"
-  environment                 = "${terraform.env}"
-  project                     = "${var.project}"
-  owner                       = "${var.owner}"
-  costcenter                  = "${var.costcenter}"
-  service                     = "${var.service}"
+  vpc_zone_identifier = ["${module.vpc.private_subnet_ids}"]
+  role_name           = "${module.iam_role.role_name}"
+  min_size            = "${var.autoscaling_min_size}"
+  max_size            = "${var.autoscaling_max_size}"
+  desired_capacity    = "${var.autoscaling_desired_capacity}"
+  env_file_path       = "${var.autoscaling_env_file_path}"
+  environment         = "${terraform.env}"
+  project             = "${var.project}"
+  owner               = "${var.owner}"
+  costcenter          = "${var.costcenter}"
+  service             = "${var.service}"
 }

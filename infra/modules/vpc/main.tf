@@ -14,6 +14,10 @@ resource "aws_vpc" "vpc" {
   }
 }
 
+####################
+# Internet Gateway #
+####################
+
 resource "aws_internet_gateway" "igw" {
   vpc_id = "${aws_vpc.vpc.id}"
 
@@ -28,19 +32,13 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-#################
-# Public Subnet #
-#################
-
-resource "aws_subnet" "public" {
+resource "aws_subnet" "igw" {
   vpc_id                  = "${aws_vpc.vpc.id}"
-  count                   = "${length(var.public_subnets_cidr)}"
-  cidr_block              = "${element(var.public_subnets_cidr, count.index)}"
-  availability_zone       = "${element(var.availability_zones, count.index)}"
-  map_public_ip_on_launch = "${var.map_public_ip_on_launch}"
+  cidr_block              = "${var.igw_cidr}"
+  map_public_ip_on_launch = false
 
   tags {
-    Name        = "${var.project}-${terraform.env}-public-${count.index}"
+    Name        = "${var.project}-${terraform.env}-igw"
     Environment = "${terraform.env}"
     Project     = "${var.project}"
     Owner       = "${var.owner}"
@@ -50,7 +48,7 @@ resource "aws_subnet" "public" {
   }
 }
 
-resource "aws_route_table" "public" {
+resource "aws_route_table" "igw" {
   vpc_id = "${aws_vpc.vpc.id}"
 
   route {
@@ -59,7 +57,7 @@ resource "aws_route_table" "public" {
   }
 
   tags {
-    Name        = "${var.project}-${terraform.env}-public"
+    Name        = "${var.project}-${terraform.env}-igw"
     Environment = "${terraform.env}"
     Project     = "${var.project}"
     Owner       = "${var.owner}"
@@ -69,10 +67,72 @@ resource "aws_route_table" "public" {
   }
 }
 
-resource "aws_route_table_association" "public" {
-  count          = "${length(var.public_subnets_cidr)}"
-  subnet_id      = "${element(aws_subnet.public.*.id, count.index)}"
-  route_table_id = "${aws_route_table.public.id}"
+resource "aws_route_table_association" "igw" {
+  subnet_id      = "${aws_subnet.igw.id}"
+  route_table_id = "${aws_route_table.igw.id}"
+}
+
+###########
+# Bastion #
+###########
+
+resource "aws_security_group" "access_to_bastion" {
+  vpc_id = "${aws_vpc.vpc.id}"
+
+  ingress = {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = "${var.access_ip_whitelist}"
+  }
+
+  tags {
+    Name        = "${var.project}-${terraform.env}-to-bastion-security-group"
+    Environment = "${terraform.env}"
+    Project     = "${var.project}"
+    Owner       = "${var.owner}"
+    CostCenter  = "${var.costcenter}"
+    managed_by  = "terraform"
+    service     = "${var.service}"
+  }
+}
+
+resource "aws_security_group" "access_from_bastion" {
+  vpc_id = "${aws_vpc.vpc.id}"
+
+  ingress {
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = ["${aws_security_group.access_to_bastion.id}"]
+  }
+
+  tags {
+    Name        = "${var.project}-${terraform.env}-from-bastion-security-group"
+    Environment = "${terraform.env}"
+    Project     = "${var.project}"
+    Owner       = "${var.owner}"
+    CostCenter  = "${var.costcenter}"
+    managed_by  = "terraform"
+    service     = "${var.service}"
+  }
+}
+
+resource "aws_instance" "bastion" {
+  ami             = "${var.bastion_ami}"
+  instance_type   = "t2.micro"
+  subnet_id       = "${aws_subnet.igw.id}"
+  security_groups = ["${aws_security_group.access_to_bastion.id}"]
+
+  tags {
+    Name        = "${var.project}-${terraform.env}-bastion"
+    Environment = "${terraform.env}"
+    Project     = "${var.project}"
+    Owner       = "${var.owner}"
+    CostCenter  = "${var.costcenter}"
+    managed_by  = "terraform"
+    service     = "${var.service}"
+  }
 }
 
 ##################
@@ -122,21 +182,9 @@ resource "aws_route_table_association" "private" {
   route_table_id = "${aws_route_table.private.id}"
 }
 
-resource "aws_subnet" "igw" {
-  vpc_id                  = "${aws_vpc.vpc.id}"
-  cidr_block              = "${var.igw_cidr}"
-  map_public_ip_on_launch = false
-
-  tags {
-    Name        = "${var.project}-${terraform.env}-igw"
-    Environment = "${terraform.env}"
-    Project     = "${var.project}"
-    Owner       = "${var.owner}"
-    CostCenter  = "${var.costcenter}"
-    managed_by  = "terraform"
-    service     = "${var.service}"
-  }
-}
+#######
+# NAT #
+#######
 
 resource "aws_subnet" "nat" {
   vpc_id                  = "${aws_vpc.vpc.id}"
@@ -154,15 +202,6 @@ resource "aws_subnet" "nat" {
     managed_by  = "terraform"
     service     = "${var.service}"
   }
-}
-
-resource "aws_eip" "nat" {
-  vpc = true
-}
-
-resource "aws_nat_gateway" "natgw" {
-  allocation_id = "${aws_eip.nat.id}"
-  subnet_id     = "${aws_subnet.igw.id}"
 }
 
 resource "aws_route_table" "nat" {
@@ -190,29 +229,18 @@ resource "aws_route_table_association" "nat" {
   route_table_id = "${aws_route_table.nat.id}"
 }
 
-resource "aws_route_table" "igw" {
-  vpc_id = "${aws_vpc.vpc.id}"
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = "${aws_internet_gateway.igw.id}"
-  }
-
-  tags {
-    Name        = "${var.project}-${terraform.env}-igw"
-    Environment = "${terraform.env}"
-    Project     = "${var.project}"
-    Owner       = "${var.owner}"
-    CostCenter  = "${var.costcenter}"
-    managed_by  = "terraform"
-    service     = "${var.service}"
-  }
+resource "aws_eip" "nat" {
+  vpc = true
 }
 
-resource "aws_route_table_association" "igw" {
-  subnet_id      = "${aws_subnet.igw.id}"
-  route_table_id = "${aws_route_table.igw.id}"
+resource "aws_nat_gateway" "natgw" {
+  allocation_id = "${aws_eip.nat.id}"
+  subnet_id     = "${aws_subnet.igw.id}"
 }
+
+########################
+# "All" Security Group #
+########################
 
 resource "aws_security_group" "all" {
   name = "all"

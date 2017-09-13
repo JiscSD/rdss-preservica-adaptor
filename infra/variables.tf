@@ -31,8 +31,7 @@ variable "region" {
 ####################
 variable "availability_zones" {
   description = "List of availability zones."
-
-  type = "list"
+  type        = "list"
 
   default = [
     "eu-west-2a",
@@ -53,7 +52,7 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  description = "SSh key to use for EC2 instance."
+  description = "SSH key to use for EC2 instance."
   default     = "preservica-service-test"
 }
 
@@ -81,10 +80,6 @@ variable "upload_buckets_ids" {
 ####################
 # Autoscaling
 ####################
-variable "launch_in_public_subnet" {
-  description = "Launch ASG ec2 nodes into public subnet"
-  default     = "true"
-}
 
 variable "autoscaling_min_size" {
   description = "Minimal size of instances in group."
@@ -125,4 +120,23 @@ variable "error_stream_name" {
 variable "systemd_unit" {
   description = "SystemD unit name for application."
   default     = "preservicaservice"
+}
+
+####################
+# IP Whitelist
+####################
+variable "access_ip_whitelist" {
+  description = "IP whitelist for access to bastion server"
+  type        = "list"
+
+  default = [
+    "62.254.125.26",  #Glasgow
+    "46.102.195.182", #London
+    "88.98.215.19",   #Mark Winterbottom
+  ]
+}
+
+variable "bastion_ami" {
+  description = "AMI to use for the bastion instance"
+  default     = "ami-ed100689"
 }

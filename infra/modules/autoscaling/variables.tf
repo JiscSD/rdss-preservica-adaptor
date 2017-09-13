@@ -27,7 +27,7 @@ variable "type" {
 }
 
 variable "key_name" {
-  description = "SSh key to use for instance."
+  description = "SSH key to use for instance."
 }
 
 variable "security_groups" {
@@ -78,10 +78,6 @@ variable "env_file_path" {
 
 variable "role_name" {
   description = "Autoscale profile role name."
-}
-
-variable "associate_public_ip_address" {
-  description = "Assign public IP address to ec2 nodes in ASG"
 }
 
 variable "systemd_unit" {

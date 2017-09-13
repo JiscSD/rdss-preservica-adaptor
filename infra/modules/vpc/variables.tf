@@ -72,11 +72,20 @@ variable "igw_cidr" {
 }
 
 variable "availability_zones" {
-  description = "Avaialbility Zones for Subnets. Indexes must match `subnets_cidr`"
+  description = "Availability Zones for Subnets. Indexes must match `subnets_cidr`"
   type        = "list"
 }
 
 variable "map_public_ip_on_launch" {
   description = "Set try if you want to map the public IP on launch."
   default     = true
+}
+
+variable "bastion_ami" {
+  description = "AMI to use for the bastion instance"
+}
+
+variable "access_ip_whitelist" {
+  description = "IP whitelist for access to bastion server"
+  type        = "list"
 }
