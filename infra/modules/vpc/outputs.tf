@@ -15,5 +15,5 @@ output "igw_subnet_ids" {
 }
 
 output "igw_subnet_id" {
-  value = ["${aws_subnet.igw.id}"]
+  value = "${aws_subnet.igw.id}"
 }
