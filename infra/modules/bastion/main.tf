@@ -8,6 +8,13 @@ resource "aws_security_group" "access_to_bastion" {
     cidr_blocks = "${var.access_ip_whitelist}"
   }
 
+  egress = {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags {
     Name        = "${var.project}-${terraform.env}-to-bastion-security-group"
     Environment = "${terraform.env}"
