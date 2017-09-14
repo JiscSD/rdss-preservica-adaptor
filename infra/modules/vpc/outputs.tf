@@ -13,3 +13,7 @@ output "nat_subnet_ids" {
 output "igw_subnet_ids" {
   value = ["${aws_subnet.igw.*.id}"]
 }
+
+output "igw_subnet_id" {
+  value = ["${aws_subnet.igw.id}"]
+}

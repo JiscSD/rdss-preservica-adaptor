@@ -45,7 +45,7 @@ module "bastion" {
   costcenter          = "${var.costcenter}"
   service             = "${var.service}"
   vpc                 = "${module.vpc.vpc_id}"
-  public_subnet       = "${module.vpc.igw_subnet_ids}"
+  public_subnet       = "${module.vpc.igw_subnet_id}"
 }
 
 data "aws_kinesis_stream" "input_stream" {
