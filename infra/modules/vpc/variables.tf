@@ -75,17 +75,3 @@ variable "availability_zones" {
   description = "Availability Zones for Subnets. Indexes must match `subnets_cidr`"
   type        = "list"
 }
-
-variable "map_public_ip_on_launch" {
-  description = "Set try if you want to map the public IP on launch."
-  default     = true
-}
-
-variable "access_ip_whitelist" {
-  description = "IP whitelist for access to bastion server"
-  type        = "list"
-}
-
-variable "public_key" {
-  description = "The public key to access the bastion server"
-}

@@ -174,37 +174,3 @@ resource "aws_nat_gateway" "natgw" {
   allocation_id = "${aws_eip.nat.id}"
   subnet_id     = "${aws_subnet.igw.id}"
 }
-
-########################
-# "All" Security Group #
-########################
-
-resource "aws_security_group" "all" {
-  name = "all"
-
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  vpc_id = "${aws_vpc.vpc.id}"
-
-  tags {
-    Name        = "${var.project}-${terraform.env}-security-group-all"
-    Environment = "${terraform.env}"
-    Project     = "${var.project}"
-    Owner       = "${var.owner}"
-    CostCenter  = "${var.costcenter}"
-    managed_by  = "terraform"
-    service     = "${var.service}"
-  }
-}

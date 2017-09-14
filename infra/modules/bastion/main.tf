@@ -1,5 +1,5 @@
 resource "aws_security_group" "access_to_bastion" {
-  vpc_id = "${aws_vpc.vpc.id}"
+  vpc_id = "${var.vpc}"
 
   ingress = {
     from_port   = 22
@@ -20,7 +20,7 @@ resource "aws_security_group" "access_to_bastion" {
 }
 
 resource "aws_security_group" "access_from_bastion" {
-  vpc_id = "${aws_vpc.vpc.id}"
+  vpc_id = "${var.vpc}"
 
   ingress {
     from_port       = 22
@@ -40,21 +40,12 @@ resource "aws_security_group" "access_from_bastion" {
   }
 }
 
-resource "aws_key_pair" "auth" {
-  key_name   = "${var.project}-${terraform.env}"
-  public_key = "${var.public_key}"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 resource "aws_instance" "bastion" {
   ami             = "ami-ed100689"
   instance_type   = "t2.micro"
-  subnet_id       = "${aws_subnet.igw.id}"
+  subnet_id       = "${var.public_subnet}"
   security_groups = ["${aws_security_group.access_to_bastion.id}"]
-  key_name        = "${aws_key_pair.auth.id}"
+  key_name        = "${var.key_name}"
 
   tags {
     Name        = "bastion-${var.project}-${terraform.env}"

@@ -14,6 +14,15 @@ data "template_file" "public_key" {
   template = "${file("public-keys/${var.project}-${terraform.env}.pub")}"
 }
 
+resource "aws_key_pair" "auth" {
+  key_name   = "${var.project}-${terraform.env}"
+  public_key = "${data.template_file.public_key.rendered}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 module "vpc" {
   source               = "./modules/vpc"
   environment          = "${terraform.env}"
@@ -24,8 +33,18 @@ module "vpc" {
   owner                = "${var.owner}"
   costcenter           = "${var.costcenter}"
   service              = "${var.service}"
-  access_ip_whitelist  = "${var.access_ip_whitelist}"
-  public_key           = "${data.template_file.public_key.rendered}"
+}
+
+module "bastion" {
+  source              = "./modules/bastion"
+  access_ip_whitelist = "${var.access_ip_whitelist}"
+  key_name            = "${aws_key_pair.auth.key_name}"
+  project             = "${var.project}"
+  owner               = "${var.owner}"
+  costcenter          = "${var.costcenter}"
+  service             = "${var.service}"
+  vpc                 = "${module.vpc.vpc_id}"
+  subnet              = "${module.vpc.igw_subnet_ids}"
 }
 
 data "aws_kinesis_stream" "input_stream" {
@@ -44,10 +63,10 @@ module "iam_role" {
 
 module "autoscaling" {
   source             = "./modules/autoscaling"
-  key_name           = "${var.key_name}"
+  key_name           = "${aws_key_pair.auth.key_name}"
   ami                = "${var.instance_ami}"
   type               = "${var.instance_type}"
-  security_groups    = ["${module.vpc.security_group_all_id}"]
+  security_groups    = ["${module.bastion.access_from_bastion_id}"]
   availability_zones = "${var.availability_zones}"
   systemd_unit       = "${var.systemd_unit}"
 
