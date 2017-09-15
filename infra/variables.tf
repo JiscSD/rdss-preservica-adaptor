@@ -130,8 +130,8 @@ variable "access_ip_whitelist" {
   type        = "list"
 
   default = [
-    "62.254.125.26/32",  #Glasgow
-    "46.102.195.182/32", #London
-    "88.98.215.19/32",   #Mark Winterbottom
+    "62.254.125.26/32",  # Glasgow
+    "46.102.195.182/32", # London
+    "88.98.209.19/32",   # Mark Winterbottom
   ]
 }
