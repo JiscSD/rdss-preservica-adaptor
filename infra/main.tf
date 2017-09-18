@@ -39,6 +39,7 @@ module "bastion" {
   source        = "./modules/bastion"
   environment   = "${terraform.env}"
   project       = "${var.project}"
+  key_name      = "${aws_key_pair.auth.key_name}"
   owner         = "${var.owner}"
   costcenter    = "${var.costcenter}"
   service       = "${var.service}"

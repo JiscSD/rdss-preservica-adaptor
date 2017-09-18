@@ -6,7 +6,7 @@ output "private_subnet_ids" {
   value = ["${aws_subnet.private.*.id}"]
 }
 
-output "private_subnet_cidr" {
+output "private_subnets_cidr" {
   value = ["${var.private_subnets_cidr}"]
 }
 
