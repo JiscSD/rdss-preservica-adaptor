@@ -36,11 +36,24 @@ module "vpc" {
 }
 
 module "bastion" {
-  source              = "./modules/bastion"
+  source        = "./modules/bastion"
+  environment   = "${terraform.env}"
+  key_name      = "${aws_key_pair.auth.key_name}"
+  project       = "${var.project}"
+  owner         = "${var.owner}"
+  costcenter    = "${var.costcenter}"
+  service       = "${var.service}"
+  bastion_sg    = "${module.security_groups.bastion-sg}"
+  public_subnet = "${module.vpc.igw_subnet_id}"
+}
+
+module "security_groups" {
+  source              = "./modules/security_groups"
   environment         = "${terraform.env}"
   access_ip_whitelist = "${var.access_ip_whitelist}"
   key_name            = "${aws_key_pair.auth.key_name}"
   project             = "${var.project}"
+  vpc                 = "${module.vpc.vpc_id}"
   owner               = "${var.owner}"
   costcenter          = "${var.costcenter}"
   service             = "${var.service}"
@@ -67,7 +80,7 @@ module "autoscaling" {
   key_name           = "${aws_key_pair.auth.key_name}"
   ami                = "${var.instance_ami}"
   type               = "${var.instance_type}"
-  security_groups    = ["${module.bastion.access_from_bastion_id}"]
+  security_groups    = ["${module.security_groups.app-sg}"]
   availability_zones = "${var.availability_zones}"
   systemd_unit       = "${var.systemd_unit}"
 

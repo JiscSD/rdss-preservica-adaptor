@@ -18,14 +18,16 @@ variable "environment" {
   description = "Environment we are working with."
 }
 
-variable "public_subnet" {
-  description = "Public subnet for the bastion."
+variable "private_subnets_cidr" {
+  description = "CIDR for private subnets."
+  type        = "list"
 }
 
-variable "bastion_sg" {
-  description = "Security group for the bastion."
+variable "vpc" {
+  description = "VPC the bastion is protecting."
 }
 
-variable "key_name" {
-  description = "The name of the public key to access the bastion server"
+variable "access_ip_whitelist" {
+  description = "IP whitelist for access to bastion server"
+  type        = "list"
 }
