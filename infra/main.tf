@@ -38,7 +38,6 @@ module "vpc" {
 module "bastion" {
   source        = "./modules/bastion"
   environment   = "${terraform.env}"
-  key_name      = "${aws_key_pair.auth.key_name}"
   project       = "${var.project}"
   owner         = "${var.owner}"
   costcenter    = "${var.costcenter}"
@@ -48,17 +47,16 @@ module "bastion" {
 }
 
 module "security_groups" {
-  source              = "./modules/security_groups"
-  environment         = "${terraform.env}"
-  access_ip_whitelist = "${var.access_ip_whitelist}"
-  key_name            = "${aws_key_pair.auth.key_name}"
-  project             = "${var.project}"
-  vpc                 = "${module.vpc.vpc_id}"
-  owner               = "${var.owner}"
-  costcenter          = "${var.costcenter}"
-  service             = "${var.service}"
-  vpc                 = "${module.vpc.vpc_id}"
-  public_subnet       = "${module.vpc.igw_subnet_id}"
+  source               = "./modules/security_groups"
+  environment          = "${terraform.env}"
+  access_ip_whitelist  = "${var.access_ip_whitelist}"
+  project              = "${var.project}"
+  private_subnets_cidr = "${module.vpc.private_subnets_cidr}"
+  vpc                  = "${module.vpc.vpc_id}"
+  owner                = "${var.owner}"
+  costcenter           = "${var.costcenter}"
+  service              = "${var.service}"
+  vpc                  = "${module.vpc.vpc_id}"
 }
 
 data "aws_kinesis_stream" "input_stream" {
