@@ -16,7 +16,7 @@ resource "aws_security_group" "bastion-sg" {
   }
 
   tags {
-    Name        = "${var.project}-${terraform.env}-to-bastion-security-group"
+    Name        = "${var.project}-${terraform.env}-bastion-sg"
     Environment = "${terraform.env}"
     Project     = "${var.project}"
     Owner       = "${var.owner}"
@@ -44,7 +44,7 @@ resource "aws_security_group" "app-sg" {
   }
 
   tags {
-    Name        = "${var.project}-${terraform.env}-from-bastion-security-group"
+    Name        = "${var.project}-${terraform.env}-app-sg"
     Environment = "${terraform.env}"
     Project     = "${var.project}"
     Owner       = "${var.owner}"
