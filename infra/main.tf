@@ -10,6 +10,19 @@ terraform {
   }
 }
 
+data "template_file" "public_key" {
+  template = "${file("public-keys/${var.project}-${terraform.env}.pub")}"
+}
+
+resource "aws_key_pair" "auth" {
+  key_name   = "${var.project}-${terraform.env}"
+  public_key = "${data.template_file.public_key.rendered}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 module "vpc" {
   source               = "./modules/vpc"
   environment          = "${terraform.env}"
@@ -20,6 +33,31 @@ module "vpc" {
   owner                = "${var.owner}"
   costcenter           = "${var.costcenter}"
   service              = "${var.service}"
+}
+
+module "bastion" {
+  source        = "./modules/bastion"
+  environment   = "${terraform.env}"
+  project       = "${var.project}"
+  key_name      = "${aws_key_pair.auth.key_name}"
+  owner         = "${var.owner}"
+  costcenter    = "${var.costcenter}"
+  service       = "${var.service}"
+  bastion_sg    = "${module.security_groups.bastion-sg}"
+  public_subnet = "${module.vpc.igw_subnet_id}"
+}
+
+module "security_groups" {
+  source               = "./modules/security_groups"
+  environment          = "${terraform.env}"
+  access_ip_whitelist  = "${var.access_ip_whitelist}"
+  project              = "${var.project}"
+  private_subnets_cidr = "${module.vpc.private_subnets_cidr}"
+  vpc                  = "${module.vpc.vpc_id}"
+  owner                = "${var.owner}"
+  costcenter           = "${var.costcenter}"
+  service              = "${var.service}"
+  vpc                  = "${module.vpc.vpc_id}"
 }
 
 data "aws_kinesis_stream" "input_stream" {
@@ -38,24 +76,23 @@ module "iam_role" {
 
 module "autoscaling" {
   source             = "./modules/autoscaling"
-  key_name           = "${var.key_name}"
+  key_name           = "${aws_key_pair.auth.key_name}"
   ami                = "${var.instance_ami}"
   type               = "${var.instance_type}"
-  security_groups    = ["${module.vpc.security_group_all_id}"]
+  security_groups    = ["${module.security_groups.app-sg}"]
   availability_zones = "${var.availability_zones}"
   systemd_unit       = "${var.systemd_unit}"
 
   # https://github.com/hashicorp/terraform/issues/12453
-  vpc_zone_identifier         = ["${split(",", var.launch_in_public_subnet == "true" ? join(",", module.vpc.public_subnet_ids) : join(",", module.vpc.private_subnet_ids))}"]
-  associate_public_ip_address = "${var.launch_in_public_subnet}"
-  role_name                   = "${module.iam_role.role_name}"
-  min_size                    = "${var.autoscaling_min_size}"
-  max_size                    = "${var.autoscaling_max_size}"
-  desired_capacity            = "${var.autoscaling_desired_capacity}"
-  env_file_path               = "${var.autoscaling_env_file_path}"
-  environment                 = "${terraform.env}"
-  project                     = "${var.project}"
-  owner                       = "${var.owner}"
-  costcenter                  = "${var.costcenter}"
-  service                     = "${var.service}"
+  vpc_zone_identifier = ["${module.vpc.private_subnet_ids}"]
+  role_name           = "${module.iam_role.role_name}"
+  min_size            = "${var.autoscaling_min_size}"
+  max_size            = "${var.autoscaling_max_size}"
+  desired_capacity    = "${var.autoscaling_desired_capacity}"
+  env_file_path       = "${var.autoscaling_env_file_path}"
+  environment         = "${terraform.env}"
+  project             = "${var.project}"
+  owner               = "${var.owner}"
+  costcenter          = "${var.costcenter}"
+  service             = "${var.service}"
 }

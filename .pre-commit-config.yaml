@@ -36,7 +36,7 @@
           files: bin\/(?!run)
 
 -   repo: https://github.com/willthames/ansible-lint
-    sha: v3.4.13
+    sha: v3.4.15
     hooks:
     -   id: ansible-lint
         name: Ansible-lint

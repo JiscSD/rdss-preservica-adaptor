@@ -24,13 +24,12 @@ resource "aws_iam_instance_profile" "profile" {
 }
 
 resource "aws_launch_configuration" "config" {
-  image_id                    = "${var.ami}"
-  instance_type               = "${var.type}"
-  key_name                    = "${var.key_name}"
-  security_groups             = ["${var.security_groups}"]
-  user_data                   = "${data.template_cloudinit_config.config.rendered}"
-  associate_public_ip_address = "${var.associate_public_ip_address}"
-  iam_instance_profile        = "${aws_iam_instance_profile.profile.id}"
+  image_id             = "${var.ami}"
+  instance_type        = "${var.type}"
+  key_name             = "${var.key_name}"
+  security_groups      = ["${var.security_groups}"]
+  user_data            = "${data.template_cloudinit_config.config.rendered}"
+  iam_instance_profile = "${aws_iam_instance_profile.profile.id}"
 
   lifecycle {
     create_before_destroy = true
