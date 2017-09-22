@@ -45,8 +45,8 @@ def create_supported_tasks(message, config):
     :raise: preservicaservice.errors.MalformedHeaderError
     """
     try:
-        message_type = message.get('messageHeader', {}).get('messageType')
-    except (ValueError, TypeError):
+        message_type = message['messageHeader']['messageType']
+    except (NameError, KeyError):
         raise MalformedHeaderError()
 
     if not isinstance(message_type, str):

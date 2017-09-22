@@ -135,13 +135,13 @@ def get_container_name(url):
         return None
 
 
-def get_base_archive_path(url):
+def get_base_archive_path(url, message_id):
     """ Derive container name from url
 
     :param S3Url url: url to look
     :rtype: str or None
     """
-    return os.path.dirname(url.object_key)
+    return os.path.dirname(os.path.join(message_id, url.object_key))
 
 
 class FileMetadata(object):
@@ -177,7 +177,7 @@ class FileTask(object):
     DEFAULT_FILE_SIZE_LIMIT = 4 * 1000 * 1000 * 1000
 
     def __init__(
-        self, download_url, metadata,
+        self, download_url, metadata, message_id,
         file_size_limit=DEFAULT_FILE_SIZE_LIMIT,
     ):
         """
@@ -188,7 +188,10 @@ class FileTask(object):
         self.download_url = download_url
         self.metadata = metadata
         self.file_size_limit = file_size_limit
-        self.archive_base_path = get_base_archive_path(self.download_url)
+        self.message_id = message_id
+        self.archive_base_path = get_base_archive_path(
+            self.download_url, self.message_id,
+        )
 
     def download(self, download_path):
         """ Download given path from s3 to temp destination.
@@ -319,7 +322,7 @@ class BaseMetadataCreateTask(BaseTask):
         if not isinstance(objects, list):
             raise MalformedBodyError('expected objectFile as list')
 
-        file_tasks = list(map(cls.build_file_tasks, objects))
+        file_tasks = list(map(cls.build_file_tasks, objects, message_id))
         if not file_tasks:
             raise MalformedBodyError('empty objectFile')
 
@@ -339,7 +342,7 @@ class BaseMetadataCreateTask(BaseTask):
         )
 
     @classmethod
-    def build_file_tasks(cls, message):
+    def build_file_tasks(cls, message, message_id):
         url = message.get('fileStorageLocation')
         if not url:
             raise MalformedBodyError(
@@ -353,7 +356,9 @@ class BaseMetadataCreateTask(BaseTask):
             )
 
         try:
-            return FileTask(download_url, FileMetadata(**message))
+            return FileTask(
+                download_url, FileMetadata(**message), message_id,
+            )
         except Exception as e:
             raise e
 

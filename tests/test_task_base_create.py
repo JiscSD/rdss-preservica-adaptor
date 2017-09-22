@@ -20,6 +20,7 @@ def file_task1():
     yield tasks.FileTask(
         S3Url('s3://bucket/the/prefix/foo'),
         tasks.FileMetadata(fileName='baz.pdf'),
+        'message_id',
     )
 
 
@@ -28,6 +29,7 @@ def file_task2():
     yield tasks.FileTask(
         S3Url('s3://bucket/the/prefix/bar'),
         tasks.FileMetadata(fileName='bam.pdf'),
+        'message_id',
     )
 
 
@@ -239,11 +241,14 @@ def test_get_container_name(argument, expected):
 
 @pytest.mark.parametrize(
     'argument, expected', [
-        ('s3://bucket/foo/bar/baz', 'foo/bar'),
-        ('s3://bucket/foo/bar', 'foo'),
-        ('s3://bucket/foo/', 'foo'),
-        ('s3://bucket/foo', ''),
+        ('s3://bucket/foo/bar/baz', 'message_id/foo/bar'),
+        ('s3://bucket/foo/bar', 'message_id/foo'),
+        ('s3://bucket/foo/', 'message_id/foo'),
+        ('s3://bucket/foo', 'message_id'),
     ],
 )
 def test_get_base_archive_path(argument, expected):
-    assert tasks.get_base_archive_path(S3Url.parse(argument)) == expected
+    assert tasks.get_base_archive_path(
+        S3Url.parse(argument),
+        'message_id',
+    ) == expected

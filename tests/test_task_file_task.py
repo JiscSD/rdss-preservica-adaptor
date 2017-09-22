@@ -26,6 +26,7 @@ def task(file_metadata):
     yield tasks.FileTask(
         S3Url('s3://bucket/the/prefix/foo'),
         file_metadata,
+        'message_id',
     )
 
 
@@ -48,6 +49,7 @@ def test_verify_limit(temp_file, size):
     task = tasks.FileTask(
         S3Url('s3://bucket/the/prefix/foo'),
         tasks.FileMetadata(fileName='baz.pdf'),
+        'message_id',
         size,
     )
     with pytest.raises(errors.UnderlyingSystemError):
@@ -63,5 +65,9 @@ def test_zip_bundle(task, temp_file, temp_file2, temp_file3):
 
     task.zip_bundle(temp_file, temp_file2, temp_file3)
 
-    assert_zip_contains(temp_file, 'the/prefix/foo', 'download')
-    assert_zip_contains(temp_file, 'the/prefix/foo.metadata', 'meta')
+    assert_zip_contains(
+        temp_file, 'message_id/the/prefix/foo', 'download',
+    )
+    assert_zip_contains(
+        temp_file, 'message_id/the/prefix/foo.metadata', 'meta',
+    )

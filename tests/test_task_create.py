@@ -15,6 +15,7 @@ def file_task1():
     yield tasks.FileTask(
         S3Url('s3://bucket/the/prefix/foo.pdf'),
         tasks.FileMetadata(fileName='baz.pdf'),
+        'message_id',
     )
 
 
@@ -23,6 +24,7 @@ def file_task2():
     yield tasks.FileTask(
         S3Url('s3://bucket/the/prefix/bar.pdf'),
         tasks.FileMetadata(fileName='bam.pdf'),
+        'message_id',
     )
 
 
@@ -58,17 +60,25 @@ def test_run_succeeds(temp_file, task):
         partial='<root><foo type="str">bar</foo>',
     )
 
-    assert_zip_contains(temp_file, 'the/prefix/foo.pdf', file1_contents)
     assert_zip_contains(
         temp_file,
-        'the/prefix/foo.pdf.metadata',
+        'message_id/the/prefix/foo.pdf',
+        file1_contents,
+    )
+    assert_zip_contains(
+        temp_file,
+        'message_id/the/prefix/foo.pdf.metadata',
         partial='fileName>baz.pdf<',
     )
 
-    assert_zip_contains(temp_file, 'the/prefix/bar.pdf', file2_contents)
     assert_zip_contains(
         temp_file,
-        'the/prefix/bar.pdf.metadata',
+        'message_id/the/prefix/bar.pdf',
+        file2_contents,
+    )
+    assert_zip_contains(
+        temp_file,
+        'message_id/the/prefix/bar.pdf.metadata',
         partial='fileName>bam.pdf<',
     )
 
@@ -80,7 +90,7 @@ def test_run_succeeds(temp_file, task):
     assert metadata['bucket'] == 'upload'
     assert metadata['status'] == 'ready'
     assert metadata['name'] == 'message_id.zip'
-    assert metadata['size'] == '1129'
+    assert metadata['size'] == '1217'
     assert metadata['size_uncompressed'] == '20739'
     assert (
         datetime.datetime.now() -
