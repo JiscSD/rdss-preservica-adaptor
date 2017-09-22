@@ -239,9 +239,9 @@ def test_get_container_name(argument, expected):
 
 @pytest.mark.parametrize(
     'argument, expected', [
-        ('s3://bucket/foo/bar/baz', 'bar'),
-        ('s3://bucket/foo/bar', ''),
-        ('s3://bucket/foo/', ''),
+        ('s3://bucket/foo/bar/baz', 'foo/bar'),
+        ('s3://bucket/foo/bar', 'foo'),
+        ('s3://bucket/foo/', 'foo'),
         ('s3://bucket/foo', ''),
     ],
 )

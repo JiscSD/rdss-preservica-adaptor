@@ -141,7 +141,7 @@ def get_base_archive_path(url):
     :param S3Url url: url to look
     :rtype: str or None
     """
-    return '/'.join(os.path.dirname(url.object_key).split('/')[1:])
+    return os.path.dirname(url.object_key)
 
 
 class FileMetadata(object):
