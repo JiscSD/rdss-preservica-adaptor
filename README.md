@@ -108,7 +108,6 @@ createdby         `"role"` property of `messageBody.objectOrganisationRole` obje
 
 #### Assumptions
 
-- The top directory in s3 object filepath is to be ignored, ie `unsorted`. As such, there is an assumption that all URLs have a common top level directory in their S3 object file paths (`messagBody.objectFile[]` objects - `fileStorageLocation` property)
 - `createdby` S3 attribute of zip bundle - taken from `messageBody.ObjectPublisher[]` objects - `role` property. An assumption that all objects have the same value for `role` property. Current logic is to take the value from first object in the list.
 
 #### Logging
