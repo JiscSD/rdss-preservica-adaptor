@@ -130,7 +130,7 @@ def get_container_name(url):
     :rtype: str or None
     """
     try:
-        return url.object_key.split('/')[1].strip() or None
+        return url.object_key.split('/')[0].strip() or None
     except IndexError:
         return None
 

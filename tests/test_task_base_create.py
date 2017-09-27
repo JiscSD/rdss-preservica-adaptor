@@ -230,10 +230,13 @@ def test_require_organisation_role_raises(message, error):
 
 @pytest.mark.parametrize(
     'argument, expected', [
-        ('s3://bucket/foo/bar/baz', 'bar'),
-        ('s3://bucket/foo/bar', 'bar'),
-        ('s3://bucket/foo/', None),
-        ('s3://bucket/foo', None),
+        ('s3://bucket/foo/bar/baz', 'foo'),
+        ('s3://bucket/foo/bar', 'foo'),
+        ('s3://bucket/foo/', 'foo'),
+        ('s3://bucket/foo', 'foo'),
+        ('s3://bucket/', None),
+        ('s3://bucket', None),
+        ('s3://bucket/unsorted/10.17863/CAM.679/data.zip', 'unsorted'),
     ],
 )
 def test_get_container_name(argument, expected):
