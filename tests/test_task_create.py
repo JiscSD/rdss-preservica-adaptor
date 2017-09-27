@@ -85,7 +85,7 @@ def test_run_succeeds(temp_file, task):
     bundle = upload_bucket.Object('to/message_id.zip')
     metadata = bundle.metadata
 
-    assert len(metadata.keys()) == 8
+    assert len(metadata.keys()) == 9
     assert metadata['key'] == 'message_id'
     assert metadata['bucket'] == 'upload'
     assert metadata['status'] == 'ready'
@@ -97,6 +97,7 @@ def test_run_succeeds(temp_file, task):
         dateutil.parser.parse(metadata['createddate'])
     ).total_seconds() < 10
     assert metadata['createdby'] == 'role'
+    assert metadata['collectionname'] == 'Preservica'
 
 
 @moto.mock_s3

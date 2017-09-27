@@ -449,7 +449,7 @@ class BaseMetadataCreateTask(BaseTask):
             'size_uncompressed': str(size_uncompressed),
             'createddate': datetime.datetime.now().isoformat(),
             'createdby': self.role,
-
+            'collectionname': 'Preservica',
         }
 
 

@@ -67,7 +67,7 @@ def test_collect_meta(temp_file, temp_file2, temp_file3, task):
 
     metadata = task.collect_meta(temp_file)
 
-    assert len(metadata.keys()) == 8
+    assert len(metadata.keys()) == 9
     assert metadata['key'] == 'message_id'
     assert metadata['bucket'] == 'upload'
     assert metadata['status'] == 'ready'
@@ -79,6 +79,7 @@ def test_collect_meta(temp_file, temp_file2, temp_file3, task):
         dateutil.parser.parse(metadata['createddate'])
     ).total_seconds() < 10
     assert metadata['createdby'] == 'role'
+    assert metadata['collectionname'] == 'Preservica'
 
 
 @moto.mock_s3
