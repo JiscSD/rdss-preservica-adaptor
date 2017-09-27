@@ -224,7 +224,6 @@ class FileTask(object):
         :param str download_path: original file
         :param str meta_path: meta file
         """
-
         contents = (
             (
                 download_path, os.path.join(
@@ -397,7 +396,7 @@ class BaseMetadataCreateTask(BaseTask):
             ) as f:
                 f.write(
                     meta_path,
-                    '{0}/{0}.metadata'.format(self.container_name),
+                    '{0}.metadata'.format(self.message_id),
                 )
 
     def upload_bundle(self, upload_url, zip_path, metadata, override):

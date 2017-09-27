@@ -56,7 +56,7 @@ def test_run_succeeds(temp_file, task):
 
     assert_zip_contains(
         temp_file,
-        'container_name/container_name.metadata',
+        'message_id.metadata',
         partial='<root><foo type="str">bar</foo>',
     )
 
@@ -90,7 +90,7 @@ def test_run_succeeds(temp_file, task):
     assert metadata['bucket'] == 'upload'
     assert metadata['status'] == 'ready'
     assert metadata['name'] == 'message_id.zip'
-    assert metadata['size'] == '1217'
+    assert metadata['size'] == '1179'
     assert metadata['size_uncompressed'] == '20739'
     assert (
         datetime.datetime.now() -
