@@ -36,7 +36,6 @@ def task(file_task1, file_task2):
         S3Url('s3://upload'),
         'this-is-message-uuid',
         'role',
-        'container_name',
     )
 
 

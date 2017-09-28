@@ -123,21 +123,6 @@ def require_organisation_role(message):
         raise MalformedBodyError('missing objectOrganisationRole.role')
 
 
-def get_container_name(url):
-    """ Derive container name from url
-
-    :param S3Url url: url to look
-    :rtype: str or None
-    """
-    try:
-        container_name = url.object_key.split('/')[0].strip() or None
-        logger.debug('MWDEBUG - url = "{}"'.format(url))
-        logger.debug('MWDEBUG - container_name = "{}"'.format(container_name))
-        return container_name
-    except IndexError:
-        return None
-
-
 def get_base_archive_path(url, message_id):
     """ Derive container name from url
 
@@ -276,7 +261,6 @@ class BaseMetadataCreateTask(BaseTask):
 
     def __init__(
         self, message, file_tasks, upload_url, message_id, role,
-        container_name,
     ):
         """
         :param dict message: source message
@@ -285,14 +269,12 @@ class BaseMetadataCreateTask(BaseTask):
         :param S3Url upload_url: upload url
         :param str message_id: message header id
         :param str role: tag role
-        :param str container_name: upload container folder name
         """
         self.message = message
         self.file_tasks = file_tasks
         self.upload_url = upload_url
         self.message_id = str(message_id)
         self.role = role
-        self.container_name = container_name
 
     @classmethod
     def build(cls, message, config):
@@ -328,19 +310,12 @@ class BaseMetadataCreateTask(BaseTask):
         if not file_tasks:
             raise MalformedBodyError('empty objectFile')
 
-        container_name = get_container_name(file_tasks[0].download_url)
-        if not container_name:
-            raise MalformedBodyError(
-                'First objectFile has no valid url to get container name',
-            )
-
         return cls(
             message,
             file_tasks,
             upload_url,
             message_id,
             role,
-            container_name,
         )
 
     @classmethod

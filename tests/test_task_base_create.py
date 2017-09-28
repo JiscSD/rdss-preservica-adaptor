@@ -41,7 +41,6 @@ def task(file_task1, file_task2):
         S3Url('s3://upload/to'),
         'message_id',
         'role',
-        'container_name',
     )
 
 
@@ -226,21 +225,6 @@ def test_require_organisation_role_succeeds(message, expected):
 def test_require_organisation_role_raises(message, error):
     with pytest.raises(MalformedBodyError, match=error):
         tasks.require_organisation_role(message)
-
-
-@pytest.mark.parametrize(
-    'argument, expected', [
-        ('s3://bucket/foo/bar/baz', 'foo'),
-        ('s3://bucket/foo/bar', 'foo'),
-        ('s3://bucket/foo/', 'foo'),
-        ('s3://bucket/foo', 'foo'),
-        ('s3://bucket/', None),
-        ('s3://bucket', None),
-        ('s3://bucket/unsorted/10.17863/CAM.679/data.zip', 'unsorted'),
-    ],
-)
-def test_get_container_name(argument, expected):
-    assert tasks.get_container_name(S3Url.parse(argument)) == expected
 
 
 @pytest.mark.parametrize(
