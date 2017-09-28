@@ -13,18 +13,18 @@ from .helpers import assert_zip_contains, create_bucket
 @pytest.fixture
 def file_task1():
     yield tasks.FileTask(
-        S3Url('s3://bucket/unsorted/10.17863/CAM.679/data.zip'),
-        tasks.FileMetadata(fileName='Label of this intellectual asset: 1'),
-        'ad6dee33-80ed-ae48-9cac-ed6f2250b017',
+        S3Url('s3://bucket/the/prefix/foo.pdf'),
+        tasks.FileMetadata(fileName='baz.pdf'),
+        'message-id',
     )
 
 
 @pytest.fixture
 def file_task2():
     yield tasks.FileTask(
-        S3Url('s3://bucket/unsorted/10.17863/CAM.679/readme.txt'),
-        tasks.FileMetadata(fileName='Label of this intellectual asset: 2'),
-        'ad6dee33-80ed-ae48-9cac-ed6f2250b017',
+        S3Url('s3://bucket/the/prefix/bar.pdf'),
+        tasks.FileMetadata(fileName='bam.pdf'),
+        'message-id',
     )
 
 
@@ -33,8 +33,8 @@ def task(file_task1, file_task2):
     yield tasks.BaseMetadataCreateTask(
         {'foo': 'bar'},
         [file_task1, file_task2],
-        S3Url('s3://upload'),
-        'ad6dee33-80ed-ae48-9cac-ed6f2250b017',
+        S3Url('s3://upload/to'),
+        'message-id',
         'role',
         'container_name',
     )
