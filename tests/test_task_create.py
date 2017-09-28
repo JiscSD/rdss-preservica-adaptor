@@ -15,7 +15,7 @@ def file_task1():
     yield tasks.FileTask(
         S3Url('s3://bucket/the/prefix/foo.pdf'),
         tasks.FileMetadata(fileName='baz.pdf'),
-        'message-id',
+        'this-is-message-uuid',
     )
 
 
@@ -24,7 +24,7 @@ def file_task2():
     yield tasks.FileTask(
         S3Url('s3://bucket/the/prefix/bar.pdf'),
         tasks.FileMetadata(fileName='bam.pdf'),
-        'message-id',
+        'this-is-message-uuid',
     )
 
 
@@ -33,8 +33,8 @@ def task(file_task1, file_task2):
     yield tasks.BaseMetadataCreateTask(
         {'foo': 'bar'},
         [file_task1, file_task2],
-        S3Url('s3://upload/to'),
-        'message-id',
+        S3Url('s3://upload'),
+        'this-is-message-uuid',
         'role',
         'container_name',
     )
@@ -52,46 +52,45 @@ def test_run_succeeds(temp_file, task):
 
     task.run()
 
-    upload_bucket.download_file('to/message-id.zip', temp_file)
+    upload_bucket.download_file('this-is-message-uuid.zip', temp_file)
 
     assert_zip_contains(
         temp_file,
-        'message-id.metadata',
+        'this-is-message-uuid.metadata',
         partial='<root><foo type="str">bar</foo>',
     )
 
     assert_zip_contains(
         temp_file,
-        'message-id/the/prefix/foo.pdf',
+        'this-is-message-uuid/the/prefix/foo.pdf',
         file1_contents,
     )
     assert_zip_contains(
         temp_file,
-        'message-id/the/prefix/foo.pdf.metadata',
+        'this-is-message-uuid/the/prefix/foo.pdf.metadata',
         partial='fileName>baz.pdf<',
     )
 
     assert_zip_contains(
         temp_file,
-        'message-id/the/prefix/bar.pdf',
+        'this-is-message-uuid/the/prefix/bar.pdf',
         file2_contents,
     )
     assert_zip_contains(
         temp_file,
-        'message-id/the/prefix/bar.pdf.metadata',
+        'this-is-message-uuid/the/prefix/bar.pdf.metadata',
         partial='fileName>bam.pdf<',
     )
 
-    bundle = upload_bucket.Object('to/message-id.zip')
+    bundle = upload_bucket.Object('this-is-message-uuid.zip')
     metadata = bundle.metadata
 
     assert len(metadata.keys()) == 9
-    assert metadata['key'] == 'message-id'
+    assert metadata['key'] == 'this-is-message-uuid'
     assert metadata['bucket'] == 'upload'
     assert metadata['status'] == 'ready'
-    assert metadata['name'] == 'message-id.zip'
-    assert metadata['size'] == '1179'
-    assert metadata['size_uncompressed'] == '20739'
+    assert metadata['name'] == 'this-is-message-uuid.zip'
+    assert int(metadata['size_uncompressed']) > int(metadata['size'])
     assert (
         datetime.datetime.now() -
         dateutil.parser.parse(metadata['createddate'])
@@ -116,7 +115,9 @@ def test_run_no_override(task):
     source_bucket.put_object(Key='the/prefix/bar.pdf', Body='bar')
 
     upload_bucket = create_bucket('upload')
-    upload_bucket.put_object(Key='to/message-id.zip', Body='contents')
+    upload_bucket.put_object(
+        Key='this-is-message-uuid.zip', Body='contents',
+    )
 
     with pytest.raises(errors.ResourceAlreadyExistsError):
         task.run()
