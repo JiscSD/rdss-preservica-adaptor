@@ -58,7 +58,6 @@ def create_supported_tasks(message, config):
             '{} is not supported'.format(message_type),
         )
 
-    logger.debug('MARKW - Running build class method.')
     return TYPE_TO_TASKS[message_type].build(message, config)
 
 

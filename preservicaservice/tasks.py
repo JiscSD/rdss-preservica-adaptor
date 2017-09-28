@@ -315,8 +315,6 @@ class BaseMetadataCreateTask(BaseTask):
         if not file_tasks:
             raise MalformedBodyError('empty objectFile')
 
-        logging.debug('MARKW - About to return class.')
-
         return cls(
             message,
             file_tasks,
