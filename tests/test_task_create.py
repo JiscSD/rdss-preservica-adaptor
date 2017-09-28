@@ -15,7 +15,7 @@ def file_task1():
     yield tasks.FileTask(
         S3Url('s3://bucket/the/prefix/foo.pdf'),
         tasks.FileMetadata(fileName='baz.pdf'),
-        'message_id',
+        'message-id',
     )
 
 
@@ -24,7 +24,7 @@ def file_task2():
     yield tasks.FileTask(
         S3Url('s3://bucket/the/prefix/bar.pdf'),
         tasks.FileMetadata(fileName='bam.pdf'),
-        'message_id',
+        'message-id',
     )
 
 
@@ -34,7 +34,7 @@ def task(file_task1, file_task2):
         {'foo': 'bar'},
         [file_task1, file_task2],
         S3Url('s3://upload/to'),
-        'message_id',
+        'message-id',
         'role',
         'container_name',
     )
@@ -52,44 +52,44 @@ def test_run_succeeds(temp_file, task):
 
     task.run()
 
-    upload_bucket.download_file('to/message_id.zip', temp_file)
+    upload_bucket.download_file('to/message-id.zip', temp_file)
 
     assert_zip_contains(
         temp_file,
-        'message_id.metadata',
+        'message-id.metadata',
         partial='<root><foo type="str">bar</foo>',
     )
 
     assert_zip_contains(
         temp_file,
-        'message_id/the/prefix/foo.pdf',
+        'message-id/the/prefix/foo.pdf',
         file1_contents,
     )
     assert_zip_contains(
         temp_file,
-        'message_id/the/prefix/foo.pdf.metadata',
+        'message-id/the/prefix/foo.pdf.metadata',
         partial='fileName>baz.pdf<',
     )
 
     assert_zip_contains(
         temp_file,
-        'message_id/the/prefix/bar.pdf',
+        'message-id/the/prefix/bar.pdf',
         file2_contents,
     )
     assert_zip_contains(
         temp_file,
-        'message_id/the/prefix/bar.pdf.metadata',
+        'message-id/the/prefix/bar.pdf.metadata',
         partial='fileName>bam.pdf<',
     )
 
-    bundle = upload_bucket.Object('to/message_id.zip')
+    bundle = upload_bucket.Object('to/message-id.zip')
     metadata = bundle.metadata
 
     assert len(metadata.keys()) == 9
-    assert metadata['key'] == 'message_id'
+    assert metadata['key'] == 'message-id'
     assert metadata['bucket'] == 'upload'
     assert metadata['status'] == 'ready'
-    assert metadata['name'] == 'message_id.zip'
+    assert metadata['name'] == 'message-id.zip'
     assert metadata['size'] == '1179'
     assert metadata['size_uncompressed'] == '20739'
     assert (
@@ -116,7 +116,7 @@ def test_run_no_override(task):
     source_bucket.put_object(Key='the/prefix/bar.pdf', Body='bar')
 
     upload_bucket = create_bucket('upload')
-    upload_bucket.put_object(Key='to/message_id.zip', Body='contents')
+    upload_bucket.put_object(Key='to/message-id.zip', Body='contents')
 
     with pytest.raises(errors.ResourceAlreadyExistsError):
         task.run()
