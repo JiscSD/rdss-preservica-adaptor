@@ -214,13 +214,15 @@ class FileTask(object):
         """
         contents = (
             (
-                download_path, os.path.join(
+                download_path,
+                os.path.join(
                     self.archive_base_path,
                     os.path.basename(self.download_url.object_key),
                 ),
             ),
             (
-                meta_path, os.path.join(
+                meta_path,
+                os.path.join(
                     self.archive_base_path,
                     '{}.metadata'.format(os.path.basename(
                         self.download_url.object_key,
@@ -273,7 +275,7 @@ class BaseMetadataCreateTask(BaseTask):
         self.message = message
         self.file_tasks = file_tasks
         self.upload_url = upload_url
-        self.message_id = str(message_id)
+        self.message_id = message_id
         self.role = role
 
     @classmethod
@@ -306,9 +308,14 @@ class BaseMetadataCreateTask(BaseTask):
         if not isinstance(objects, list):
             raise MalformedBodyError('expected objectFile as list')
 
-        file_tasks = list(map(cls.build_file_tasks, objects, message_id))
+        file_tasks = []
+        for obj in objects:
+            file_tasks.append(cls.build_file_task(obj, message_id))
+
         if not file_tasks:
             raise MalformedBodyError('empty objectFile')
+
+        logging.debug('MARKW - About to return class.')
 
         return cls(
             message,
@@ -319,7 +326,7 @@ class BaseMetadataCreateTask(BaseTask):
         )
 
     @classmethod
-    def build_file_tasks(cls, message, message_id):
+    def build_file_task(cls, message, message_id):
         url = message.get('fileStorageLocation')
         if not url:
             raise MalformedBodyError(
