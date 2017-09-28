@@ -374,7 +374,7 @@ class BaseMetadataCreateTask(BaseTask):
             ) as f:
                 f.write(
                     meta_path,
-                    '{0}.metadata'.format(self.message_id),
+                    '{0}/{0}.metadata'.format(self.message_id),
                 )
 
     def upload_bundle(self, upload_url, zip_path, metadata, override):

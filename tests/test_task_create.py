@@ -55,7 +55,7 @@ def test_run_succeeds(temp_file, task):
 
     assert_zip_contains(
         temp_file,
-        'this-is-message-uuid.metadata',
+        'this-is-message-uuid/this-is-message-uuid.metadata',
         partial='<root><foo type="str">bar</foo>',
     )
 

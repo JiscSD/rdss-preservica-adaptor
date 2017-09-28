@@ -48,7 +48,7 @@ def test_bundle_meta(temp_file, task):
     task.bundle_meta(temp_file)
     assert_zip_contains(
         temp_file,
-        'message_id.metadata',
+        'message_id/message_id.metadata',
         partial='<root><foo type="str">bar</foo>',
     )
 
