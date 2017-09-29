@@ -66,7 +66,7 @@ def test_collect_meta(temp_file, temp_file2, temp_file3, task):
 
     metadata = task.collect_meta(temp_file)
 
-    assert len(metadata.keys()) == 9
+    assert len(metadata.keys()) == 8
     assert metadata['key'] == 'message_id'
     assert metadata['bucket'] == 'upload'
     assert metadata['status'] == 'ready'
@@ -78,7 +78,6 @@ def test_collect_meta(temp_file, temp_file2, temp_file3, task):
         dateutil.parser.parse(metadata['createddate'])
     ).total_seconds() < 10
     assert metadata['createdby'] == 'role'
-    assert metadata['collectionname'] == 'Preservica'
 
 
 @moto.mock_s3
@@ -94,14 +93,14 @@ def test_upload_override(task, temp_file, temp_file2):
         True,
     )
 
-    bucket.download_file('path/message_id.zip', temp_file2)
+    bucket.download_file('path/message_id', temp_file2)
     assert_file_contents(temp_file2, 'bundle')
 
 
 @moto.mock_s3
 def test_upload_no_override(task, temp_file):
     bucket = create_bucket('bucket')
-    bucket.put_object(Key='prefix/foo/message_id.zip', Body='value')
+    bucket.put_object(Key='prefix/foo/message_id', Body='value')
 
     with open(temp_file, 'w') as f:
         f.write('bundle')

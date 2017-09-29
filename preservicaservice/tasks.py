@@ -409,7 +409,7 @@ class BaseMetadataCreateTask(BaseTask):
 
     @property
     def bundle_name(self):
-        return '{}.zip'.format(self.message_id)
+        return self.message_id
 
     def collect_meta(self, zip_file_path):
         """ S3 object metadata
@@ -427,12 +427,11 @@ class BaseMetadataCreateTask(BaseTask):
             'key': self.message_id,
             'bucket': self.upload_url.bucket_name,
             'status': 'ready',
-            'name': self.bundle_name,
+            'name': '{}.zip'.format(self.bundle_name),
             'size': str(os.stat(zip_file_path).st_size),
             'size_uncompressed': str(size_uncompressed),
             'createddate': datetime.datetime.now().isoformat(),
             'createdby': self.role,
-            'collectionname': 'Preservica',
         }
 
 

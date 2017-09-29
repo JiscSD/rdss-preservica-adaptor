@@ -51,7 +51,7 @@ def test_run_succeeds(temp_file, task):
 
     task.run()
 
-    upload_bucket.download_file('this-is-message-uuid.zip', temp_file)
+    upload_bucket.download_file('this-is-message-uuid', temp_file)
 
     assert_zip_contains(
         temp_file,
@@ -81,10 +81,10 @@ def test_run_succeeds(temp_file, task):
         partial='fileName>bam.pdf<',
     )
 
-    bundle = upload_bucket.Object('this-is-message-uuid.zip')
+    bundle = upload_bucket.Object('this-is-message-uuid')
     metadata = bundle.metadata
 
-    assert len(metadata.keys()) == 9
+    assert len(metadata.keys()) == 8
     assert metadata['key'] == 'this-is-message-uuid'
     assert metadata['bucket'] == 'upload'
     assert metadata['status'] == 'ready'
@@ -95,7 +95,6 @@ def test_run_succeeds(temp_file, task):
         dateutil.parser.parse(metadata['createddate'])
     ).total_seconds() < 10
     assert metadata['createdby'] == 'role'
-    assert metadata['collectionname'] == 'Preservica'
 
 
 @moto.mock_s3
@@ -115,7 +114,7 @@ def test_run_no_override(task):
 
     upload_bucket = create_bucket('upload')
     upload_bucket.put_object(
-        Key='this-is-message-uuid.zip', Body='contents',
+        Key='this-is-message-uuid', Body='contents',
     )
 
     with pytest.raises(errors.ResourceAlreadyExistsError):
