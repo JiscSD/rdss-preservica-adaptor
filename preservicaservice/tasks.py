@@ -5,9 +5,6 @@ import os
 import tempfile
 import zipfile
 
-import boto3
-import botocore.exceptions
-
 from .errors import (
     MalformedBodyError,
     ResourceAlreadyExistsError,
@@ -22,12 +19,6 @@ logger = logging.getLogger(__name__)
 
 def get_tmp_file():
     return tempfile.NamedTemporaryFile(delete=False).name
-
-
-def get_bucket(bucket_name):
-    session = boto3.Session()
-    s3 = session.resource('s3')
-    return s3.Bucket(bucket_name)
 
 
 class BaseTask(abc.ABC):
@@ -324,8 +315,8 @@ class BaseMetadataCreateTask(BaseTask):
         )
 
     @classmethod
-    def build_file_task(cls, message, message_id):
-        url = message.get('fileStorageLocation')
+    def build_file_task(cls, object_file, message_id):
+        url = object_file.get('fileStorageLocation')
         if not url:
             raise MalformedBodyError(
                 'invalid s3 value in fileStorageLocation',
@@ -339,7 +330,7 @@ class BaseMetadataCreateTask(BaseTask):
 
         try:
             return FileTask(
-                download_url, FileMetadata(**message), message_id,
+                download_url, FileMetadata(**object_file), message_id,
             )
         except Exception as e:
             raise e
