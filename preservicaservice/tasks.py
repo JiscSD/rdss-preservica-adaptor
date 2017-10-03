@@ -75,27 +75,61 @@ def require_non_empty_key(message, key1, key2):
         raise MalformedBodyError('missing {}'.format(key2))
 
 
+def first_org_id_from_org_roles(org_roles):
+    """ Return first Jisc ID found in an objectOrganisationRole."""
+    for role in org_roles:
+        if not isinstance(role, dict):
+            continue
+        org = role.get('organisation', {})
+        if not isinstance(org, dict):
+            continue
+        org_id = org.get('organisationJiscId')
+        if not org_id:
+            continue
+        return str(org_id).strip()
+
+
+def first_org_id_from_person_roles(person_roles):
+    """ Return first Jisc ID found in an objectPersonRole."""
+    for role in person_roles:
+        if not isinstance(role, dict):
+            continue
+        person = role.get('person', {})
+        if not isinstance(person, dict):
+            continue
+        person_orgs = person.get('personOrganisation', [])
+        for org in person_orgs:
+            if not isinstance(role, dict):
+                continue
+            org_id = org.get('organisationJiscId')
+            if not org_id:
+                continue
+            return str(org_id).strip()
+
+
 def require_organisation_id(message):
-    publishers = require_non_empty_key(
-        message,
-        'messageBody',
-        'objectOrganisationRole',
+    """ Retrieve Jisc ID from message payload or raise MalformedBodyError."""
+    org_roles = message.get('messageBody', {}).get(
+        'objectOrganisationRole', [],
     )
-    try:
-        for publisher in publishers:
-            if not isinstance(publisher, dict):
-                continue
-            organisation = publisher.get('organisation', {})
-            value = organisation.get('organisationJiscId', '')
-            if not value:
-                continue
-            value = str(value).strip()
-            if not value:
-                continue
-            return value
-        raise MalformedBodyError('missing organisationJiscId')
-    except (KeyError, ValueError, TypeError, AttributeError):
-        raise MalformedBodyError('missing organisationJiscId')
+    value = first_org_id_from_org_roles(org_roles)
+    if value:
+        return value
+
+    person_roles = message.get('messageBody', {}).get(
+        'objectPersonRole', [],
+    )
+    value = first_org_id_from_person_roles(person_roles)
+    if value:
+        return value
+
+    raise MalformedBodyError(
+        'Unable to determine organisationJiscId org ID. '
+        'Missing {0} or {1} fields?'.format(
+            'objectOrganisationRole',
+            'objectPersonRole',
+        ),
+    )
 
 
 def require_organisation_role(message):
