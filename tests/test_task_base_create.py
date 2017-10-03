@@ -8,7 +8,7 @@ import pytest
 from preservicaservice import errors
 from preservicaservice import tasks
 from preservicaservice.errors import MalformedBodyError
-from preservicaservice.s3_url import S3Url
+from preservicaservice.remote_urls import S3RemoteUrl
 from .helpers import (
     assert_file_contents, assert_zip_contains,
     create_bucket
@@ -18,7 +18,7 @@ from .helpers import (
 @pytest.fixture
 def file_task1():
     yield tasks.FileTask(
-        S3Url('s3://bucket/the/prefix/foo'),
+        S3RemoteUrl('s3://bucket/the/prefix/foo'),
         tasks.FileMetadata(fileName='baz.pdf'),
         'message_id',
     )
@@ -27,7 +27,7 @@ def file_task1():
 @pytest.fixture
 def file_task2():
     yield tasks.FileTask(
-        S3Url('s3://bucket/the/prefix/bar'),
+        S3RemoteUrl('s3://bucket/the/prefix/bar'),
         tasks.FileMetadata(fileName='bam.pdf'),
         'message_id',
     )
@@ -38,7 +38,7 @@ def task(file_task1, file_task2):
     yield tasks.BaseMetadataCreateTask(
         {'foo': 'bar'},
         [file_task1, file_task2],
-        S3Url('s3://upload/to'),
+        S3RemoteUrl('s3://upload/to'),
         'message_id',
         'role',
     )
@@ -88,7 +88,7 @@ def test_upload_override(task, temp_file, temp_file2):
         f.write('bundle')
 
     task.upload_bundle(
-        S3Url('s3://bucket/path'),
+        S3RemoteUrl('s3://bucket/path'),
         temp_file, {'foo': 'bar'},
         True,
     )
@@ -107,7 +107,7 @@ def test_upload_no_override(task, temp_file):
 
     with pytest.raises(errors.ResourceAlreadyExistsError):
         task.upload_bundle(
-            S3Url('s3://bucket/prefix/foo'), temp_file, {}, False,
+            S3RemoteUrl('s3://bucket/prefix/foo'), temp_file, {}, False,
         )
 
 
@@ -236,6 +236,6 @@ def test_require_organisation_role_raises(message, error):
 )
 def test_get_base_archive_path(argument, expected):
     assert tasks.get_base_archive_path(
-        S3Url.parse(argument),
+        S3RemoteUrl.parse(argument),
         'message_id',
     ) == expected

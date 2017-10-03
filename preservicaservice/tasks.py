@@ -4,21 +4,27 @@ import logging
 import os
 import tempfile
 import zipfile
+import boto3
 
 from .errors import (
     MalformedBodyError,
     ResourceAlreadyExistsError,
-    UnderlyingSystemError,
-    ResourceNotFoundError
+    UnderlyingSystemError
 )
 from .meta import write_object_meta, write_message_meta
-from .s3_url import S3Url
+from .remote_urls import S3RemoteUrl, HTTPRemoteUrl
 
 logger = logging.getLogger(__name__)
 
 
 def get_tmp_file():
     return tempfile.NamedTemporaryFile(delete=False).name
+
+
+def get_bucket(bucket_name):
+    session = boto3.Session()
+    s3 = session.resource('s3')
+    return s3.Bucket(bucket_name)
 
 
 class BaseTask(abc.ABC):
@@ -120,7 +126,7 @@ def get_base_archive_path(url, message_id):
     :param S3Url url: url to look
     :rtype: str or None
     """
-    return os.path.dirname(os.path.join(message_id, url.object_key))
+    return os.path.dirname(os.path.join(message_id, url.path))
 
 
 class FileMetadata(object):
@@ -156,20 +162,21 @@ class FileTask(object):
     DEFAULT_FILE_SIZE_LIMIT = 4 * 1000 * 1000 * 1000
 
     def __init__(
-        self, download_url, metadata, message_id,
+        self, remote_file, metadata, message_id,
         file_size_limit=DEFAULT_FILE_SIZE_LIMIT,
     ):
         """
-        :param S3Url download_url: source url to fetch file
+        :param remote_file: remote file object
+        :param remote_file: remote_file.BaseRemoteFile
         :param FileMetadata metadata: file related metadata
         :param int file_size_limit: max file size limit
         """
-        self.download_url = download_url
+        self.remote_file = remote_file
         self.metadata = metadata
         self.file_size_limit = file_size_limit
         self.message_id = message_id
         self.archive_base_path = get_base_archive_path(
-            self.download_url, self.message_id,
+            self.remote_file, self.message_id,
         )
 
     def download(self, download_path):
@@ -177,14 +184,7 @@ class FileTask(object):
 
         :param str download_path: what to download
         """
-        url = self.download_url
-        bucket = get_bucket(url.bucket_name)
-        try:
-            bucket.download_file(url.object_key, download_path)
-        except botocore.exceptions.ClientError as e:
-            raise ResourceNotFoundError(
-                'missing file to download {}'.format(e),
-            )
+        self.remote_file.download(download_path)
 
     def verify_file_size(self, path):
         """ Check given path file size limit and raise if not valid.
@@ -208,7 +208,7 @@ class FileTask(object):
                 download_path,
                 os.path.join(
                     self.archive_base_path,
-                    os.path.basename(self.download_url.object_key),
+                    os.path.basename(self.remote_file.path),
                 ),
             ),
             (
@@ -216,7 +216,7 @@ class FileTask(object):
                 os.path.join(
                     self.archive_base_path,
                     '{}.metadata'.format(os.path.basename(
-                        self.download_url.object_key,
+                        self.remote_file.path,
                     )),
                 ),
             ),
@@ -318,19 +318,26 @@ class BaseMetadataCreateTask(BaseTask):
     def build_file_task(cls, object_file, message_id):
         url = object_file.get('fileStorageLocation')
         if not url:
-            raise MalformedBodyError(
-                'invalid s3 value in fileStorageLocation',
-            )
+            raise MalformedBodyError('fileStorageLocation not specified.')
+        storage_type = object_file.get('fileStorageType')
+
         try:
-            download_url = S3Url.parse(url)
+            if storage_type == 1:  # S3 URI
+                remote_file = S3RemoteUrl.parse(url)
+            elif storage_type == 2:  # HTTP URL
+                remote_file = HTTPRemoteUrl.parse(url)
+            else:
+                raise MalformedBodyError(
+                    'Unsupported remoteStorageType ({})'.format(storage_type),
+                )
         except ValueError:
-            raise MalformedBodyError(
-                'invalid s3 value in fileStorageLocation',
-            )
+            raise MalformedBodyError('invalid value in fileStorageLocation')
 
         try:
             return FileTask(
-                download_url, FileMetadata(**object_file), message_id,
+                remote_file,
+                FileMetadata(**object_file),
+                message_id,
             )
         except Exception as e:
             raise e
@@ -377,15 +384,15 @@ class BaseMetadataCreateTask(BaseTask):
         """ Upload given zip to target
 
         :param upload_url: target s3 folder
-        :type upload_url: preservicaservice.s3_url.S3Url
+        :type upload_url: preservicaservice.remote_urls.S3RemoteUrl
         :param str zip_path: source file
         :param dict metadata: metadata to set on s3 object
         :param bool override: don't fail if file exists
         :return:
         """
-        bucket = get_bucket(upload_url.bucket_name)
+        bucket = get_bucket(upload_url.host)
 
-        key = os.path.join(upload_url.object_key, self.bundle_name)
+        key = os.path.join(upload_url.path, self.bundle_name)
 
         if not override:
             if list(bucket.objects.filter(Prefix=key)):
@@ -416,7 +423,7 @@ class BaseMetadataCreateTask(BaseTask):
         # make sure all values are strings
         return {
             'key': self.message_id,
-            'bucket': self.upload_url.bucket_name,
+            'bucket': self.upload_url.host,
             'status': 'ready',
             'name': '{}.zip'.format(self.bundle_name),
             'size': str(os.stat(zip_file_path).st_size),

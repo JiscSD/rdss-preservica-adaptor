@@ -6,14 +6,14 @@ import pytest
 
 from preservicaservice import errors
 from preservicaservice import tasks
-from preservicaservice.s3_url import S3Url
+from preservicaservice.remote_urls import S3RemoteUrl
 from .helpers import assert_zip_contains, create_bucket
 
 
 @pytest.fixture
 def file_task1():
     yield tasks.FileTask(
-        S3Url('s3://bucket/the/prefix/foo.pdf'),
+        S3RemoteUrl('s3://bucket/the/prefix/foo.pdf'),
         tasks.FileMetadata(fileName='baz.pdf'),
         'this-is-message-uuid',
     )
@@ -22,7 +22,7 @@ def file_task1():
 @pytest.fixture
 def file_task2():
     yield tasks.FileTask(
-        S3Url('s3://bucket/the/prefix/bar.pdf'),
+        S3RemoteUrl('s3://bucket/the/prefix/bar.pdf'),
         tasks.FileMetadata(fileName='bam.pdf'),
         'this-is-message-uuid',
     )
@@ -33,7 +33,7 @@ def task(file_task1, file_task2):
     yield tasks.BaseMetadataCreateTask(
         {'foo': 'bar'},
         [file_task1, file_task2],
-        S3Url('s3://upload'),
+        S3RemoteUrl('s3://upload'),
         'this-is-message-uuid',
         'role',
     )

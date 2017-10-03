@@ -3,7 +3,7 @@ import pytest
 
 from preservicaservice import errors
 from preservicaservice import tasks
-from preservicaservice.s3_url import S3Url
+from preservicaservice.remote_urls import S3RemoteUrl
 from .helpers import (
     assert_file_contents, assert_zip_contains,
     create_bucket
@@ -24,7 +24,7 @@ def test_generate_meta(temp_file, file_metadata):
 @pytest.fixture
 def task(file_metadata):
     yield tasks.FileTask(
-        S3Url('s3://bucket/the/prefix/foo'),
+        S3RemoteUrl('s3://bucket/the/prefix/foo'),
         file_metadata,
         'message_id',
     )
@@ -47,7 +47,7 @@ def test_verify_limit(temp_file, size):
     with open(temp_file, 'w') as f:
         f.write(10 * 'a')
     task = tasks.FileTask(
-        S3Url('s3://bucket/the/prefix/foo'),
+        S3RemoteUrl('s3://bucket/the/prefix/foo'),
         tasks.FileMetadata(fileName='baz.pdf'),
         'message_id',
         size,
