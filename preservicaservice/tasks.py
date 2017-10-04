@@ -109,16 +109,16 @@ def first_org_id_from_person_roles(person_roles):
 
 def require_organisation_id(message):
     """ Retrieve Jisc ID from message payload or raise MalformedBodyError."""
-    org_roles = message.get('messageBody', {}).get(
-        'objectOrganisationRole', [],
-    )
+    message_body = message.get('messageBody', {})
+    if not isinstance(message_body, dict):
+        raise MalformedBodyError('Body is not a dict.')
+
+    org_roles = message_body.get('objectOrganisationRole', [])
     value = first_org_id_from_org_roles(org_roles)
     if value:
         return value
 
-    person_roles = message.get('messageBody', {}).get(
-        'objectPersonRole', [],
-    )
+    person_roles = message_body.get('objectPersonRole', [])
     value = first_org_id_from_person_roles(person_roles)
     if value:
         return value
@@ -132,26 +132,40 @@ def require_organisation_id(message):
     )
 
 
+def first_role_id_in_roles(roles):
+    """ Return the first role ID found in list of roles."""
+    for role in roles:
+        if not isinstance(role, dict):
+            continue
+        role_id = role.get('role')
+        if not role_id:
+            continue
+        return str(role_id).strip()
+
+
 def require_organisation_role(message):
-    publishers = require_non_empty_key(
-        message,
-        'messageBody',
-        'objectOrganisationRole',
+    """ Retrieve role ID from message payload or raise exception."""
+    message_body = message.get('messageBody', {})
+    if not isinstance(message_body, dict):
+        raise MalformedBodyError('Body is not a dict.')
+
+    org_roles = message_body.get('objectOrganisationRole', [])
+    value = first_role_id_in_roles(org_roles)
+    if value:
+        return value
+
+    person_roles = message_body.get('objectPersonRole', [])
+    value = first_role_id_in_roles(person_roles)
+    if value:
+        return value
+
+    raise MalformedBodyError(
+        'Unable to determine role ID. '
+        'Missing {0} or {1} fields?'.format(
+            'objectOrganisationRole',
+            'objectPersonRole',
+        ),
     )
-    try:
-        for publisher in publishers:
-            if not isinstance(publisher, dict):
-                continue
-            value = publisher.get('role', '')
-            if not value:
-                continue
-            value = str(value).strip()
-            if not value:
-                continue
-            return value
-        raise MalformedBodyError('missing objectOrganisationRole.role')
-    except (KeyError, ValueError, TypeError, AttributeError):
-        raise MalformedBodyError('missing objectOrganisationRole.role')
 
 
 def get_base_archive_path(url, message_id):

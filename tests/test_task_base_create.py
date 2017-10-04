@@ -209,7 +209,7 @@ def test_require_organisation_role_succeeds(message, expected):
                     {'role': ''},
                 ],
             }},
-            'objectOrganisationRole.role',
+            'objectOrganisationRole',
         ),
         (
             {'messageBody': {
@@ -217,7 +217,7 @@ def test_require_organisation_role_succeeds(message, expected):
                     {'role': None},
                 ],
             }},
-            'objectOrganisationRole.role',
+            'objectOrganisationRole',
         ),
     ],
 )
