@@ -66,8 +66,8 @@ def test_zip_bundle(task, temp_file, temp_file2, temp_file3):
     task.zip_bundle(temp_file, temp_file2, temp_file3)
 
     assert_zip_contains(
-        temp_file, 'message_id/the/prefix/foo', 'download',
+        temp_file, 'message_id/foo', 'download',
     )
     assert_zip_contains(
-        temp_file, 'message_id/the/prefix/foo.metadata', 'meta',
+        temp_file, 'message_id/foo.metadata', 'meta',
     )

@@ -11,8 +11,9 @@ from .errors import UnderlyingSystemError, ResourceNotFoundError
 class BaseRemoteUrl(abc.ABC):
     """ Wrapper for remote files."""
 
-    def __init__(self, url):
+    def __init__(self, url, file_name=None):
         self.url = url
+        self.file_name = file_name
 
     @property
     def host(self):
@@ -22,14 +23,22 @@ class BaseRemoteUrl(abc.ABC):
     def path(self):
         return urlparse(self.url).path.lstrip('/')
 
+    @property
+    def name(self):
+        if self.file_name:
+            return self.file_name
+        return urlparse(self.url).path.split('/')[-1].strip()
+
     @classmethod
     @abc.abstractmethod
-    def parse(cls, url):
+    def parse(cls, url, file_name=None):
         """ Factory method to produce a url from string.
 
         All validation should happen here.
 
         :param string url: remote URL
+        :param file_name: name of file
+        :default file_name: None
         :raise: ValueError if any error
         :return: instance
         :rtype: BaseRemoteUrl
@@ -48,7 +57,7 @@ class S3RemoteUrl(BaseRemoteUrl):
     """ Wrapper for remote S3 files."""
 
     @classmethod
-    def parse(cls, url):
+    def parse(cls, url, file_name=None):
         """ Parse URL to an S3RemoteUrl object.
 
         :param string url: remote URL to remote S3 object.
@@ -56,9 +65,9 @@ class S3RemoteUrl(BaseRemoteUrl):
         p = urlparse(url)
         if not bool(p.scheme == 's3' and p.netloc):
             raise ValueError(
-                'fileStorageLocation is invalid: {}'.format(url),
+                'Invalid S3 URI: {}'.format(url),
             )
-        return cls(url)
+        return cls(url, file_name)
 
     def _get_bucket(self, bucket_name):
         """ Retrieve bucket by name."""
@@ -87,7 +96,7 @@ class HTTPRemoteUrl(BaseRemoteUrl):
     """ Wrapper for remote HTTP files."""
 
     @classmethod
-    def parse(cls, url):
+    def parse(cls, url, file_name=None):
         """ Parse URL to an S3RemoteUrl object.
 
         :param string url: remote URL to remote S3 object.
@@ -95,8 +104,8 @@ class HTTPRemoteUrl(BaseRemoteUrl):
         valid_schemes = ['http', 'https']
         p = urlparse(url)
         if not bool(p.scheme in valid_schemes and p.netloc):
-            raise ValueError('invalid URL {}'.format(url))
-        return cls(url)
+            raise ValueError('Invalid HTTP URL {}'.format(url))
+        return cls(url, file_name)
 
     def download(self, download_path):
         """ Download remote file via HTTP to the provided download path."""

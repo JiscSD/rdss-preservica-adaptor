@@ -61,23 +61,23 @@ def test_run_succeeds(temp_file, task):
 
     assert_zip_contains(
         temp_file,
-        'this-is-message-uuid/the/prefix/foo.pdf',
+        'this-is-message-uuid/foo.pdf',
         file1_contents,
     )
     assert_zip_contains(
         temp_file,
-        'this-is-message-uuid/the/prefix/foo.pdf.metadata',
+        'this-is-message-uuid/foo.pdf.metadata',
         partial='fileName>baz.pdf<',
     )
 
     assert_zip_contains(
         temp_file,
-        'this-is-message-uuid/the/prefix/bar.pdf',
+        'this-is-message-uuid/bar.pdf',
         file2_contents,
     )
     assert_zip_contains(
         temp_file,
-        'this-is-message-uuid/the/prefix/bar.pdf.metadata',
+        'this-is-message-uuid/bar.pdf.metadata',
         partial='fileName>bam.pdf<',
     )
 

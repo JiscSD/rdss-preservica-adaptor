@@ -168,15 +168,6 @@ def require_organisation_role(message):
     )
 
 
-def get_base_archive_path(url, message_id):
-    """ Derive container name from url
-
-    :param S3Url url: url to look
-    :rtype: str or None
-    """
-    return os.path.dirname(os.path.join(message_id, url.path))
-
-
 class FileMetadata(object):
     """ File object Metadata, not related to AWS metadata. """
 
@@ -223,9 +214,7 @@ class FileTask(object):
         self.metadata = metadata
         self.file_size_limit = file_size_limit
         self.message_id = message_id
-        self.archive_base_path = get_base_archive_path(
-            self.remote_file, self.message_id,
-        )
+        self.archive_base_path = message_id
 
     def download(self, download_path):
         """ Download given path from s3 to temp destination.
@@ -256,7 +245,7 @@ class FileTask(object):
                 download_path,
                 os.path.join(
                     self.archive_base_path,
-                    os.path.basename(self.remote_file.path),
+                    os.path.basename(self.remote_file.name),
                 ),
             ),
             (
@@ -264,7 +253,7 @@ class FileTask(object):
                 os.path.join(
                     self.archive_base_path,
                     '{}.metadata'.format(os.path.basename(
-                        self.remote_file.path,
+                        self.remote_file.name,
                     )),
                 ),
             ),
@@ -367,13 +356,14 @@ class BaseMetadataCreateTask(BaseTask):
         url = object_file.get('fileStorageLocation')
         if not url:
             raise MalformedBodyError('fileStorageLocation not specified.')
+        file_name = object_file.get('fileName')
         storage_type = object_file.get('fileStorageType')
 
         try:
             if storage_type == 1:  # S3 URI
-                remote_file = S3RemoteUrl.parse(url)
+                remote_file = S3RemoteUrl.parse(url, file_name)
             elif storage_type == 2:  # HTTP URL
-                remote_file = HTTPRemoteUrl.parse(url)
+                remote_file = HTTPRemoteUrl.parse(url, file_name)
             else:
                 raise MalformedBodyError(
                     'Unsupported remoteStorageType ({})'.format(storage_type),

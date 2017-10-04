@@ -295,6 +295,79 @@ def test_metadata_create_task_skipped(valid_config):
                 },
             }, 'fileName',
         ),
+        (
+            {
+                'messageHeader': valid_create_header(),
+                'messageBody': {
+                    'objectFile': [
+                        {
+                            'fileStorageLocation': 's3://something/something',
+                            'fileName': 'filename',
+                            # http type for s3 url
+                            'fileStorageType': 2,
+                        },
+                    ],
+                    'objectOrganisationRole': valid_create_publisher(),
+                },
+            },
+            'fileStorageLocation',
+        ),
+        (
+            {
+                'messageHeader': valid_create_header(),
+                'messageBody': {
+                    'objectFile': [
+                        {
+                            'fileStorageLocation': 'http://something/something',
+                            'fileName': 'filename',
+                            # http type for s3 url
+                            'fileStorageType': 1,
+                        },
+                    ],
+                    'objectOrganisationRole': valid_create_publisher(),
+                },
+            },
+            'fileStorageLocation',
+        ),
+        (
+            {
+                'messageHeader': valid_create_header(),
+                'messageBody': {
+                    'objectFile': [
+                        {
+                            'fileStorageLocation': 'http://something/something',
+                            'fileName': 'filename',
+                            'fileStorageType': 2,
+                        },
+                    ],
+                    # no role
+                },
+            },
+            'organisationJiscId',
+        ),
+        (
+            {
+                'messageHeader': valid_create_header(),
+                'messageBody': {
+                    'objectFile': [
+                        {
+                            'fileStorageLocation': 'http://something/something',
+                            'fileName': 'filename',
+                            'fileStorageType': 2,
+                        },
+                    ],
+                    'objectOrganisationRole': [
+                        {
+                            'organisation': {
+                                'organisationJiscId': 1,
+                            },
+                            # Missing role
+                        },
+                    ],
+                },
+            },
+            'role ID',
+        ),
     ],
 )
 def test_metadata_create_task_error(message, error, valid_config):

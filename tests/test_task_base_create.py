@@ -224,18 +224,3 @@ def test_require_organisation_role_succeeds(message, expected):
 def test_require_organisation_role_raises(message, error):
     with pytest.raises(MalformedBodyError, match=error):
         tasks.require_organisation_role(message)
-
-
-@pytest.mark.parametrize(
-    'argument, expected', [
-        ('s3://bucket/foo/bar/baz', 'message_id/foo/bar'),
-        ('s3://bucket/foo/bar', 'message_id/foo'),
-        ('s3://bucket/foo/', 'message_id/foo'),
-        ('s3://bucket/foo', 'message_id'),
-    ],
-)
-def test_get_base_archive_path(argument, expected):
-    assert tasks.get_base_archive_path(
-        S3RemoteUrl.parse(argument),
-        'message_id',
-    ) == expected
