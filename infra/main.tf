@@ -61,7 +61,7 @@ module "security_groups" {
 }
 
 data "aws_kinesis_stream" "input_stream" {
-  name = "shared_services_input_${terraform.env}"
+  name = "shared_services_output_${terraform.env}"
 }
 
 module "iam_role" {
