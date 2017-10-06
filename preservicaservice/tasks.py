@@ -205,7 +205,6 @@ class FileTask(object):
         file_size_limit=DEFAULT_FILE_SIZE_LIMIT,
     ):
         """
-        :param remote_file: remote file object
         :param remote_file: remote_file.BaseRemoteFile
         :param FileMetadata metadata: file related metadata
         :param int file_size_limit: max file size limit
