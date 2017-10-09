@@ -80,7 +80,7 @@ def first_org_id_from_org_roles(org_roles):
     for role in org_roles:
         if not isinstance(role, dict):
             continue
-        org = role.get('organisation', {})
+        org = role.get('organisation')
         if not isinstance(org, dict):
             continue
         org_id = org.get('organisationJiscId')
@@ -94,7 +94,7 @@ def first_org_id_from_person_roles(person_roles):
     for role in person_roles:
         if not isinstance(role, dict):
             continue
-        person = role.get('person', {})
+        person = role.get('person')
         if not isinstance(person, dict):
             continue
         person_orgs = person.get('personOrganisation', [])
@@ -109,7 +109,7 @@ def first_org_id_from_person_roles(person_roles):
 
 def require_organisation_id(message):
     """ Retrieve Jisc ID from message payload or raise MalformedBodyError."""
-    message_body = message.get('messageBody', {})
+    message_body = message.get('messageBody')
     if not isinstance(message_body, dict):
         raise MalformedBodyError('Body is not a dict.')
 
