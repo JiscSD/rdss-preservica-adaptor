@@ -7,7 +7,7 @@ import re
 
 import yaml
 
-from .s3_url import S3Url
+from .remote_urls import S3RemoteUrl
 
 
 def get_config_path(file_name):
@@ -97,7 +97,7 @@ class Config:
         def prepare_bucket_pair(item):
             key, value = item
             try:
-                url = S3Url.parse(value)
+                url = S3RemoteUrl.parse(value)
             except ValueError:
                 raise ConfigValidationError(
                     'organisation_buckets',

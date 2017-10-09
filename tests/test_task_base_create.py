@@ -8,7 +8,7 @@ import pytest
 from preservicaservice import errors
 from preservicaservice import tasks
 from preservicaservice.errors import MalformedBodyError
-from preservicaservice.s3_url import S3Url
+from preservicaservice.remote_urls import S3RemoteUrl
 from .helpers import (
     assert_file_contents, assert_zip_contains,
     create_bucket
@@ -18,16 +18,18 @@ from .helpers import (
 @pytest.fixture
 def file_task1():
     yield tasks.FileTask(
-        S3Url('s3://bucket/the/prefix/foo'),
+        S3RemoteUrl('s3://bucket/the/prefix/foo'),
         tasks.FileMetadata(fileName='baz.pdf'),
+        'message_id',
     )
 
 
 @pytest.fixture
 def file_task2():
     yield tasks.FileTask(
-        S3Url('s3://bucket/the/prefix/bar'),
+        S3RemoteUrl('s3://bucket/the/prefix/bar'),
         tasks.FileMetadata(fileName='bam.pdf'),
+        'message_id',
     )
 
 
@@ -36,10 +38,9 @@ def task(file_task1, file_task2):
     yield tasks.BaseMetadataCreateTask(
         {'foo': 'bar'},
         [file_task1, file_task2],
-        S3Url('s3://upload/to'),
+        S3RemoteUrl('s3://upload/to'),
         'message_id',
         'role',
-        'container_name',
     )
 
 
@@ -47,7 +48,7 @@ def test_bundle_meta(temp_file, task):
     task.bundle_meta(temp_file)
     assert_zip_contains(
         temp_file,
-        'container_name/container_name.metadata',
+        'message_id/message_id.metadata',
         partial='<root><foo type="str">bar</foo>',
     )
 
@@ -87,26 +88,26 @@ def test_upload_override(task, temp_file, temp_file2):
         f.write('bundle')
 
     task.upload_bundle(
-        S3Url('s3://bucket/path'),
+        S3RemoteUrl('s3://bucket/path'),
         temp_file, {'foo': 'bar'},
         True,
     )
 
-    bucket.download_file('path/message_id.zip', temp_file2)
+    bucket.download_file('path/message_id', temp_file2)
     assert_file_contents(temp_file2, 'bundle')
 
 
 @moto.mock_s3
 def test_upload_no_override(task, temp_file):
     bucket = create_bucket('bucket')
-    bucket.put_object(Key='prefix/foo/message_id.zip', Body='value')
+    bucket.put_object(Key='prefix/foo/message_id', Body='value')
 
     with open(temp_file, 'w') as f:
         f.write('bundle')
 
     with pytest.raises(errors.ResourceAlreadyExistsError):
         task.upload_bundle(
-            S3Url('s3://bucket/prefix/foo'), temp_file, {}, False,
+            S3RemoteUrl('s3://bucket/prefix/foo'), temp_file, {}, False,
         )
 
 
@@ -148,7 +149,7 @@ def test_require_organisation_id_succeeds(message, expected):
 
 @pytest.mark.parametrize(
     'message, error', [
-        ({}, 'objectOrganisationRole'),
+        ({}, 'messageBody is not a dict.'),
         ({'messageBody': {}}, 'objectOrganisationRole'),
         ({'messageBody': {'objectOrganisationRole': {}}}, 'objectOrganisationRole'),
         ({'messageBody': {'objectOrganisationRole': []}}, 'objectOrganisationRole'),
@@ -198,7 +199,7 @@ def test_require_organisation_role_succeeds(message, expected):
 
 @pytest.mark.parametrize(
     'message, error', [
-        ({}, 'objectOrganisationRole'),
+        ({}, 'messageBody is not a dict.'),
         ({'messageBody': {}}, 'objectOrganisationRole'),
         ({'messageBody': {'objectOrganisationRole': {}}}, 'objectOrganisationRole'),
         ({'messageBody': {'objectOrganisationRole': []}}, 'objectOrganisationRole'),
@@ -208,7 +209,7 @@ def test_require_organisation_role_succeeds(message, expected):
                     {'role': ''},
                 ],
             }},
-            'objectOrganisationRole.role',
+            'objectOrganisationRole',
         ),
         (
             {'messageBody': {
@@ -216,34 +217,10 @@ def test_require_organisation_role_succeeds(message, expected):
                     {'role': None},
                 ],
             }},
-            'objectOrganisationRole.role',
+            'objectOrganisationRole',
         ),
     ],
 )
 def test_require_organisation_role_raises(message, error):
     with pytest.raises(MalformedBodyError, match=error):
         tasks.require_organisation_role(message)
-
-
-@pytest.mark.parametrize(
-    'argument, expected', [
-        ('s3://bucket/foo/bar/baz', 'bar'),
-        ('s3://bucket/foo/bar', 'bar'),
-        ('s3://bucket/foo/', None),
-        ('s3://bucket/foo', None),
-    ],
-)
-def test_get_container_name(argument, expected):
-    assert tasks.get_container_name(S3Url.parse(argument)) == expected
-
-
-@pytest.mark.parametrize(
-    'argument, expected', [
-        ('s3://bucket/foo/bar/baz', 'bar'),
-        ('s3://bucket/foo/bar', ''),
-        ('s3://bucket/foo/', ''),
-        ('s3://bucket/foo', ''),
-    ],
-)
-def test_get_base_archive_path(argument, expected):
-    assert tasks.get_base_archive_path(S3Url.parse(argument)) == expected

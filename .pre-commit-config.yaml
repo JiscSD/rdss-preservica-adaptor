@@ -30,7 +30,7 @@
     -   id: add-trailing-comma
 
 -   repo: https://github.com/detailyang/pre-commit-shell
-    sha: 1.0.1
+    sha: 1.0.2
     hooks:
         - id: shell-lint
           files: bin\/(?!run)

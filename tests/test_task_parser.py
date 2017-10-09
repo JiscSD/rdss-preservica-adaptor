@@ -7,6 +7,7 @@ import pytest
 from preservicaservice import errors
 from preservicaservice import tasks
 from preservicaservice import tasks_parser
+from preservicaservice.remote_urls import S3RemoteUrl
 
 Record = namedtuple('Record', 'data')
 
@@ -80,6 +81,7 @@ def valid_create_object_file():
         {
             'fileStorageLocation': 's3://bucket/path/to/file',
             'fileName': 'filename',
+            'fileStorageType': 1,
         },
     ]
 
@@ -92,10 +94,12 @@ def test_metadata_create_task(valid_config):
                 {
                     'fileStorageLocation': 's3://bucket/path/to/file',
                     'fileName': 'filename',
+                    'fileStorageType': 1,
                 },
                 {
                     'fileStorageLocation': 's3://bucket/path/to/file2',
                     'fileName': 'filename2',
+                    'fileStorageType': 1,
                 },
             ],
             'objectOrganisationRole': [{
@@ -112,7 +116,7 @@ def test_metadata_create_task(valid_config):
     task = tasks_parser.record_to_task(record, valid_config)
 
     assert isinstance(task, tasks.MetadataCreateTask)
-    assert isinstance(task.upload_url, tasks.S3Url)
+    assert isinstance(task.upload_url, S3RemoteUrl)
     assert task.upload_url.url == 's3://upload/to'
     assert task.message_id == 'message_id'
     assert task.role == '3'
@@ -120,11 +124,11 @@ def test_metadata_create_task(valid_config):
     assert len(task.file_tasks) == 2
 
     file_task = task.file_tasks[0]
-    assert file_task.download_url.url == 's3://bucket/path/to/file'
+    assert file_task.remote_file.url == 's3://bucket/path/to/file'
     assert file_task.metadata.fileName == 'filename'
 
     file_task = task.file_tasks[1]
-    assert file_task.download_url.url == 's3://bucket/path/to/file2'
+    assert file_task.remote_file.url == 's3://bucket/path/to/file2'
     assert file_task.metadata.fileName == 'filename2'
 
 
@@ -136,10 +140,12 @@ def test_metadata_create_task_skipped(valid_config):
                 {
                     'fileStorageLocation': 's3://bucket/path/to/file',
                     'fileName': 'filename',
+                    'fileStorageType': 1,
                 },
                 {
                     'fileStorageLocation': 's3://bucket/path/to/file2',
                     'fileName': 'filename2',
+                    'fileStorageType': 1,
                 },
             ],
             'objectOrganisationRole': [{
@@ -173,6 +179,7 @@ def test_metadata_create_task_skipped(valid_config):
                     'objectFile': {
                         # missing s3 path
                         'fileName': 'filename',
+                        'fileStorageType': 1,
                     },
                     'objectOrganisationRole': valid_create_publisher(),
                 },
@@ -234,6 +241,7 @@ def test_metadata_create_task_skipped(valid_config):
                         {
                             # missing s3 path
                             'fileName': 'filename',
+                            'fileStorageType': 1,
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -248,6 +256,7 @@ def test_metadata_create_task_skipped(valid_config):
                         {
                             # no file name
                             'fileStorageLocation': 's3://bucket/path/to/file',
+                            'fileStorageType': 1,
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -263,6 +272,7 @@ def test_metadata_create_task_skipped(valid_config):
                             # wrong s3 path
                             'fileStorageLocation': 'bucket/path/to/file',
                             'fileName': 'filename',
+                            'fileStorageType': 1,
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -278,11 +288,85 @@ def test_metadata_create_task_skipped(valid_config):
                             'fileStorageLocation': 's3://bucket/path/to/file',
                             # empty file name
                             'fileName': '',
+                            'fileStorageType': 1,
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
                 },
             }, 'fileName',
+        ),
+        (
+            {
+                'messageHeader': valid_create_header(),
+                'messageBody': {
+                    'objectFile': [
+                        {
+                            'fileStorageLocation': 's3://something/something',
+                            'fileName': 'filename',
+                            # http type for s3 url
+                            'fileStorageType': 2,
+                        },
+                    ],
+                    'objectOrganisationRole': valid_create_publisher(),
+                },
+            },
+            'fileStorageLocation',
+        ),
+        (
+            {
+                'messageHeader': valid_create_header(),
+                'messageBody': {
+                    'objectFile': [
+                        {
+                            'fileStorageLocation': 'http://something/something',
+                            'fileName': 'filename',
+                            # http type for s3 url
+                            'fileStorageType': 1,
+                        },
+                    ],
+                    'objectOrganisationRole': valid_create_publisher(),
+                },
+            },
+            'fileStorageLocation',
+        ),
+        (
+            {
+                'messageHeader': valid_create_header(),
+                'messageBody': {
+                    'objectFile': [
+                        {
+                            'fileStorageLocation': 'http://something/something',
+                            'fileName': 'filename',
+                            'fileStorageType': 2,
+                        },
+                    ],
+                    # no role
+                },
+            },
+            'organisationJiscId',
+        ),
+        (
+            {
+                'messageHeader': valid_create_header(),
+                'messageBody': {
+                    'objectFile': [
+                        {
+                            'fileStorageLocation': 'http://something/something',
+                            'fileName': 'filename',
+                            'fileStorageType': 2,
+                        },
+                    ],
+                    'objectOrganisationRole': [
+                        {
+                            'organisation': {
+                                'organisationJiscId': 1,
+                            },
+                            # Missing role
+                        },
+                    ],
+                },
+            },
+            'role ID',
         ),
     ],
 )

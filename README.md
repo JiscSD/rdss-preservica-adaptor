@@ -10,7 +10,7 @@ Preservica DOI records are created based upon the [message payloads](https://git
 Python3.6. Uses the [AWS Kinesis Client Python Library](https://github.com/awslabs/amazon-kinesis-client-python).
 
 #### Flow
-1. Listens for create messages from the `shared_services_input_$ENVIRONMENT` kinesis stream using the [Java KCL daemon](https://github.com/awslabs/amazon-kinesis-client)
+1. Listens for create messages from the `shared_services_output_$ENVIRONMENT` kinesis stream using the [Java KCL daemon](https://github.com/awslabs/amazon-kinesis-client)
 2. Downloads files referenced in payload message and generates a zip bundle
 3. Uploads the zip bundle to the appropriate bucket for the organisation which produced the files. A dictionary mapping organisation ID to to S3 bucket is present in the config file for each environment, see the [dev config](config/dev.py) for an example.
 
@@ -108,7 +108,6 @@ createdby         `"role"` property of `messageBody.objectOrganisationRole` obje
 
 #### Assumptions
 
-- The top directory in s3 object filepath is to be ignored, ie `unsorted`. As such, there is an assumption that all URLs have a common top level directory in their S3 object file paths (`messagBody.objectFile[]` objects - `fileStorageLocation` property)
 - `createdby` S3 attribute of zip bundle - taken from `messageBody.ObjectPublisher[]` objects - `role` property. An assumption that all objects have the same value for `role` property. Current logic is to take the value from first object in the list.
 
 #### Logging
