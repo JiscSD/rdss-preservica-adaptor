@@ -111,7 +111,7 @@ def require_organisation_id(message):
     """ Retrieve Jisc ID from message payload or raise MalformedBodyError."""
     message_body = message.get('messageBody')
     if not isinstance(message_body, dict):
-        raise MalformedBodyError('Body is not a dict.')
+        raise MalformedBodyError('messageBody is not a dict.')
 
     org_roles = message_body.get('objectOrganisationRole', [])
     value = first_org_id_from_org_roles(org_roles)
@@ -145,9 +145,9 @@ def first_role_id_in_roles(roles):
 
 def require_organisation_role(message):
     """ Retrieve role ID from message payload or raise exception."""
-    message_body = message.get('messageBody', {})
+    message_body = message.get('messageBody')
     if not isinstance(message_body, dict):
-        raise MalformedBodyError('Body is not a dict.')
+        raise MalformedBodyError('messageBody is not a dict.')
 
     org_roles = message_body.get('objectOrganisationRole', [])
     value = first_role_id_in_roles(org_roles)

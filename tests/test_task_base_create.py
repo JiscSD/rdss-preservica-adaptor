@@ -149,7 +149,7 @@ def test_require_organisation_id_succeeds(message, expected):
 
 @pytest.mark.parametrize(
     'message, error', [
-        ({}, 'Body is not a dict.'),
+        ({}, 'messageBody is not a dict.'),
         ({'messageBody': {}}, 'objectOrganisationRole'),
         ({'messageBody': {'objectOrganisationRole': {}}}, 'objectOrganisationRole'),
         ({'messageBody': {'objectOrganisationRole': []}}, 'objectOrganisationRole'),
@@ -199,7 +199,7 @@ def test_require_organisation_role_succeeds(message, expected):
 
 @pytest.mark.parametrize(
     'message, error', [
-        ({}, 'objectOrganisationRole'),
+        ({}, 'messageBody is not a dict.'),
         ({'messageBody': {}}, 'objectOrganisationRole'),
         ({'messageBody': {'objectOrganisationRole': {}}}, 'objectOrganisationRole'),
         ({'messageBody': {'objectOrganisationRole': []}}, 'objectOrganisationRole'),
