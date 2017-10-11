@@ -18,7 +18,6 @@ addons:
       - shellcheck
 
 before_install:
-  - sudo apt-get update -yqq
   - >
       travis_retry curl
       "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"

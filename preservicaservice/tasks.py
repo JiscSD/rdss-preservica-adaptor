@@ -4,18 +4,15 @@ import logging
 import os
 import tempfile
 import zipfile
-
 import boto3
-import botocore.exceptions
 
 from .errors import (
     MalformedBodyError,
     ResourceAlreadyExistsError,
-    UnderlyingSystemError,
-    ResourceNotFoundError
+    UnderlyingSystemError
 )
 from .meta import write_object_meta, write_message_meta
-from .s3_url import S3Url
+from .remote_urls import S3RemoteUrl, HTTPRemoteUrl
 
 logger = logging.getLogger(__name__)
 
@@ -78,70 +75,97 @@ def require_non_empty_key(message, key1, key2):
         raise MalformedBodyError('missing {}'.format(key2))
 
 
+def first_org_id_from_org_roles(org_roles):
+    """ Return first Jisc ID found in an objectOrganisationRole."""
+    for role in org_roles:
+        if not isinstance(role, dict):
+            continue
+        org = role.get('organisation')
+        if not isinstance(org, dict):
+            continue
+        org_id = org.get('organisationJiscId')
+        if not org_id:
+            continue
+        return str(org_id).strip()
+
+
+def first_org_id_from_person_roles(person_roles):
+    """ Return first Jisc ID found in an objectPersonRole."""
+    for role in person_roles:
+        if not isinstance(role, dict):
+            continue
+        person = role.get('person')
+        if not isinstance(person, dict):
+            continue
+        person_orgs = person.get('personOrganisation', [])
+        for org in person_orgs:
+            if not isinstance(role, dict):
+                continue
+            org_id = org.get('organisationJiscId')
+            if not org_id:
+                continue
+            return str(org_id).strip()
+
+
 def require_organisation_id(message):
-    publishers = require_non_empty_key(
-        message,
-        'messageBody',
-        'objectOrganisationRole',
+    """ Retrieve Jisc ID from message payload or raise MalformedBodyError."""
+    message_body = message.get('messageBody')
+    if not isinstance(message_body, dict):
+        raise MalformedBodyError('messageBody is not a dict.')
+
+    org_roles = message_body.get('objectOrganisationRole', [])
+    value = first_org_id_from_org_roles(org_roles)
+    if value:
+        return value
+
+    person_roles = message_body.get('objectPersonRole', [])
+    value = first_org_id_from_person_roles(person_roles)
+    if value:
+        return value
+
+    raise MalformedBodyError(
+        'Unable to determine organisationJiscId org ID. '
+        'Missing {0} or {1} fields?'.format(
+            'objectOrganisationRole',
+            'objectPersonRole',
+        ),
     )
-    try:
-        for publisher in publishers:
-            if not isinstance(publisher, dict):
-                continue
-            organisation = publisher.get('organisation', {})
-            value = organisation.get('organisationJiscId', '')
-            if not value:
-                continue
-            value = str(value).strip()
-            if not value:
-                continue
-            return value
-        raise MalformedBodyError('missing organisationJiscId')
-    except (KeyError, ValueError, TypeError, AttributeError):
-        raise MalformedBodyError('missing organisationJiscId')
+
+
+def first_role_id_in_roles(roles):
+    """ Return the first role ID found in list of roles."""
+    for role in roles:
+        if not isinstance(role, dict):
+            continue
+        role_id = role.get('role')
+        if not role_id:
+            continue
+        return str(role_id).strip()
 
 
 def require_organisation_role(message):
-    publishers = require_non_empty_key(
-        message,
-        'messageBody',
-        'objectOrganisationRole',
+    """ Retrieve role ID from message payload or raise exception."""
+    message_body = message.get('messageBody')
+    if not isinstance(message_body, dict):
+        raise MalformedBodyError('messageBody is not a dict.')
+
+    org_roles = message_body.get('objectOrganisationRole', [])
+    value = first_role_id_in_roles(org_roles)
+    if value:
+        return value
+
+    person_roles = message_body.get('objectPersonRole', [])
+    value = first_role_id_in_roles(person_roles)
+    if value:
+        return value
+
+    raise MalformedBodyError(
+        'Unable to determine role ID. '
+        'Missing {0} or {1} fields?'.format(
+            'objectOrganisationRole',
+            'objectPersonRole',
+        ),
     )
-    try:
-        for publisher in publishers:
-            if not isinstance(publisher, dict):
-                continue
-            value = publisher.get('role', '')
-            if not value:
-                continue
-            value = str(value).strip()
-            if not value:
-                continue
-            return value
-        raise MalformedBodyError('missing objectOrganisationRole.role')
-    except (KeyError, ValueError, TypeError, AttributeError):
-        raise MalformedBodyError('missing objectOrganisationRole.role')
-
-
-def get_container_name(url):
-    """ Derive container name from url
-
-    :param S3Url url: url to look
-    :rtype: str or None
-    """
-    try:
-        return url.object_key.split('/')[1].strip() or None
-    except IndexError:
-        return None
-
-
-def get_base_archive_path(url):
-    """ Derive container name from url
-
-    :param S3Url url: url to look
-    :rtype: str or None
-    """
-    return '/'.join(os.path.dirname(url.object_key).split('/')[1:])
 
 
 class FileMetadata(object):
@@ -177,32 +201,26 @@ class FileTask(object):
     DEFAULT_FILE_SIZE_LIMIT = 4 * 1000 * 1000 * 1000
 
     def __init__(
-        self, download_url, metadata,
+        self, remote_file, metadata, message_id,
         file_size_limit=DEFAULT_FILE_SIZE_LIMIT,
     ):
         """
-        :param S3Url download_url: source url to fetch file
+        :param remote_file: remote_file.BaseRemoteFile
         :param FileMetadata metadata: file related metadata
         :param int file_size_limit: max file size limit
         """
-        self.download_url = download_url
+        self.remote_file = remote_file
         self.metadata = metadata
         self.file_size_limit = file_size_limit
-        self.archive_base_path = get_base_archive_path(self.download_url)
+        self.message_id = message_id
+        self.archive_base_path = message_id
 
     def download(self, download_path):
         """ Download given path from s3 to temp destination.
 
         :param str download_path: what to download
         """
-        url = self.download_url
-        bucket = get_bucket(url.bucket_name)
-        try:
-            bucket.download_file(url.object_key, download_path)
-        except botocore.exceptions.ClientError as e:
-            raise ResourceNotFoundError(
-                'missing file to download {}'.format(e),
-            )
+        self.remote_file.download(download_path)
 
     def verify_file_size(self, path):
         """ Check given path file size limit and raise if not valid.
@@ -221,19 +239,20 @@ class FileTask(object):
         :param str download_path: original file
         :param str meta_path: meta file
         """
-
         contents = (
             (
-                download_path, os.path.join(
+                download_path,
+                os.path.join(
                     self.archive_base_path,
-                    os.path.basename(self.download_url.object_key),
+                    os.path.basename(self.remote_file.name),
                 ),
             ),
             (
-                meta_path, os.path.join(
+                meta_path,
+                os.path.join(
                     self.archive_base_path,
                     '{}.metadata'.format(os.path.basename(
-                        self.download_url.object_key,
+                        self.remote_file.name,
                     )),
                 ),
             ),
@@ -271,7 +290,6 @@ class BaseMetadataCreateTask(BaseTask):
 
     def __init__(
         self, message, file_tasks, upload_url, message_id, role,
-        container_name,
     ):
         """
         :param dict message: source message
@@ -280,14 +298,12 @@ class BaseMetadataCreateTask(BaseTask):
         :param S3Url upload_url: upload url
         :param str message_id: message header id
         :param str role: tag role
-        :param str container_name: upload container folder name
         """
         self.message = message
         self.file_tasks = file_tasks
         self.upload_url = upload_url
-        self.message_id = str(message_id)
+        self.message_id = message_id
         self.role = role
-        self.container_name = container_name
 
     @classmethod
     def build(cls, message, config):
@@ -319,15 +335,12 @@ class BaseMetadataCreateTask(BaseTask):
         if not isinstance(objects, list):
             raise MalformedBodyError('expected objectFile as list')
 
-        file_tasks = list(map(cls.build_file_tasks, objects))
+        file_tasks = []
+        for obj in objects:
+            file_tasks.append(cls.build_file_task(obj, message_id))
+
         if not file_tasks:
             raise MalformedBodyError('empty objectFile')
-
-        container_name = get_container_name(file_tasks[0].download_url)
-        if not container_name:
-            raise MalformedBodyError(
-                'First objectFile has no valid url to get container name',
-            )
 
         return cls(
             message,
@@ -335,25 +348,34 @@ class BaseMetadataCreateTask(BaseTask):
             upload_url,
             message_id,
             role,
-            container_name,
         )
 
     @classmethod
-    def build_file_tasks(cls, message):
-        url = message.get('fileStorageLocation')
+    def build_file_task(cls, object_file, message_id):
+        url = object_file.get('fileStorageLocation')
         if not url:
-            raise MalformedBodyError(
-                'invalid s3 value in fileStorageLocation',
-            )
-        try:
-            download_url = S3Url.parse(url)
-        except ValueError:
-            raise MalformedBodyError(
-                'invalid s3 value in fileStorageLocation',
-            )
+            raise MalformedBodyError('fileStorageLocation not specified.')
+        file_name = object_file.get('fileName')
+        storage_type = object_file.get('fileStorageType')
 
         try:
-            return FileTask(download_url, FileMetadata(**message))
+            if storage_type == 1:  # S3 URI
+                remote_file = S3RemoteUrl.parse(url, file_name)
+            elif storage_type == 2:  # HTTP URL
+                remote_file = HTTPRemoteUrl.parse(url, file_name)
+            else:
+                raise MalformedBodyError(
+                    'Unsupported remoteStorageType ({})'.format(storage_type),
+                )
+        except ValueError:
+            raise MalformedBodyError('invalid value in fileStorageLocation')
+
+        try:
+            return FileTask(
+                remote_file,
+                FileMetadata(**object_file),
+                message_id,
+            )
         except Exception as e:
             raise e
 
@@ -392,22 +414,22 @@ class BaseMetadataCreateTask(BaseTask):
             ) as f:
                 f.write(
                     meta_path,
-                    '{0}/{0}.metadata'.format(self.container_name),
+                    '{0}/{0}.metadata'.format(self.message_id),
                 )
 
     def upload_bundle(self, upload_url, zip_path, metadata, override):
         """ Upload given zip to target
 
         :param upload_url: target s3 folder
-        :type upload_url: preservicaservice.s3_url.S3Url
+        :type upload_url: preservicaservice.remote_urls.S3RemoteUrl
         :param str zip_path: source file
         :param dict metadata: metadata to set on s3 object
         :param bool override: don't fail if file exists
         :return:
         """
-        bucket = get_bucket(upload_url.bucket_name)
+        bucket = get_bucket(upload_url.host)
 
-        key = os.path.join(upload_url.object_key, self.bundle_name)
+        key = os.path.join(upload_url.path, self.bundle_name)
 
         if not override:
             if list(bucket.objects.filter(Prefix=key)):
@@ -422,7 +444,7 @@ class BaseMetadataCreateTask(BaseTask):
 
     @property
     def bundle_name(self):
-        return '{}.zip'.format(self.message_id)
+        return self.message_id
 
     def collect_meta(self, zip_file_path):
         """ S3 object metadata
@@ -438,14 +460,13 @@ class BaseMetadataCreateTask(BaseTask):
         # make sure all values are strings
         return {
             'key': self.message_id,
-            'bucket': self.upload_url.bucket_name,
+            'bucket': self.upload_url.host,
             'status': 'ready',
-            'name': self.bundle_name,
+            'name': '{}.zip'.format(self.bundle_name),
             'size': str(os.stat(zip_file_path).st_size),
             'size_uncompressed': str(size_uncompressed),
             'createddate': datetime.datetime.now().isoformat(),
             'createdby': self.role,
-
         }
 
 

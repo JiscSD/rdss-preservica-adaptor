@@ -10,3 +10,4 @@ pre-commit
 pytest
 pytest-cov
 PyYAML
+requests

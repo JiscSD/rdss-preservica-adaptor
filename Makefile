@@ -27,7 +27,6 @@ clean:
 
 lint:
 	@pre-commit run \
-		--allow-unstaged-config \
 		--all-files \
 		--verbose
 

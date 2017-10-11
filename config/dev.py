@@ -1,4 +1,4 @@
-input_stream_name = 'shared_services_input_dev'
+input_stream_name = 'shared_services_output_dev'
 input_stream_region = 'eu-west-2'
 error_stream_name = 'message_error_dev'
 error_stream_region = 'eu-west-2'
@@ -14,4 +14,5 @@ organisation_buckets = {
     '854': 's3://preservica-854-api-dev-autoupload',
     '476': 's3://preservica-476-api-dev-autoupload',
     '471': 's3://preservica-471-api-dev-autoupload',
+    '99999': 's3://uk.ac.jisc.alpha.researchdata.s3.uoj.autoupload',
 }
