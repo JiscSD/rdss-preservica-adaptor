@@ -16,6 +16,7 @@ def file_task1():
         S3RemoteUrl('s3://bucket/the/prefix/foo.pdf'),
         tasks.FileMetadata(fileName='baz.pdf'),
         'this-is-message-uuid',
+        'object-uuid',
     )
 
 
@@ -25,6 +26,7 @@ def file_task2():
         S3RemoteUrl('s3://bucket/the/prefix/bar.pdf'),
         tasks.FileMetadata(fileName='bam.pdf'),
         'this-is-message-uuid',
+        'object-uuid',
     )
 
 
@@ -36,6 +38,7 @@ def task(file_task1, file_task2):
         S3RemoteUrl('s3://upload'),
         'this-is-message-uuid',
         'role',
+        'object-uuid',
     )
 
 
@@ -55,29 +58,29 @@ def test_run_succeeds(temp_file, task):
 
     assert_zip_contains(
         temp_file,
-        'this-is-message-uuid/this-is-message-uuid.metadata',
+        'object-uuid/object-uuid.metadata',
         partial='<root><foo type="str">bar</foo>',
     )
 
     assert_zip_contains(
         temp_file,
-        'this-is-message-uuid/foo.pdf',
+        'object-uuid/foo.pdf',
         file1_contents,
     )
     assert_zip_contains(
         temp_file,
-        'this-is-message-uuid/foo.pdf.metadata',
+        'object-uuid/foo.pdf.metadata',
         partial='fileName>baz.pdf<',
     )
 
     assert_zip_contains(
         temp_file,
-        'this-is-message-uuid/bar.pdf',
+        'object-uuid/bar.pdf',
         file2_contents,
     )
     assert_zip_contains(
         temp_file,
-        'this-is-message-uuid/bar.pdf.metadata',
+        'object-uuid/bar.pdf.metadata',
         partial='fileName>bam.pdf<',
     )
 

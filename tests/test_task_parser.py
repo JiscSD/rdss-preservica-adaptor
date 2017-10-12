@@ -90,6 +90,7 @@ def test_metadata_create_task(valid_config):
     record = to_record({
         'messageHeader': valid_create_header(),
         'messageBody': {
+            'objectUuid': 'object_uuid',
             'objectFile': [
                 {
                     'fileStorageLocation': 's3://bucket/path/to/file',
@@ -167,6 +168,7 @@ def test_metadata_create_task_skipped(valid_config):
                 'messageHeader': valid_create_header(),
                 # empty body
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     'objectOrganisationRole': valid_create_publisher(),
                 },
             }, 'objectFile',
@@ -175,6 +177,7 @@ def test_metadata_create_task_skipped(valid_config):
             {
                 'messageHeader': valid_create_header(),
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     # is dict
                     'objectFile': {
                         # missing s3 path
@@ -192,6 +195,7 @@ def test_metadata_create_task_skipped(valid_config):
                     'messageType': tasks.MetadataCreateTask.TYPE,
                 },
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     'objectFile': valid_create_object_file(),
                     'objectOrganisationRole': valid_create_publisher(),
                 },
@@ -202,6 +206,7 @@ def test_metadata_create_task_skipped(valid_config):
                 # missing objectOrganisationRole
                 'messageHeader': valid_create_header(),
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     'objectFile': valid_create_object_file(),
                 },
             }, 'objectOrganisationRole',
@@ -210,6 +215,7 @@ def test_metadata_create_task_skipped(valid_config):
             {
                 'messageHeader': valid_create_header(),
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     'objectFile': valid_create_object_file(),
                 },
                 # invalid objectOrganisationRole
@@ -225,6 +231,7 @@ def test_metadata_create_task_skipped(valid_config):
             {
                 'messageHeader': valid_create_header(),
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     'objectFile': valid_create_object_file(),
                 },
                 # invalid objectOrganisationRole
@@ -237,6 +244,7 @@ def test_metadata_create_task_skipped(valid_config):
             {
                 'messageHeader': valid_create_header(),
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     'objectFile': [
                         {
                             # missing s3 path
@@ -252,6 +260,7 @@ def test_metadata_create_task_skipped(valid_config):
             {
                 'messageHeader': valid_create_header(),
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     'objectFile': [
                         {
                             # no file name
@@ -267,6 +276,7 @@ def test_metadata_create_task_skipped(valid_config):
             {
                 'messageHeader': valid_create_header(),
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     'objectFile': [
                         {
                             # wrong s3 path
@@ -283,6 +293,7 @@ def test_metadata_create_task_skipped(valid_config):
             {
                 'messageHeader': valid_create_header(),
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     'objectFile': [
                         {
                             'fileStorageLocation': 's3://bucket/path/to/file',
@@ -299,6 +310,7 @@ def test_metadata_create_task_skipped(valid_config):
             {
                 'messageHeader': valid_create_header(),
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     'objectFile': [
                         {
                             'fileStorageLocation': 's3://something/something',
@@ -316,6 +328,7 @@ def test_metadata_create_task_skipped(valid_config):
             {
                 'messageHeader': valid_create_header(),
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     'objectFile': [
                         {
                             'fileStorageLocation': 'http://something/something',
@@ -333,6 +346,7 @@ def test_metadata_create_task_skipped(valid_config):
             {
                 'messageHeader': valid_create_header(),
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     'objectFile': [
                         {
                             'fileStorageLocation': 'http://something/something',
@@ -349,6 +363,7 @@ def test_metadata_create_task_skipped(valid_config):
             {
                 'messageHeader': valid_create_header(),
                 'messageBody': {
+                    'objectUuid': 'object_uuid',
                     'objectFile': [
                         {
                             'fileStorageLocation': 'http://something/something',
@@ -367,6 +382,16 @@ def test_metadata_create_task_skipped(valid_config):
                 },
             },
             'role ID',
+        ),
+        (
+            {
+                'messageHeader': valid_create_header(),
+                'messageBody': {
+                    'objectFile': valid_create_object_file(),
+                    'objectOrganisationRole': valid_create_publisher(),
+                },
+            },
+            'objectUuid',
         ),
     ],
 )

@@ -21,6 +21,7 @@ def file_task1():
         S3RemoteUrl('s3://bucket/the/prefix/foo'),
         tasks.FileMetadata(fileName='baz.pdf'),
         'message_id',
+        'object_id',
     )
 
 
@@ -30,6 +31,7 @@ def file_task2():
         S3RemoteUrl('s3://bucket/the/prefix/bar'),
         tasks.FileMetadata(fileName='bam.pdf'),
         'message_id',
+        'object_id',
     )
 
 
@@ -41,6 +43,7 @@ def task(file_task1, file_task2):
         S3RemoteUrl('s3://upload/to'),
         'message_id',
         'role',
+        'object_id',
     )
 
 
@@ -48,7 +51,7 @@ def test_bundle_meta(temp_file, task):
     task.bundle_meta(temp_file)
     assert_zip_contains(
         temp_file,
-        'message_id/message_id.metadata',
+        'object_id/object_id.metadata',
         partial='<root><foo type="str">bar</foo>',
     )
 
