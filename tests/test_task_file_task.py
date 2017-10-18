@@ -27,6 +27,7 @@ def task(file_metadata):
         S3RemoteUrl('s3://bucket/the/prefix/foo'),
         file_metadata,
         'message_id',
+        'object_id',
     )
 
 
@@ -50,6 +51,7 @@ def test_verify_limit(temp_file, size):
         S3RemoteUrl('s3://bucket/the/prefix/foo'),
         tasks.FileMetadata(fileName='baz.pdf'),
         'message_id',
+        'object_id',
         size,
     )
     with pytest.raises(errors.UnderlyingSystemError):
@@ -66,8 +68,8 @@ def test_zip_bundle(task, temp_file, temp_file2, temp_file3):
     task.zip_bundle(temp_file, temp_file2, temp_file3)
 
     assert_zip_contains(
-        temp_file, 'message_id/foo', 'download',
+        temp_file, 'object_id/foo', 'download',
     )
     assert_zip_contains(
-        temp_file, 'message_id/foo.metadata', 'meta',
+        temp_file, 'object_id/foo.metadata', 'meta',
     )

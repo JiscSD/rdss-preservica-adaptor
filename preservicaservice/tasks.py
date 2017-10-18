@@ -201,7 +201,7 @@ class FileTask(object):
     DEFAULT_FILE_SIZE_LIMIT = 4 * 1000 * 1000 * 1000
 
     def __init__(
-        self, remote_file, metadata, message_id,
+        self, remote_file, metadata, message_id, object_id,
         file_size_limit=DEFAULT_FILE_SIZE_LIMIT,
     ):
         """
@@ -213,7 +213,7 @@ class FileTask(object):
         self.metadata = metadata
         self.file_size_limit = file_size_limit
         self.message_id = message_id
-        self.archive_base_path = message_id
+        self.archive_base_path = object_id
 
     def download(self, download_path):
         """ Download given path from s3 to temp destination.
@@ -289,7 +289,7 @@ class BaseMetadataCreateTask(BaseTask):
     UPLOAD_OVERRIDE = False
 
     def __init__(
-        self, message, file_tasks, upload_url, message_id, role,
+        self, message, file_tasks, upload_url, message_id, role, object_id,
     ):
         """
         :param dict message: source message
@@ -303,6 +303,7 @@ class BaseMetadataCreateTask(BaseTask):
         self.file_tasks = file_tasks
         self.upload_url = upload_url
         self.message_id = message_id
+        self.object_id = object_id
         self.role = role
 
     @classmethod
@@ -332,12 +333,14 @@ class BaseMetadataCreateTask(BaseTask):
         objects = require_non_empty_key(
             message, 'messageBody', 'objectFile',
         )
+
+        object_id = require_non_empty_key(message, 'messageBody', 'objectUuid')
         if not isinstance(objects, list):
             raise MalformedBodyError('expected objectFile as list')
 
         file_tasks = []
         for obj in objects:
-            file_tasks.append(cls.build_file_task(obj, message_id))
+            file_tasks.append(cls.build_file_task(obj, message_id, object_id))
 
         if not file_tasks:
             raise MalformedBodyError('empty objectFile')
@@ -348,10 +351,11 @@ class BaseMetadataCreateTask(BaseTask):
             upload_url,
             message_id,
             role,
+            object_id,
         )
 
     @classmethod
-    def build_file_task(cls, object_file, message_id):
+    def build_file_task(cls, object_file, message_id, object_id):
         url = object_file.get('fileStorageLocation')
         if not url:
             raise MalformedBodyError('fileStorageLocation not specified.')
@@ -375,6 +379,7 @@ class BaseMetadataCreateTask(BaseTask):
                 remote_file,
                 FileMetadata(**object_file),
                 message_id,
+                object_id,
             )
         except Exception as e:
             raise e
@@ -414,7 +419,7 @@ class BaseMetadataCreateTask(BaseTask):
             ) as f:
                 f.write(
                     meta_path,
-                    '{0}/{0}.metadata'.format(self.message_id),
+                    '{0}/{0}.metadata'.format(self.object_id),
                 )
 
     def upload_bundle(self, upload_url, zip_path, metadata, override):
