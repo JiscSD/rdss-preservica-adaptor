@@ -20,11 +20,11 @@ variable "upload_buckets_arns" {
   default     = []
 }
 
+variable "objects_bucket_arn" {
+  description = "Object bucket ARN."
+}
+
 variable "dynamodb_arn" {
   description = "Dynamodb to keep kinesis stream read ARN."
   default     = "*"
-}
-
-variable "objects_bucket" {
-  default = "rdss-preservicaservice-objects"
 }

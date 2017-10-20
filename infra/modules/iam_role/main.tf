@@ -165,8 +165,7 @@ resource "aws_iam_role_policy" "objects" {
         "s3:GetObject"
       ],
       "Resource": [
-        "${var.objects_bucket}",
-        "${var.objects_bucket}/*"
+        "${var.objects_bucket_arn}/*"
       ]
     }
   ]

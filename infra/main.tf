@@ -23,6 +23,21 @@ resource "aws_key_pair" "auth" {
   }
 }
 
+data "template_file" "awslogs_agent_config" {
+  template = "${file("./s3-objects/config-objects/awslogs-agent-config.conftemplate")}"
+
+  vars {
+    terraform_environment = "${terraform.env}"
+  }
+}
+
+resource "aws_s3_bucket_object" "config_objects_awslogs_agent_config" {
+  bucket  = "${var.objects_bucket}"
+  key     = "application/config/${terraform.env}/awslogs-agent-config.conf"
+  content = "${data.template_file.awslogs_agent_config.rendered}"
+  etag    = "${md5(data.template_file.awslogs_agent_config.rendered)}"
+}
+
 module "vpc" {
   source               = "./modules/vpc"
   environment          = "${terraform.env}"
@@ -64,11 +79,16 @@ data "aws_kinesis_stream" "input_stream" {
   name = "shared_services_output_${terraform.env}"
 }
 
+data "aws_s3_bucket" "objects" {
+  bucket = "${var.objects_bucket}"
+}
+
 module "iam_role" {
   source              = "./modules/iam_role"
   input_stream_arn    = "${data.aws_kinesis_stream.input_stream.arn}"
   error_stream_arn    = "arn:aws:kinesis:*:*:stream/${var.error_stream_name}_${terraform.env}"
   upload_buckets_arns = "${formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.env)}"
+  objects_bucket_arn  = "${data.aws_s3_bucket.objects.arn}"
   dynamodb_arn        = "*"
   environment         = "${terraform.env}"
   project             = "${var.project}"
@@ -95,19 +115,4 @@ module "autoscaling" {
   owner               = "${var.owner}"
   costcenter          = "${var.costcenter}"
   service             = "${var.service}"
-}
-
-resource "aws_s3_bucket_object" "config_objects_awslogs_agent_config" {
-  bucket  = "${var.objects_bucket}"
-  key     = "application/config/${terraform.env}/awslogs-agent-config.conf"
-  content = "${data.template_file.awslogs_agent_config.rendered}"
-  etag    = "${md5(data.template_file.awslogs_agent_config.rendered)}"
-}
-
-data "template_file" "awslogs_agent_config" {
-  template = "${file("./s3-objects/config-objects/awslogs-agent-config.conftemplate")}"
-
-  vars {
-    terraform_environment = "${terraform.env}"
-  }
 }
