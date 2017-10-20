@@ -40,7 +40,6 @@ resource "aws_s3_bucket_object" "config_objects_awslogs_agent_config" {
 
 module "vpc" {
   source               = "./modules/vpc"
-  environment          = "${terraform.env}"
   enable_dns_support   = true
   enable_dns_hostnames = true
   availability_zones   = "${var.availability_zones}"
@@ -52,7 +51,6 @@ module "vpc" {
 
 module "bastion" {
   source        = "./modules/bastion"
-  environment   = "${terraform.env}"
   key_name      = "${aws_key_pair.auth.key_name}"
   bastion_sg    = "${module.security_groups.bastion-sg}"
   public_subnet = "${module.vpc.igw_subnet_id}"
@@ -64,7 +62,6 @@ module "bastion" {
 
 module "security_groups" {
   source               = "./modules/security_groups"
-  environment          = "${terraform.env}"
   access_ip_whitelist  = "${var.access_ip_whitelist}"
   private_subnets_cidr = "${module.vpc.private_subnets_cidr}"
   vpc                  = "${module.vpc.vpc_id}"
@@ -85,7 +82,6 @@ module "iam_role" {
   upload_buckets_arns = "${formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.env)}"
   objects_bucket_arn  = "arn:aws:s3:::${var.objects_bucket}"
   dynamodb_arn        = "*"
-  environment         = "${terraform.env}"
   project             = "${var.project}"
 }
 
@@ -105,7 +101,6 @@ module "autoscaling" {
   max_size            = "${var.autoscaling_max_size}"
   desired_capacity    = "${var.autoscaling_desired_capacity}"
   env_file_path       = "${var.autoscaling_env_file_path}"
-  environment         = "${terraform.env}"
   project             = "${var.project}"
   service             = "${var.service}"
   cost_centre         = "${var.cost_centre}"
