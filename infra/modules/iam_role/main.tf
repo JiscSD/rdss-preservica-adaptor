@@ -150,3 +150,26 @@ resource "aws_iam_role_policy" "cloudwatch" {
 }
 EOF
 }
+
+resource "aws_iam_role_policy" "objects" {
+  name = "${var.project}-${terraform.env}-objects"
+  role = "${aws_iam_role.role.id}"
+
+  policy = <<EOF
+{
+  "Version":"2012-10-17",
+  "Statement":[
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "${var.objects_bucket}",
+        "${var.objects_bucket}/*"
+      ]
+    }
+  ]
+}
+EOF
+}

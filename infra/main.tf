@@ -96,3 +96,18 @@ module "autoscaling" {
   costcenter          = "${var.costcenter}"
   service             = "${var.service}"
 }
+
+resource "aws_s3_bucket_object" "config_objects_awslogs_agent_config" {
+  bucket  = "${var.objects_bucket}"
+  key     = "application/config/${terraform.env}/awslogs-agent-config.conf"
+  content = "${data.template_file.awslogs_agent_config.rendered}"
+  etag    = "${md5(data.template_file.awslogs_agent_config.rendered)}"
+}
+
+data "template_file" "awslogs_agent_config" {
+  template = "${file("./s3-objects/config-objects/awslogs-agent-config.conftemplate")}"
+
+  vars {
+    terraform_environment = "${terraform.env}"
+  }
+}

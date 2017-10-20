@@ -135,3 +135,11 @@ variable "access_ip_whitelist" {
     "88.98.209.19/32",   # Mark Winterbottom
   ]
 }
+
+####################
+# Objects bucket
+####################
+
+variable "objects_bucket" {
+  default = "rdss-preservicaservice-objects"
+}
