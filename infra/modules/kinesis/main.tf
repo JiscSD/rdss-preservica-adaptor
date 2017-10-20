@@ -5,12 +5,12 @@ resource "aws_kinesis_stream" "stream" {
   shard_level_metrics = "${var.shard_level_metricsc}"
 
   tags {
-    Name        = "${var.project}-${terraform.env}-stream-${var.name}"
-    Environment = "${terraform.env}"
-    Project     = "${var.project}"
-    Owner       = "${var.owner}"
-    CostCenter  = "${var.costcenter}"
-    managed_by  = "terraform"
-    service     = "${var.service}"
+    "Name"        = "${var.name}"
+    "Environment" = "${terraform.env}"
+    "Project"     = "${var.project}"
+    "Service"     = "${var.service}"
+    "CostCentre"  = "${var.cost_centre}"
+    "Owner"       = "${var.owner}"
+    "ManagedBy"   = "Terraform"
   }
 }

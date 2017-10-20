@@ -1,24 +1,22 @@
 variable "project" {
-  description = "Project name."
-}
-
-variable "owner" {
-  description = "Project owner name."
-}
-
-variable "costcenter" {
-  description = "Cost center name."
+  description = "The name of the project to which the Kinesis Stream belongs."
 }
 
 variable "service" {
-  description = "Service name."
+  description = "The name of the service to which the Kinesis Stream belongs."
 }
 
-variable "environment" {
-  description = "Environment we are working with."
+variable "cost_centre" {
+  description = "The name of the cost centre to which the Kinesis Stream belongs."
 }
 
-variable "name" {}
+variable "owner" {
+  description = "The owner of the Kinesis Stream."
+}
+
+variable "name" {
+  description = "The name of the Kinesis Stream."
+}
 
 variable "shard_count" {
   description = "Stream shards number."

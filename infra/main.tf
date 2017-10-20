@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "${var.region}"
+  region = "${var.aws_region}"
 }
 
 terraform {
@@ -45,34 +45,33 @@ module "vpc" {
   enable_dns_hostnames = true
   availability_zones   = "${var.availability_zones}"
   project              = "${var.project}"
-  owner                = "${var.owner}"
-  costcenter           = "${var.costcenter}"
   service              = "${var.service}"
+  cost_centre          = "${var.cost_centre}"
+  owner                = "${var.owner}"
 }
 
 module "bastion" {
   source        = "./modules/bastion"
   environment   = "${terraform.env}"
-  project       = "${var.project}"
   key_name      = "${aws_key_pair.auth.key_name}"
-  owner         = "${var.owner}"
-  costcenter    = "${var.costcenter}"
-  service       = "${var.service}"
   bastion_sg    = "${module.security_groups.bastion-sg}"
   public_subnet = "${module.vpc.igw_subnet_id}"
+  project       = "${var.project}"
+  service       = "${var.service}"
+  cost_centre   = "${var.cost_centre}"
+  owner         = "${var.owner}"
 }
 
 module "security_groups" {
   source               = "./modules/security_groups"
   environment          = "${terraform.env}"
   access_ip_whitelist  = "${var.access_ip_whitelist}"
-  project              = "${var.project}"
   private_subnets_cidr = "${module.vpc.private_subnets_cidr}"
   vpc                  = "${module.vpc.vpc_id}"
-  owner                = "${var.owner}"
-  costcenter           = "${var.costcenter}"
+  project              = "${var.project}"
   service              = "${var.service}"
-  vpc                  = "${module.vpc.vpc_id}"
+  cost_centre          = "${var.cost_centre}"
+  owner                = "${var.owner}"
 }
 
 data "aws_kinesis_stream" "input_stream" {
@@ -108,7 +107,7 @@ module "autoscaling" {
   env_file_path       = "${var.autoscaling_env_file_path}"
   environment         = "${terraform.env}"
   project             = "${var.project}"
-  owner               = "${var.owner}"
-  costcenter          = "${var.costcenter}"
   service             = "${var.service}"
+  cost_centre         = "${var.cost_centre}"
+  owner               = "${var.owner}"
 }

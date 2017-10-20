@@ -1,29 +1,25 @@
-variable "account_id" {
-  description = "AWS account to use."
-}
-
 variable "project" {
-  description = "Project name for tags and resource naming."
-  default     = "preservicaservice"
-}
-
-variable "owner" {
-  description = "Contact person responsible for the resource."
-  default     = "alan.mackenzie@digirati.com"
-}
-
-variable "costcenter" {
-  description = "Cost Center tag."
-  default     = "RDSS"
+  default = "rdss-institutional-ecs-clusters"
 }
 
 variable "service" {
-  description = "Service name for tags."
-  default     = "rdss"
+  default = "RDSS"
 }
 
-variable "region" {
+variable "cost_centre" {
+  default = "RDSS"
+}
+
+variable "owner" {
+  default = "alan.mackenzie@digirati.com"
+}
+
+variable "aws_region" {
   default = "eu-west-2"
+}
+
+variable "account_id" {
+  description = "AWS account to use."
 }
 
 ####################

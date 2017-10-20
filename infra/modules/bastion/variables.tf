@@ -1,31 +1,27 @@
 variable "project" {
-  description = "Project name."
-}
-
-variable "owner" {
-  description = "Project owner name."
-}
-
-variable "costcenter" {
-  description = "Cost center name."
+  description = "The name of the project to which the bastion server belongs."
 }
 
 variable "service" {
-  description = "Service name."
+  description = "The name of the service to which the bastion server belongs."
 }
 
-variable "environment" {
-  description = "Environment we are working with."
+variable "cost_centre" {
+  description = "The name of the cost centre to which the bastion server belongs."
+}
+
+variable "owner" {
+  description = "The owner of the bastion server."
 }
 
 variable "public_subnet" {
-  description = "Public subnet for the bastion."
+  description = "Public subnet for the bastion server."
 }
 
 variable "bastion_sg" {
-  description = "Security group for the bastion."
+  description = "Security group for the bastion server."
 }
 
 variable "key_name" {
-  description = "The name of the public key to access the bastion server"
+  description = "The name of the public key to access the bastion server."
 }

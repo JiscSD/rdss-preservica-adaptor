@@ -16,13 +16,13 @@ resource "aws_security_group" "bastion-sg" {
   }
 
   tags {
-    Name        = "${var.project}-${terraform.env}-bastion-sg"
-    Environment = "${terraform.env}"
-    Project     = "${var.project}"
-    Owner       = "${var.owner}"
-    CostCenter  = "${var.costcenter}"
-    managed_by  = "terraform"
-    service     = "${var.service}"
+    "Name"        = "${var.project}-${terraform.env}-bastion-sg"
+    "Environment" = "${terraform.env}"
+    "Project"     = "${var.project}"
+    "Service"     = "${var.service}"
+    "CostCentre"  = "${var.cost_centre}"
+    "Owner"       = "${var.owner}"
+    "ManagedBy"   = "Terraform"
   }
 }
 
@@ -44,12 +44,12 @@ resource "aws_security_group" "app-sg" {
   }
 
   tags {
-    Name        = "${var.project}-${terraform.env}-app-sg"
-    Environment = "${terraform.env}"
-    Project     = "${var.project}"
-    Owner       = "${var.owner}"
-    CostCenter  = "${var.costcenter}"
-    managed_by  = "terraform"
-    service     = "${var.service}"
+    "Name"        = "${var.project}-${terraform.env}-app-sg"
+    "Environment" = "${terraform.env}"
+    "Project"     = "${var.project}"
+    "Service"     = "${var.service}"
+    "CostCentre"  = "${var.cost_centre}"
+    "Owner"       = "${var.owner}"
+    "ManagedBy"   = "Terraform"
   }
 }

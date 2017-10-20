@@ -1,9 +1,5 @@
 variable "project" {
-  description = "Project name."
-}
-
-variable "environment" {
-  description = "Environment we are working with."
+  description = "The name of the project to which the IAM Role belongs."
 }
 
 variable "input_stream_arn" {

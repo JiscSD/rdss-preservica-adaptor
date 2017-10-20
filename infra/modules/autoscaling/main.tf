@@ -71,26 +71,26 @@ resource "aws_autoscaling_group" "group" {
   }
 
   tag {
+    key                 = "Service"
+    value               = "${var.service}"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "CostCentre"
+    value               = "${var.cost_centre}"
+    propagate_at_launch = true
+  }
+
+  tag {
     key                 = "Owner"
     value               = "${var.owner}"
     propagate_at_launch = true
   }
 
   tag {
-    key                 = "CostCenter"
-    value               = "${var.costcenter}"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "managed_by"
-    value               = "terraform"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "service"
-    value               = "${var.service}"
+    key                 = "ManagedBy"
+    value               = "Terraform"
     propagate_at_launch = true
   }
 }

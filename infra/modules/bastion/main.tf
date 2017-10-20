@@ -6,12 +6,12 @@ resource "aws_instance" "bastion" {
   key_name        = "${var.key_name}"
 
   tags {
-    Name        = "bastion-${var.project}-${terraform.env}"
-    Environment = "${terraform.env}"
-    Project     = "${var.project}"
-    Owner       = "${var.owner}"
-    CostCenter  = "${var.costcenter}"
-    managed_by  = "terraform"
-    service     = "${var.service}"
+    "Name"        = "${var.project}-${terraform.env}-bastion"
+    "Environment" = "${terraform.env}"
+    "Project"     = "${var.project}"
+    "Service"     = "${var.service}"
+    "CostCentre"  = "${var.cost_centre}"
+    "Owner"       = "${var.owner}"
+    "ManagedBy"   = "Terraform"
   }
 }
