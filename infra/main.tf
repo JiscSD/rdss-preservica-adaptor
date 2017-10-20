@@ -79,16 +79,12 @@ data "aws_kinesis_stream" "input_stream" {
   name = "shared_services_output_${terraform.env}"
 }
 
-data "aws_s3_bucket" "objects" {
-  bucket = "${var.objects_bucket}"
-}
-
 module "iam_role" {
   source              = "./modules/iam_role"
   input_stream_arn    = "${data.aws_kinesis_stream.input_stream.arn}"
   error_stream_arn    = "arn:aws:kinesis:*:*:stream/${var.error_stream_name}_${terraform.env}"
   upload_buckets_arns = "${formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.env)}"
-  objects_bucket_arn  = "${data.aws_s3_bucket.objects.arn}"
+  objects_bucket_arn  = "arn:aws:s3:::${var.objects_bucket}"
   dynamodb_arn        = "*"
   environment         = "${terraform.env}"
   project             = "${var.project}"
