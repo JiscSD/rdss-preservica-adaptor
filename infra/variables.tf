@@ -1,5 +1,5 @@
 variable "project" {
-  default = "rdss-institutional-ecs-clusters"
+  default = "rdss-preservica-adaptor"
 }
 
 variable "service" {

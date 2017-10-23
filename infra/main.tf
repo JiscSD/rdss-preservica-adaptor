@@ -11,7 +11,7 @@ terraform {
 }
 
 data "template_file" "public_key" {
-  template = "${file("public-keys/${var.project}-${terraform.env}.pub")}"
+  template = "${file("public-keys/preservicaservice-${terraform.env}.pub")}"
 }
 
 resource "aws_key_pair" "auth" {
