@@ -1,7 +1,7 @@
 [general]
 state_file = /var/awslogs/state/agent-state
 
-[/var/log/syslog]
+[/var/log/preservicaservice/debug.log]
 file = /var/log/preservicaservice/debug.log
 log_group_name = preservicaservice-${terraform_environment}
 log_stream_name = {instance_id}
