@@ -7,6 +7,16 @@ resource "aws_flow_log" "flowlog" {
 
 resource "aws_cloudwatch_log_group" "flowlog_log_group" {
   name = "${var.project}-${terraform.env}-flowlogs"
+
+  tags {
+    "Name"        = "${var.project}-${terraform.env}-flowlogs"
+    "Environment" = "${terraform.env}"
+    "Project"     = "${var.project}"
+    "Service"     = "${var.service}"
+    "CostCentre"  = "${var.cost_centre}"
+    "Owner"       = "${var.owner}"
+    "ManagedBy"   = "Terraform"
+  }
 }
 
 resource "aws_iam_role" "flowlog_role" {
