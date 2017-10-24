@@ -6,7 +6,7 @@ resource "aws_flow_log" "flowlog" {
 }
 
 resource "aws_cloudwatch_log_group" "flowlog_log_group" {
-  name = "${var.project}-${terraform.env}-flowlogs"
+  name = "preservicaservice-${terraform.env}-flowlogs"
 
   tags {
     "Name"        = "${var.project}-${terraform.env}-flowlogs"
