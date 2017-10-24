@@ -125,16 +125,50 @@ resource "aws_iam_role_policy" "cloudwatch" {
 
   policy = <<EOF
 {
-   "Version":"2012-10-17",
-   "Statement":[
-      {
-         "Effect":"Allow",
-         "Action":[
-            "cloudwatch:Put*"
-         ],
-         "Resource": ["*"]
-      }
-   ]
+  "Version":"2012-10-17",
+  "Statement":[
+    {
+      "Effect":"Allow",
+      "Action":[
+        "cloudwatch:Put*"
+      ],
+      "Resource": ["*"]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams"
+      ],
+      "Resource": [
+        "arn:aws:logs:*:*:*"
+      ]
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "objects" {
+  name = "${var.project}-${terraform.env}-objects"
+  role = "${aws_iam_role.role.id}"
+
+  policy = <<EOF
+{
+  "Version":"2012-10-17",
+  "Statement":[
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "${var.objects_bucket_arn}/*"
+      ]
+    }
+  ]
 }
 EOF
 }

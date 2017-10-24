@@ -1,21 +1,17 @@
 variable "project" {
-  description = "Project name."
-}
-
-variable "owner" {
-  description = "Project owner name."
-}
-
-variable "costcenter" {
-  description = "Cost center name."
+  description = "The name of the project to which the VPC belongs."
 }
 
 variable "service" {
-  description = "Service name."
+  description = "The name of the service to which the VPC belongs."
 }
 
-variable "environment" {
-  description = "Environment we are working with."
+variable "cost_centre" {
+  description = "The name of the cost centre to which the VPC belongs."
+}
+
+variable "owner" {
+  description = "The owner of the VPC."
 }
 
 variable "enable_dns_support" {

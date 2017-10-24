@@ -1,9 +1,5 @@
 variable "project" {
-  description = "Project name."
-}
-
-variable "environment" {
-  description = "Environment we are working with."
+  description = "The name of the project to which the IAM Role belongs."
 }
 
 variable "input_stream_arn" {
@@ -18,6 +14,10 @@ variable "upload_buckets_arns" {
   description = "Upload bucket ARN."
   type        = "list"
   default     = []
+}
+
+variable "objects_bucket_arn" {
+  description = "Object bucket ARN."
 }
 
 variable "dynamodb_arn" {
