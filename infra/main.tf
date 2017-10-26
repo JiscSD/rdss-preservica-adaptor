@@ -106,3 +106,12 @@ module "autoscaling" {
   cost_centre         = "${var.cost_centre}"
   owner               = "${var.owner}"
 }
+
+module "flowlogs" {
+  source      = "./modules/flowlogs"
+  vpc_id      = "${module.vpc.vpc_id}"
+  project     = "${var.project}"
+  service     = "${var.service}"
+  cost_centre = "${var.cost_centre}"
+  owner       = "${var.owner}"
+}
