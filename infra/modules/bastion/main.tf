@@ -5,6 +5,25 @@ resource "aws_instance" "bastion" {
   security_groups = ["${var.bastion_sg}"]
   key_name        = "${var.key_name}"
 
+  user_data = <<EOF
+#!/bin/bash
+
+# Update all packages
+yum clean all
+yum -y upgrade
+
+# Install NFS etc
+yum -y install awslogs
+service rpcbind restart
+
+# Set up the AWS logs agent
+mkdir -p /var/awslogs/state
+sed -c -i "s/\(region *= *\).*/\1${var.aws_region}/" /etc/awslogs/awscli.conf
+aws s3 cp s3://rdss-preservicaservice-objects/application/config/${environment}/bastion/awslogs-agent-config.conf /etc/awslogs/awslogs.conf --region ${var.aws_region}
+service awslogs start
+chkconfig awslogs on
+EOF
+
   tags {
     "Name"        = "${var.project}-${terraform.env}-bastion"
     "Environment" = "${terraform.env}"

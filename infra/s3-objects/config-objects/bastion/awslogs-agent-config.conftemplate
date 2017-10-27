@@ -1,0 +1,32 @@
+[general]
+state_file = /var/awslogs/state/agent-state
+
+[/var/log/audit/audit.log]
+file = /var/log/audit/audit.log
+log_group_name = preservicaservice-${terraform_environment}-/var/log/audit/audit.log
+log_stream_name = ${instance_type}/{instance_id}
+datetime_format = %Y-%m-%dT%H:%M:%S%z
+
+[/var/log/cron]
+file = /var/log/cron
+log_group_name = preservicaservice-${terraform_environment}-/var/log/cron
+log_stream_name = ${instance_type}/{instance_id}
+datetime_format = %Y-%m-%dT%H:%M:%S%z
+
+[/var/log/dmesg]
+file = /var/log/dmesg
+log_group_name = preservicaservice-${terraform_environment}-/var/log/dmesg
+log_stream_name = ${instance_type}/{instance_id}
+datetime_format = %Y-%m-%dT%H:%M:%S%z
+
+[/var/log/messages]
+file = /var/log/messages
+log_group_name = preservicaservice-${terraform_environment}-/var/log/messages
+log_stream_name = ${instance_type}/{instance_id}
+datetime_format = %Y-%m-%dT%H:%M:%S%z
+
+[/var/log/secure]
+file = /var/log/secure
+log_group_name = preservicaservice-${terraform_environment}-/var/log/secure
+log_stream_name = ${instance_type}/{instance_id}
+datetime_format = %Y-%m-%dT%H:%M:%S%z

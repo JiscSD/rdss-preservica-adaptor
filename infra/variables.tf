@@ -23,8 +23,17 @@ variable "account_id" {
 }
 
 ####################
+# S3 Objects
+####################
+
+variable "objects_bucket" {
+  default = "rdss-preservicaservice-objects"
+}
+
+####################
 # VPC
 ####################
+
 variable "availability_zones" {
   description = "List of availability zones."
   type        = "list"
@@ -36,8 +45,9 @@ variable "availability_zones" {
 }
 
 ####################
-#  EC2 instance
+#  Auto Scaling Group
 ####################
+
 variable "instance_ami" {
   description = "Instance AMI."
 }
@@ -47,14 +57,10 @@ variable "instance_type" {
   default     = "t2.small"
 }
 
-variable "key_name" {
-  description = "SSH key to use for EC2 instance."
-  default     = "preservica-service-test"
-}
+####################
+# S3 Upload Buckets
+####################
 
-####################
-# upload buckets
-####################
 variable "upload_buckets_ids" {
   description = "Upload bucket ARN."
   type        = "list"
@@ -100,14 +106,18 @@ variable "autoscaling_env_file_path" {
 ####################
 # Kinesis streams
 ####################
-variable "input_stream_prefix" {
-  description = "Pattern to name input stream."
-  default     = "rdss-preservica-adaptor-input-"
-}
 
 variable "error_stream_name" {
   description = "Error stream name."
   default     = "message_error"
+}
+
+variable "kinesis_shard_count" {
+  default = 1
+}
+
+variable "kinesis_retention_period" {
+  default = 168
 }
 
 ####################
@@ -121,6 +131,7 @@ variable "systemd_unit" {
 ####################
 # IP Whitelist
 ####################
+
 variable "access_ip_whitelist" {
   description = "IP whitelist for access to bastion server"
   type        = "list"
@@ -130,12 +141,4 @@ variable "access_ip_whitelist" {
     "46.102.195.182/32", # London
     "88.98.209.19/32",   # Mark Winterbottom
   ]
-}
-
-####################
-# Objects bucket
-####################
-
-variable "objects_bucket" {
-  default = "rdss-preservicaservice-objects"
 }
