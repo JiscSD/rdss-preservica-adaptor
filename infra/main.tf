@@ -216,6 +216,7 @@ resource "aws_iam_role_policy" "cloudwatch_kinesis_policy" {
       "Effect": "Allow",
       "Action": "kinesis:PutRecord",
       "Resource": [
+        "${module.cloudwatch_flowlogs_stream.arn}",
         "${module.cloudwatch_bastion_audit_stream.arn}",
         "${module.cloudwatch_bastion_cron_stream.arn}",
         "${module.cloudwatch_bastion_dmesg_stream.arn}",
