@@ -83,15 +83,16 @@ module "vpc" {
 ####################
 
 module "bastion" {
-  source        = "./modules/bastion"
-  key_name      = "${aws_key_pair.auth.key_name}"
-  bastion_sg    = "${module.security_groups.bastion-sg}"
-  public_subnet = "${module.vpc.igw_subnet_id}"
-  project       = "${var.project}"
-  service       = "${var.service}"
-  cost_centre   = "${var.cost_centre}"
-  owner         = "${var.owner}"
-  aws_region    = "${var.aws_region}"
+  source             = "./modules/bastion"
+  key_name           = "${aws_key_pair.auth.key_name}"
+  bastion_sg         = "${module.security_groups.bastion-sg}"
+  public_subnet      = "${module.vpc.igw_subnet_id}"
+  objects_bucket_arn = "arn:aws:s3:::${var.objects_bucket}"
+  project            = "${var.project}"
+  service            = "${var.service}"
+  cost_centre        = "${var.cost_centre}"
+  owner              = "${var.owner}"
+  aws_region         = "${var.aws_region}"
 }
 
 ####################

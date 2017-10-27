@@ -29,3 +29,7 @@ variable "bastion_sg" {
 variable "key_name" {
   description = "The name of the public key to access the bastion server."
 }
+
+variable "objects_bucket_arn" {
+  description = "The ARN of the objects bucket."
+}
