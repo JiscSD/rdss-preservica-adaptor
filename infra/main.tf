@@ -238,111 +238,113 @@ resource "aws_iam_role_policy" "cloudwatch_kinesis_policy" {
 EOF
 }
 
-module "cloudwatch_flowlogs" {
-  source          = "./modules/cloudwatch"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_flowlogs" {
   name            = "subscription_filter_preservicaservice_flowlogs_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "${module.flowlogs.log_group_nam}"
+  filter_pattern  = ""
   destination_arn = "${module.cloudwatch_flowlogs_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-module "cloudwatch_bastion_audit" {
-  source          = "./modules/cloudwatch"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_bastion_audit" {
   name            = "subscription_filter_preservicaservice_bastion_audit_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/audit/audit.log"
+  filter_pattern  = ""
   destination_arn = "${module.cloudwatch_bastion_audit_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-module "cloudwatch_bastion_cron" {
-  source          = "./modules/cloudwatch"
-  name            = "subscription_filter_preservicaservice_bastion_cron_${terraform.env}"
-  role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
-  log_group_name  = "preservicaservice-${terraform.env}-/var/log/cron"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_bastion_cron" {
+  name           = "subscription_filter_preservicaservice_bastion_cron_${terraform.env}"
+  role_arn       = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
+  log_group_name = "preservicaservice-${terraform.env}-/var/log/cron"
+  filter_pattern = ""
+
   destination_arn = "${module.cloudwatch_bastion_cron_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-module "cloudwatch_bastion_dmesg" {
-  source          = "./modules/cloudwatch"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_bastion_dmesg" {
   name            = "subscription_filter_preservicaservice_bastion_dmesg_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/dmesg"
+  filter_pattern  = ""
   destination_arn = "${module.cloudwatch_bastion_dmesg_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-module "cloudwatch_bastion_messages" {
-  source          = "./modules/cloudwatch"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_bastion_messages" {
   name            = "subscription_filter_preservicaservice_bastion_messages_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/messages"
+  filter_pattern  = ""
   destination_arn = "${module.cloudwatch_bastion_messages_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-module "cloudwatch_bastion_secure" {
-  source          = "./modules/cloudwatch"
-  name            = "subscription_filter_preservicaservice_bastion_secure_${terraform.env}"
-  role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
-  log_group_name  = "preservicaservice-${terraform.env}-/var/log/secure"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_bastion_secure" {
+  name           = "subscription_filter_preservicaservice_bastion_secure_${terraform.env}"
+  role_arn       = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
+  log_group_name = "preservicaservice-${terraform.env}-/var/log/secure"
+  filter_pattern = ""
+
   destination_arn = "${module.cloudwatch_bastion_secure_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-module "cloudwatch_node_debug" {
-  source          = "./modules/cloudwatch"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_node_debug" {
   name            = "subscription_filter_preservicaservice_node_debug_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}"
+  filter_pattern  = ""
   destination_arn = "${module.cloudwatch_node_debug_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-module "cloudwatch_node_auth" {
-  source          = "./modules/cloudwatch"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_node_auth" {
   name            = "subscription_filter_preservicaservice_node_auth_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/auth.log"
+  filter_pattern  = ""
   destination_arn = "${module.cloudwatch_node_auth_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-module "cloudwatch_node_dpkg" {
-  source          = "./modules/cloudwatch"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_node_dpkg" {
   name            = "subscription_filter_preservicaservice_node_dpkg_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/dpkg.log"
+  filter_pattern  = ""
   destination_arn = "${module.cloudwatch_node_dpkg_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-module "cloudwatch_node_kern" {
-  source          = "./modules/cloudwatch"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_node_kern" {
   name            = "subscription_filter_preservicaservice_node_kern_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/kern.log"
+  filter_pattern  = ""
   destination_arn = "${module.cloudwatch_node_kern_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-module "cloudwatch_node_syslog" {
-  source          = "./modules/cloudwatch"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_node_syslog" {
   name            = "subscription_filter_preservicaservice_node_syslog_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/syslog"
+  filter_pattern  = ""
   destination_arn = "${module.cloudwatch_node_syslog_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
