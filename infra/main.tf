@@ -244,109 +244,109 @@ resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_flowlogs" {
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "${module.flowlogs.log_group_nam}"
   filter_pattern  = ""
-  destination_arn = "${module.cloudwatch_flowlogs_stream.arn}"
+  destination_arn = "${module.cloudwatch_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_bastion_audit" {
-  name            = "subscription_filter_preservicaservice_bastion_audit_${terraform.env}"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_audit" {
+  name            = "subscription_filter_preservicaservice_audit_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/audit/audit.log"
   filter_pattern  = ""
-  destination_arn = "${module.cloudwatch_bastion_audit_stream.arn}"
+  destination_arn = "${module.cloudwatch_audit_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_bastion_cron" {
-  name           = "subscription_filter_preservicaservice_bastion_cron_${terraform.env}"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_cron" {
+  name           = "subscription_filter_preservicaservice_cron_${terraform.env}"
   role_arn       = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name = "preservicaservice-${terraform.env}-/var/log/cron"
   filter_pattern = ""
 
-  destination_arn = "${module.cloudwatch_bastion_cron_stream.arn}"
+  destination_arn = "${module.cloudwatch_cron_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_bastion_dmesg" {
-  name            = "subscription_filter_preservicaservice_bastion_dmesg_${terraform.env}"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_dmesg" {
+  name            = "subscription_filter_preservicaservice_dmesg_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/dmesg"
   filter_pattern  = ""
-  destination_arn = "${module.cloudwatch_bastion_dmesg_stream.arn}"
+  destination_arn = "${module.cloudwatch_dmesg_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_bastion_messages" {
-  name            = "subscription_filter_preservicaservice_bastion_messages_${terraform.env}"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_messages" {
+  name            = "subscription_filter_preservicaservice_messages_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/messages"
   filter_pattern  = ""
-  destination_arn = "${module.cloudwatch_bastion_messages_stream.arn}"
+  destination_arn = "${module.cloudwatch_messages_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_bastion_secure" {
-  name           = "subscription_filter_preservicaservice_bastion_secure_${terraform.env}"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_secure" {
+  name           = "subscription_filter_preservicaservice_secure_${terraform.env}"
   role_arn       = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name = "preservicaservice-${terraform.env}-/var/log/secure"
   filter_pattern = ""
 
-  destination_arn = "${module.cloudwatch_bastion_secure_stream.arn}"
+  destination_arn = "${module.cloudwatch_secure_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_node_debug" {
-  name            = "subscription_filter_preservicaservice_node_debug_${terraform.env}"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_debug" {
+  name            = "subscription_filter_preservicaservice_debug_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
-  log_group_name  = "preservicaservice-${terraform.env}"
+  log_group_name  = "preservicaservice-${terraform.env}-/var/log/preservicaservice/debug.log"
   filter_pattern  = ""
-  destination_arn = "${module.cloudwatch_node_debug_stream.arn}"
+  destination_arn = "${module.cloudwatch_debug_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_node_auth" {
-  name            = "subscription_filter_preservicaservice_node_auth_${terraform.env}"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_auth" {
+  name            = "subscription_filter_preservicaservice_auth_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/auth.log"
   filter_pattern  = ""
-  destination_arn = "${module.cloudwatch_node_auth_stream.arn}"
+  destination_arn = "${module.cloudwatch_auth_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_node_dpkg" {
-  name            = "subscription_filter_preservicaservice_node_dpkg_${terraform.env}"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_dpkg" {
+  name            = "subscription_filter_preservicaservice_dpkg_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/dpkg.log"
   filter_pattern  = ""
-  destination_arn = "${module.cloudwatch_node_dpkg_stream.arn}"
+  destination_arn = "${module.cloudwatch_dpkg_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_node_kern" {
-  name            = "subscription_filter_preservicaservice_node_kern_${terraform.env}"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_kern" {
+  name            = "subscription_filter_preservicaservice_kern_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/kern.log"
   filter_pattern  = ""
-  destination_arn = "${module.cloudwatch_node_kern_stream.arn}"
+  destination_arn = "${module.cloudwatch_kern_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
-resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_node_syslog" {
-  name            = "subscription_filter_preservicaservice_node_syslog_${terraform.env}"
+resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_syslog" {
+  name            = "subscription_filter_preservicaservice_syslog_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/syslog"
   filter_pattern  = ""
-  destination_arn = "${module.cloudwatch_node_syslog_stream.arn}"
+  destination_arn = "${module.cloudwatch_syslog_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
@@ -370,9 +370,9 @@ module "cloudwatch_flowlogs_stream" {
   owner            = "${var.owner}"
 }
 
-module "cloudwatch_bastion_audit_stream" {
+module "cloudwatch_audit_stream" {
   source           = "./modules/kinesis"
-  name             = "cloudwatch_preservicaservice_bastion_audit_${terraform.env}"
+  name             = "cloudwatch_preservicaservice_audit_${terraform.env}"
   shard_count      = "${var.kinesis_shard_count}"
   retention_period = "${var.kinesis_retention_period}"
   project          = "${var.project}"
@@ -381,9 +381,9 @@ module "cloudwatch_bastion_audit_stream" {
   owner            = "${var.owner}"
 }
 
-module "cloudwatch_bastion_cron_stream" {
+module "cloudwatch_cron_stream" {
   source           = "./modules/kinesis"
-  name             = "cloudwatch_preservicaservice_bastion_cron_${terraform.env}"
+  name             = "cloudwatch_preservicaservice_cron_${terraform.env}"
   shard_count      = "${var.kinesis_shard_count}"
   retention_period = "${var.kinesis_retention_period}"
   project          = "${var.project}"
@@ -392,9 +392,9 @@ module "cloudwatch_bastion_cron_stream" {
   owner            = "${var.owner}"
 }
 
-module "cloudwatch_bastion_dmesg_stream" {
+module "cloudwatch_dmesg_stream" {
   source           = "./modules/kinesis"
-  name             = "cloudwatch_preservicaservice_bastion_dmesg_${terraform.env}"
+  name             = "cloudwatch_preservicaservice_dmesg_${terraform.env}"
   shard_count      = "${var.kinesis_shard_count}"
   retention_period = "${var.kinesis_retention_period}"
   project          = "${var.project}"
@@ -403,9 +403,9 @@ module "cloudwatch_bastion_dmesg_stream" {
   owner            = "${var.owner}"
 }
 
-module "cloudwatch_bastion_messages_stream" {
+module "cloudwatch_messages_stream" {
   source           = "./modules/kinesis"
-  name             = "cloudwatch_preservicaservice_bastion_messages_${terraform.env}"
+  name             = "cloudwatch_preservicaservice_messages_${terraform.env}"
   shard_count      = "${var.kinesis_shard_count}"
   retention_period = "${var.kinesis_retention_period}"
   project          = "${var.project}"
@@ -414,9 +414,9 @@ module "cloudwatch_bastion_messages_stream" {
   owner            = "${var.owner}"
 }
 
-module "cloudwatch_bastion_secure_stream" {
+module "cloudwatch_secure_stream" {
   source           = "./modules/kinesis"
-  name             = "cloudwatch_preservicaservice_bastion_secure_${terraform.env}"
+  name             = "cloudwatch_preservicaservice_secure_${terraform.env}"
   shard_count      = "${var.kinesis_shard_count}"
   retention_period = "${var.kinesis_retention_period}"
   project          = "${var.project}"
@@ -425,9 +425,9 @@ module "cloudwatch_bastion_secure_stream" {
   owner            = "${var.owner}"
 }
 
-module "cloudwatch_node_debug_stream" {
+module "cloudwatch_debug_stream" {
   source           = "./modules/kinesis"
-  name             = "cloudwatch_preservicaservice_node_debug_${terraform.env}"
+  name             = "cloudwatch_preservicaservice_debug_${terraform.env}"
   shard_count      = "${var.kinesis_shard_count}"
   retention_period = "${var.kinesis_retention_period}"
   project          = "${var.project}"
@@ -436,9 +436,9 @@ module "cloudwatch_node_debug_stream" {
   owner            = "${var.owner}"
 }
 
-module "cloudwatch_node_auth_stream" {
+module "cloudwatch_auth_stream" {
   source           = "./modules/kinesis"
-  name             = "cloudwatch_preservicaservice_node_auth_${terraform.env}"
+  name             = "cloudwatch_preservicaservice_auth_${terraform.env}"
   shard_count      = "${var.kinesis_shard_count}"
   retention_period = "${var.kinesis_retention_period}"
   project          = "${var.project}"
@@ -447,9 +447,9 @@ module "cloudwatch_node_auth_stream" {
   owner            = "${var.owner}"
 }
 
-module "cloudwatch_node_dpkg_stream" {
+module "cloudwatch_dpkg_stream" {
   source           = "./modules/kinesis"
-  name             = "cloudwatch_preservicaservice_node_dpkg_${terraform.env}"
+  name             = "cloudwatch_preservicaservice_dpkg_${terraform.env}"
   shard_count      = "${var.kinesis_shard_count}"
   retention_period = "${var.kinesis_retention_period}"
   project          = "${var.project}"
@@ -458,9 +458,9 @@ module "cloudwatch_node_dpkg_stream" {
   owner            = "${var.owner}"
 }
 
-module "cloudwatch_node_kern_stream" {
+module "cloudwatch_kern_stream" {
   source           = "./modules/kinesis"
-  name             = "cloudwatch_preservicaservice_node_kern_${terraform.env}"
+  name             = "cloudwatch_preservicaservice_kern_${terraform.env}"
   shard_count      = "${var.kinesis_shard_count}"
   retention_period = "${var.kinesis_retention_period}"
   project          = "${var.project}"
@@ -469,9 +469,9 @@ module "cloudwatch_node_kern_stream" {
   owner            = "${var.owner}"
 }
 
-module "cloudwatch_node_syslog_stream" {
+module "cloudwatch_syslog_stream" {
   source           = "./modules/kinesis"
-  name             = "cloudwatch_preservicaservice_node_syslog_${terraform.env}"
+  name             = "cloudwatch_preservicaservice_syslog_${terraform.env}"
   shard_count      = "${var.kinesis_shard_count}"
   retention_period = "${var.kinesis_retention_period}"
   project          = "${var.project}"
