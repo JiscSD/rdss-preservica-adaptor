@@ -244,6 +244,8 @@ module "cloudwatch_flowlogs" {
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "${module.flowlogs.log_group_nam}"
   destination_arn = "${module.cloudwatch_flowlogs_stream.arn}"
+
+  depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
 module "cloudwatch_bastion_audit" {
@@ -252,6 +254,8 @@ module "cloudwatch_bastion_audit" {
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/audit/audit.log"
   destination_arn = "${module.cloudwatch_bastion_audit_stream.arn}"
+
+  depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
 module "cloudwatch_bastion_cron" {
@@ -260,6 +264,8 @@ module "cloudwatch_bastion_cron" {
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/cron"
   destination_arn = "${module.cloudwatch_bastion_cron_stream.arn}"
+
+  depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
 module "cloudwatch_bastion_dmesg" {
@@ -268,6 +274,8 @@ module "cloudwatch_bastion_dmesg" {
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/dmesg"
   destination_arn = "${module.cloudwatch_bastion_dmesg_stream.arn}"
+
+  depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
 module "cloudwatch_bastion_messages" {
@@ -276,6 +284,8 @@ module "cloudwatch_bastion_messages" {
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/messages"
   destination_arn = "${module.cloudwatch_bastion_messages_stream.arn}"
+
+  depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
 module "cloudwatch_bastion_secure" {
@@ -284,6 +294,8 @@ module "cloudwatch_bastion_secure" {
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/secure"
   destination_arn = "${module.cloudwatch_bastion_secure_stream.arn}"
+
+  depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
 module "cloudwatch_node_debug" {
@@ -292,6 +304,8 @@ module "cloudwatch_node_debug" {
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}"
   destination_arn = "${module.cloudwatch_node_debug_stream.arn}"
+
+  depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
 module "cloudwatch_node_auth" {
@@ -300,6 +314,8 @@ module "cloudwatch_node_auth" {
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/auth.log"
   destination_arn = "${module.cloudwatch_node_auth_stream.arn}"
+
+  depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
 module "cloudwatch_node_dpkg" {
@@ -308,6 +324,8 @@ module "cloudwatch_node_dpkg" {
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/dpkg.log"
   destination_arn = "${module.cloudwatch_node_dpkg_stream.arn}"
+
+  depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
 module "cloudwatch_node_kern" {
@@ -316,6 +334,8 @@ module "cloudwatch_node_kern" {
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/kern.log"
   destination_arn = "${module.cloudwatch_node_kern_stream.arn}"
+
+  depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
 module "cloudwatch_node_syslog" {
@@ -324,6 +344,8 @@ module "cloudwatch_node_syslog" {
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "preservicaservice-${terraform.env}-/var/log/syslog"
   destination_arn = "${module.cloudwatch_node_syslog_stream.arn}"
+
+  depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
 
 ####################
