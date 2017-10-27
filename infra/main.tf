@@ -216,16 +216,16 @@ resource "aws_iam_role_policy" "cloudwatch_kinesis_policy" {
       "Effect": "Allow",
       "Action": "kinesis:PutRecord",
       "Resource": [
-        "${module.cloudwatch_bastion_audit.arn}"
-        "${module.cloudwatch_bastion_cron.arn}"
-        "${module.cloudwatch_bastion_dmesg.arn}"
-        "${module.cloudwatch_bastion_messages.arn}"
-        "${module.cloudwatch_bastion_secure.arn}"
-        "${module.cloudwatch_node_debug.arn}"
-        "${module.cloudwatch_node_auth.arn}"
-        "${module.cloudwatch_node_dpkg.arn}"
-        "${module.cloudwatch_node_kern.arn}"
-        "${module.cloudwatch_node_syslog.arn}"
+        "${module.cloudwatch_bastion_audit_stream.arn}"
+        "${module.cloudwatch_bastion_cron_stream.arn}"
+        "${module.cloudwatch_bastion_dmesg_stream.arn}"
+        "${module.cloudwatch_bastion_messages_stream.arn}"
+        "${module.cloudwatch_bastion_secure_stream.arn}"
+        "${module.cloudwatch_node_debug_stream.arn}"
+        "${module.cloudwatch_node_auth_stream.arn}"
+        "${module.cloudwatch_node_dpkg_stream.arn}"
+        "${module.cloudwatch_node_kern_stream.arn}"
+        "${module.cloudwatch_node_syslog_stream.arn}"
       ]
     },
     {

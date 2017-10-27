@@ -19,7 +19,7 @@ service rpcbind restart
 # Set up the AWS logs agent
 mkdir -p /var/awslogs/state
 sed -c -i "s/\(region *= *\).*/\1${var.aws_region}/" /etc/awslogs/awscli.conf
-aws s3 cp s3://rdss-preservicaservice-objects/application/config/${environment}/bastion/awslogs-agent-config.conf /etc/awslogs/awslogs.conf --region ${var.aws_region}
+aws s3 cp s3://rdss-preservicaservice-objects/application/config/${terraform.env}/bastion/awslogs-agent-config.conf /etc/awslogs/awslogs.conf --region ${var.aws_region}
 service awslogs start
 chkconfig awslogs on
 EOF
