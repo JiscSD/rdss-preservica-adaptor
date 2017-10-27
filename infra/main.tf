@@ -217,16 +217,16 @@ resource "aws_iam_role_policy" "cloudwatch_kinesis_policy" {
       "Action": "kinesis:PutRecord",
       "Resource": [
         "${module.cloudwatch_flowlogs_stream.arn}",
-        "${module.cloudwatch_bastion_audit_stream.arn}",
-        "${module.cloudwatch_bastion_cron_stream.arn}",
-        "${module.cloudwatch_bastion_dmesg_stream.arn}",
-        "${module.cloudwatch_bastion_messages_stream.arn}",
-        "${module.cloudwatch_bastion_secure_stream.arn}",
-        "${module.cloudwatch_node_debug_stream.arn}",
-        "${module.cloudwatch_node_auth_stream.arn}",
-        "${module.cloudwatch_node_dpkg_stream.arn}",
-        "${module.cloudwatch_node_kern_stream.arn}",
-        "${module.cloudwatch_node_syslog_stream.arn}"
+        "${module.cloudwatch_audit_stream.arn}",
+        "${module.cloudwatch_cron_stream.arn}",
+        "${module.cloudwatch_dmesg_stream.arn}",
+        "${module.cloudwatch_messages_stream.arn}",
+        "${module.cloudwatch_secure_stream.arn}",
+        "${module.cloudwatch_debug_stream.arn}",
+        "${module.cloudwatch_auth_stream.arn}",
+        "${module.cloudwatch_dpkg_stream.arn}",
+        "${module.cloudwatch_kern_stream.arn}",
+        "${module.cloudwatch_syslog_stream.arn}"
       ]
     },
     {
@@ -244,7 +244,7 @@ resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_flowlogs" {
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
   log_group_name  = "${module.flowlogs.log_group_nam}"
   filter_pattern  = ""
-  destination_arn = "${module.cloudwatch_stream.arn}"
+  destination_arn = "${module.cloudwatch_flowlogs_stream.arn}"
 
   depends_on = ["aws_iam_role_policy.cloudwatch_kinesis_policy"]
 }
