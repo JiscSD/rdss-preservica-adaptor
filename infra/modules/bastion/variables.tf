@@ -14,6 +14,10 @@ variable "owner" {
   description = "The owner of the bastion server."
 }
 
+variable "aws_region" {
+  description = "The AWS region into which the bastion server will be deployed."
+}
+
 variable "public_subnet" {
   description = "Public subnet for the bastion server."
 }
@@ -24,4 +28,8 @@ variable "bastion_sg" {
 
 variable "key_name" {
   description = "The name of the public key to access the bastion server."
+}
+
+variable "objects_bucket_arn" {
+  description = "The ARN of the objects bucket."
 }
