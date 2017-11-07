@@ -243,7 +243,7 @@ EOF
 resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_flowlogs" {
   name            = "subscription_filter_preservicaservice_flowlogs_${terraform.env}"
   role_arn        = "${aws_iam_role.cloudwatch_kinesis_role.arn}"
-  log_group_name  = "${module.flowlogs.log_group_nam}"
+  log_group_name  = "${module.flowlogs.log_group_name}"
   filter_pattern  = ""
   destination_arn = "${module.cloudwatch_flowlogs_stream.arn}"
 

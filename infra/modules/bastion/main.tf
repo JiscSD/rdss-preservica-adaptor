@@ -13,7 +13,7 @@ resource "aws_instance" "bastion" {
 yum clean all
 yum -y upgrade
 
-# Install NFS etc
+# Install awslogs
 yum -y install awslogs
 service rpcbind restart
 
