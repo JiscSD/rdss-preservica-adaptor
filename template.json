@@ -19,7 +19,6 @@
       "ssh_username": "ubuntu",
       "ami_name": "{{user `project`}}-{{isotime | clean_ami_name}}",
       "ami_description": "{{user `git_commit`}}",
-      "subnet_id": "subnet-04551c7f",
       "tags": {
         "name": "{{user `project`}}-{{user `enviornment`}}-ami",
         "owner": "{{user `owner`}}",
