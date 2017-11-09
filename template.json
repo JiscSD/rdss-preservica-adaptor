@@ -19,6 +19,8 @@
       "ssh_username": "ubuntu",
       "ami_name": "{{user `project`}}-{{isotime | clean_ami_name}}",
       "ami_description": "{{user `git_commit`}}",
+      "vpc_id": "vpc-ce742ba7",
+      "subnet_id": "subnet-3fcd5772",
       "tags": {
         "name": "{{user `project`}}-{{user `enviornment`}}-ami",
         "owner": "{{user `owner`}}",
