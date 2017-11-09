@@ -115,10 +115,6 @@
     },
     {
       "type": "shell-local",
-      "command": "cat packer_logs/build.log"
-    },
-    {
-      "type": "shell-local",
       "command": "grep -oP '(?<=InstanceIP:)[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}' packer_logs/build.log > packer-ip && cat packer-ip"
     },
     {
