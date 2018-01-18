@@ -14,7 +14,7 @@
       "name": "{{user `project`}}",
       "type": "amazon-ebs",
       "region": "eu-west-2",
-      "source_ami": "ami-167f6972",
+      "source_ami": "ami-d09d8ab4",
       "instance_type": "t2.small",
       "ssh_username": "ubuntu",
       "ami_name": "{{user `project`}}-{{isotime | clean_ami_name}}",
