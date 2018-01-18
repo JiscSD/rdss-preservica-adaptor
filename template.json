@@ -3,7 +3,7 @@
     "git_branch": "{{env `GIT_BRANCH`}}",
     "git_commit": "{{env `GIT_COMMIT`}}",
     "enviornment": "{{env `ENVIRONMENT`}}",
-    "box": "ubuntu/zesty64",
+    "box": "ubuntu/xenial64",
     "project": "preservica-service",
     "service": "rdss",
     "owner": "alan.mackenzie@digirati.com",
@@ -28,7 +28,7 @@
         "costcentre": "{{user `costcentre`}}"
       },
       "run_tags": {
-        "name": "{{user `project`}}-{{user `enviornment`}}-packer-builder",
+        "Name": "{{user `project`}}-{{user `enviornment`}}-packer-builder",
         "owner": "{{user `owner`}}",
         "enviornment": "{{user `enviornment`}}",
         "project": "{{user `project`}}",
