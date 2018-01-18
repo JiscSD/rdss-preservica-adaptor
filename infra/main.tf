@@ -115,13 +115,19 @@ module "security_groups" {
 ####################
 
 module "iam_role" {
-  source              = "./modules/iam_role"
-  input_stream_arn    = "${data.aws_kinesis_stream.input_stream.arn}"
-  error_stream_arn    = "arn:aws:kinesis:*:*:stream/${var.error_stream_name}_${terraform.env}"
-  upload_buckets_arns = "${formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.env)}"
-  objects_bucket_arn  = "arn:aws:s3:::${var.objects_bucket}"
-  dynamodb_arn        = "*"
-  project             = "${var.project}"
+  source           = "./modules/iam_role"
+  input_stream_arn = "${data.aws_kinesis_stream.input_stream.arn}"
+  error_stream_arn = "arn:aws:kinesis:*:*:stream/${var.error_stream_name}_${terraform.env}"
+
+  # upload_buckets_arns = "${formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.env)}"
+
+  # NOTE: The below is a temporary workaround until a `dev` and `uat` preservica
+  # becomes available. Once that happens the bellow line can be removed and above
+  # uncommented.
+  upload_buckets_arns = ["${split(",", terraform.env == "prod" ? join(",", formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.env)) : join(",", var.uat_dev_uoj_workaround_bucket))}"]
+  objects_bucket_arn = "arn:aws:s3:::${var.objects_bucket}"
+  dynamodb_arn       = "*"
+  project            = "${var.project}"
 }
 
 ####################

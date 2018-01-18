@@ -142,3 +142,8 @@ variable "access_ip_whitelist" {
     "88.98.209.19/32",   # Mark Winterbottom
   ]
 }
+
+variable "uat_dev_uoj_workaround_bucket" {
+  description = "Buckets to upload to for temp workaround until Preservica is available in UAT and DEV"
+  default     = ["arn:aws:s3:::uk.ac.jisc.alpha.researchdata.s3.uoj.autoupload"]
+}
