@@ -1,7 +1,7 @@
 require 'serverspec'
 require 'spec_helper'
 
-describe package('python3.6') do
+describe package('python3.5') do
   it { should be_installed }
 end
 

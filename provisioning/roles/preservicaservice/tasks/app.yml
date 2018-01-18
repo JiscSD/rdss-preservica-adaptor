@@ -4,7 +4,7 @@
   pip:
     requirements: '{{preservicaservice_install_path}}/requirements.txt'
     virtualenv: '{{preservicaservice_install_path}}/.env.provisioning'
-    virtualenv_command: '/usr/bin/python3.6 -m venv'
+    virtualenv_command: '/usr/bin/python3.5 -m venv'
 
 - name: install package to env
   pip:
@@ -12,4 +12,4 @@
     extra_args: '-e'
     name: '.'
     virtualenv: '{{preservicaservice_install_path}}/.env.provisioning'
-    virtualenv_command: '/usr/bin/python3.6 -m venv'
+    virtualenv_command: '/usr/bin/python3.5 -m venv'
