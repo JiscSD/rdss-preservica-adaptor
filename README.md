@@ -1,32 +1,40 @@
-# rdss-preservica-adaptor
+# RDSS Preservica Adaptor
+
 Adaptor service for publishing to Preservica.
 
 Note that the Preservica Adaptor will attempt to read from a Kinesis Stream created by the Message Broker component. Therefore, the Message Broker MUST be deployed to the target environment BEFORE this component.
 
 ## Service Information
+
 Preservica DOI records are created based upon the [message payloads](https://github.com/JiscRDSS/rdss-message-api-docs/tree/master/messages/metadata) published to the input kinesis stream.
 
 ### Service Application Code
+
 Python3.6. Uses the [AWS Kinesis Client Python Library](https://github.com/awslabs/amazon-kinesis-client-python).
 
 #### Flow
+
 1. Listens for create messages from the `shared_services_output_$ENVIRONMENT` kinesis stream using the [Java KCL daemon](https://github.com/awslabs/amazon-kinesis-client)
 2. Downloads files referenced in payload message and generates a zip bundle
 3. Uploads the zip bundle to the appropriate bucket for the organisation which produced the files. A dictionary mapping organisation ID to to S3 bucket is present in the config file for each environment, see the [dev config](config/dev.py) for an example.
 
 #### Create behaviour
-Uploads zip to S3 bucket.
-Update/Delete operations are not supported.
+
+ - Uploads zip to S3 bucket.
+ - Update/Delete operations are not supported.
 
 #### Metatdata
 
 ##### Root Metadata file
+
 A metadata file is created and placed in the root of the package. The contents are the entire kinesis message converted into XML.
 
 ##### Metadata for individual Files in the payload
+
 A metadata file in dublin core format is created for each file listed in the message payload. The metatdata filename uses the same s3 object key name as its s3 object key (`{}.metadata.xml`). The metadata content is a single node listing the file name.
 
 ##### Metadata Example
+
 Example create payload:
 ```JavaScript
 {
@@ -111,19 +119,24 @@ createdby         `"role"` property of `messageBody.objectOrganisationRole` obje
 - `createdby` S3 attribute of zip bundle - taken from `messageBody.ObjectPublisher[]` objects - `role` property. An assumption that all objects have the same value for `role` property. Current logic is to take the value from first object in the list.
 
 #### Logging
+
 Logs are written to the local syslog service and follow the format specified in [Message API docs logging section](https://github.com/JiscRDSS/rdss-message-api-docs/#logging).
 
 #### Errors
+
 Errors are published to the `message_error_$ENVIRONMENT` kinesis stream. Error handling adheres to the guidelines outlined in the [Message API docs](https://github.com/JiscRDSS/rdss-message-api-docs/#error-queues).
 
 -----------------------------------------------------------
 ### Service Infrastructure
+
 Fully baked AMI deployed into an Autoscaling Group using Ansible, Packer & Terraform.
 
 #### Configuration
+
 Application uses 12 Factor configuration. Selects appropriate configuration file based upon `$ENVIRONMENT` value set at deploy time.
 
 #### Supported Environments
+
 - `dev`
 - `uat`
 - `prod`
@@ -133,6 +146,7 @@ Application uses 12 Factor configuration. Selects appropriate configuration file
 The application is deployed into a private subnet. A bastion box is not a requirement at this stage. If you need to SSH into the ec2 instance while testing change the value of `$LAUNCH_IN_PUBLIC_SUBNET` in your environment when running `deploy`.
 
 #### Updating Base AMI Image
+
 Choose the hvm-ssd image type from the [ubuntu AMI search page](https://cloud-images.ubuntu.com/locator/ec2/.)
 
 -----------------------------------------------------------
@@ -144,6 +158,7 @@ Requires Terraform and Packer to be installed.
 ### Setup
 
 Set required variables in environment.
+
 ```
 cp .env.example .env
 # edit .env
@@ -175,6 +190,7 @@ Install terraform.
 ## Tests
 
 ### Application Tests
+
 ```
 make env
 make deps
@@ -187,11 +203,13 @@ make lint
 Requires vagrant to be installed.
 
 ##### Install kitchen and dependencies
+
 ```
 bundle install
 ```
 
 ### Run Tests
+
 ```
 kitchen test
 ```
