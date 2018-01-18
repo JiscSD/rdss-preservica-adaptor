@@ -10,7 +10,7 @@ Preservica DOI records are created based upon the [message payloads](https://git
 
 ### Service Application Code
 
-Python3.6. Uses the [AWS Kinesis Client Python Library](https://github.com/awslabs/amazon-kinesis-client-python).
+Python3.5. Uses the [AWS Kinesis Client Python Library](https://github.com/awslabs/amazon-kinesis-client-python).
 
 #### Flow
 
