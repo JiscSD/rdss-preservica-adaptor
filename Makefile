@@ -1,4 +1,4 @@
-PYTHON = python3.6
+PYTHON = python3.5
 COVERAGE_MIN = 40
 
 env:
