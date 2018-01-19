@@ -139,7 +139,7 @@ variable "access_ip_whitelist" {
   default = [
     "62.254.125.26/32",  # Glasgow
     "46.102.195.182/32", # London
-    "88.98.209.19/32",   # Mark Winterbottom
+    "88.98.212.19/32",   # Mark Winterbottom
   ]
 }
 

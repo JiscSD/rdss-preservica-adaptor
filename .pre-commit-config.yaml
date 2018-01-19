@@ -1,12 +1,8 @@
--   repo: https://github.com/kintoandar/pre-commit
-    sha: v0.0.2
-    hooks:
-    -   id: terraform_validate
-
--   repo: https://github.com/antonbabenko/pre-commit-terraform
-    sha: v1.1.0
+-   repo: https://github.com/kintoandar/pre-commit.git
+    sha: v2.1.0
     hooks:
     -   id: terraform_fmt
+    -   id: terraform_validate
 
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     sha: 46251c9523506b68419aefdf5ff6ff2fbc4506a4
