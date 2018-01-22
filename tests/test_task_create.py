@@ -59,7 +59,8 @@ def test_run_succeeds(temp_file, task):
     assert_zip_contains(
         temp_file,
         'object-uuid/object-uuid.metadata',
-        partial='<root><foo type="str">bar</foo>',
+        partial='<root schemaURI="http://jisc.ac.uk/#rdss/schema">'
+                '<foo type="str">bar</foo>',
     )
 
     assert_zip_contains(
