@@ -49,7 +49,7 @@ def write_message_meta(file_path, data):
     """
     contents = dicttoxml(data).decode('utf-8')
     contents = contents.replace(
-        '<root>', '<root schemaURI="http://jisc.ac.uk/#rdss/schema">',
+        '<root>', '<root xmlns="http://jisc.ac.uk/#rdss/schema">',
     )
     with open(file_path, 'w') as f:
         f.write(contents)

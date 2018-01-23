@@ -52,7 +52,7 @@ def test_bundle_meta(temp_file, task):
     assert_zip_contains(
         temp_file,
         'object_id/object_id.metadata',
-        partial='<root schemaURI="http://jisc.ac.uk/#rdss/schema">'
+        partial='<root xmlns="http://jisc.ac.uk/#rdss/schema">'
                 '<foo type="str">bar</foo>',
     )
 
