@@ -1,9 +1,5 @@
-dist: xenial
 sudo: required
 language: python
-env:
-  global:
-    - TERRAFORM_VERSION=0.10.8
 
 python:
   - "3.5-dev"
@@ -18,7 +14,7 @@ addons:
 before_install:
   - >
       travis_retry curl
-      "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
+      "https://releases.hashicorp.com/terraform/0.10.8/terraform_0.10.8_linux_amd64.zip"
       > /tmp/terraform.zip
   - sudo unzip /tmp/terraform.zip -d /usr/bin
   - sudo chmod +x /usr/bin/terraform
