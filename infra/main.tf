@@ -8,6 +8,8 @@ terraform {
     key    = "preservicaservice.tfstate"
     region = "eu-west-2"
   }
+
+  required_version = "0.10.8"
 }
 
 ####################

@@ -3,7 +3,7 @@ sudo: required
 language: python
 env:
   global:
-    - TERRAFORM_VERSION=0.9.11
+    - TERRAFORM_VERSION=0.10.8
 
 python:
   - "3.5-dev"
