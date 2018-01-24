@@ -18,10 +18,10 @@ cd "$CURRENT_DIR/infra" || exit 1
 if [[ ! -d .terraform ]]; then
   terraform init
 fi
-if ! terraform env list 2>&1 | grep -qi "$ENVIRONMENT"; then
-  terraform env new "$ENVIRONMENT"
+if ! terraform workspace list 2>&1 | grep -qi "$ENVIRONMENT"; then
+  terraform workspace new "$ENVIRONMENT"
 fi
-terraform env select "$ENVIRONMENT"
+terraform workspace select "$ENVIRONMENT"
 terraform get
 
 terraform plan \

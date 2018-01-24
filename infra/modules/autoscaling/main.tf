@@ -2,7 +2,7 @@ data "template_file" "init" {
   template = "${file("${path.module}/init.tpl")}"
 
   vars {
-    environment   = "${terraform.env}"
+    environment   = "${terraform.workspace}"
     systemd_unit  = "${var.systemd_unit}"
     env_file_path = "${var.env_file_path}"
   }
@@ -19,7 +19,7 @@ data "template_cloudinit_config" "config" {
 }
 
 resource "aws_iam_instance_profile" "profile" {
-  name = "${var.project}-${terraform.env}-profile"
+  name = "${var.project}-${terraform.workspace}-profile"
   role = "${var.role_name}"
 }
 
@@ -38,7 +38,7 @@ resource "aws_launch_configuration" "config" {
 
 resource "aws_autoscaling_group" "group" {
   availability_zones        = "${var.availability_zones}"
-  name                      = "${var.project}-${terraform.env}-${aws_launch_configuration.config.name}-config"
+  name                      = "${var.project}-${terraform.workspace}-${aws_launch_configuration.config.name}-config"
   min_size                  = "${var.min_size}"
   max_size                  = "${var.max_size}"
   desired_capacity          = "${var.desired_capacity}"
@@ -54,13 +54,13 @@ resource "aws_autoscaling_group" "group" {
 
   tag {
     key                 = "Name"
-    value               = "${var.project}-${terraform.env}-node"
+    value               = "${var.project}-${terraform.workspace}-node"
     propagate_at_launch = true
   }
 
   tag {
     key                 = "Environment"
-    value               = "${terraform.env}"
+    value               = "${terraform.workspace}"
     propagate_at_launch = true
   }
 

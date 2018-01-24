@@ -17,11 +17,11 @@ terraform {
 ####################
 
 data "template_file" "public_key" {
-  template = "${file("public-keys/preservicaservice-${terraform.env}.pub")}"
+  template = "${file("public-keys/preservicaservice-${terraform.workspace}.pub")}"
 }
 
 resource "aws_key_pair" "auth" {
-  key_name   = "${var.project}-${terraform.env}"
+  key_name   = "${var.project}-${terraform.workspace}"
   public_key = "${data.template_file.public_key.rendered}"
 
   lifecycle {
@@ -38,13 +38,13 @@ data "template_file" "awslogs_agent_bastion_config" {
 
   vars {
     instance_type         = "bastion"
-    terraform_environment = "${terraform.env}"
+    terraform_environment = "${terraform.workspace}"
   }
 }
 
 resource "aws_s3_bucket_object" "config_objects_awslogs_agent_bastion_config" {
   bucket  = "${var.objects_bucket}"
-  key     = "application/config/${terraform.env}/bastion/awslogs-agent-config.conf"
+  key     = "application/config/${terraform.workspace}/bastion/awslogs-agent-config.conf"
   content = "${data.template_file.awslogs_agent_bastion_config.rendered}"
   etag    = "${md5(data.template_file.awslogs_agent_bastion_config.rendered)}"
 }
@@ -54,13 +54,13 @@ data "template_file" "awslogs_agent_node_config" {
 
   vars {
     instance_type         = "node"
-    terraform_environment = "${terraform.env}"
+    terraform_environment = "${terraform.workspace}"
   }
 }
 
 resource "aws_s3_bucket_object" "config_objects_awslogs_agent_node_config" {
   bucket  = "${var.objects_bucket}"
-  key     = "application/config/${terraform.env}/node/awslogs-agent-config.conf"
+  key     = "application/config/${terraform.workspace}/node/awslogs-agent-config.conf"
   content = "${data.template_file.awslogs_agent_node_config.rendered}"
   etag    = "${md5(data.template_file.awslogs_agent_node_config.rendered)}"
 }
@@ -119,14 +119,14 @@ module "security_groups" {
 module "iam_role" {
   source           = "./modules/iam_role"
   input_stream_arn = "${data.aws_kinesis_stream.input_stream.arn}"
-  error_stream_arn = "arn:aws:kinesis:*:*:stream/${var.error_stream_name}_${terraform.env}"
+  error_stream_arn = "arn:aws:kinesis:*:*:stream/${var.error_stream_name}_${terraform.workspace}"
 
-  # upload_buckets_arns = "${formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.env)}"
+  # upload_buckets_arns = "${formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.workspace)}"
 
   # NOTE: The below is a temporary workaround until a `dev` and `uat` preservica
   # becomes available. Once that happens the bellow line can be removed and above
   # uncommented.
-  upload_buckets_arns = ["${split(",", terraform.env == "prod" ? join(",", formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.env)) : join(",", var.uat_dev_uoj_workaround_bucket))}"]
+  upload_buckets_arns = ["${split(",", terraform.workspace == "prod" ? join(",", formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.workspace)) : join(",", var.uat_dev_uoj_workaround_bucket))}"]
   objects_bucket_arn = "arn:aws:s3:::${var.objects_bucket}"
   dynamodb_arn       = "*"
   project            = "${var.project}"
@@ -174,5 +174,5 @@ module "flowlogs" {
 ####################
 
 data "aws_kinesis_stream" "input_stream" {
-  name = "shared_services_output_${terraform.env}"
+  name = "shared_services_output_${terraform.workspace}"
 }
