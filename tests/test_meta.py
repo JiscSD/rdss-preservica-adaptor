@@ -31,7 +31,7 @@ def test_write_object_meta(temp_file, data, contents):
             {'foo': {'bar': 'baz'}},
             (
                 '<?xml version="1.0" encoding="UTF-8" ?>'
-                '<root>'
+                '<root xmlns="http://jisc.ac.uk/#rdss/schema">'
                 '<foo type="dict">'
                 '<bar type="str">baz</bar>'
                 '</foo>'

@@ -8,7 +8,7 @@ galaxy_info:
   platforms:
    - name: Ubuntu
      versions:
-     - zesty
+     - xenial
 
 dependencies:
   - { role: tersmitten.locales, locales_present: 'en_US.UTF-8', locales_default: { lang: en_US.UTF-8 } }

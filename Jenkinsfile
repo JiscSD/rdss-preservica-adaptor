@@ -32,7 +32,14 @@ pipeline {
       agent { dockerfile true }
       steps {
         ansiColor('xterm') {
-          withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins_aws', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'],]) {
+          withCredentials(
+            [[
+              $class: 'AmazonWebServicesCredentialsBinding',
+              accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+              credentialsId: 'jenkins_aws',
+              secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+            ],]
+          ) {
             sh "bin/buildami"
             stash(name: "deploy_build_vars", includes: 'deploy_build_vars.json')
           }
@@ -43,7 +50,14 @@ pipeline {
       agent { dockerfile true }
       steps {
         ansiColor('xterm') {
-          withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins_aws', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'],]) {
+          withCredentials(
+            [[
+              $class: 'AmazonWebServicesCredentialsBinding',
+              accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+              credentialsId: 'jenkins_aws',
+              secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+            ],]
+          ) {
             unstash "deploy_build_vars"
             sh "mkdir -p  ~/.ssh/ && ssh-keyscan github.com | tee -a ~/.ssh/known_hosts"
             sshagent(['git']) {

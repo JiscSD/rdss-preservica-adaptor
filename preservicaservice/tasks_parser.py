@@ -25,7 +25,7 @@ def decode_record(record):
     """
     try:
         value = base64.b64decode(record.data)
-        message = json.loads(value)
+        message = json.loads(value.decode('utf-8'))
     except (TypeError, ValueError, binascii.Error):
         raise MalformedJsonBodyError()
 

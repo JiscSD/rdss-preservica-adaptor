@@ -47,6 +47,9 @@ def write_message_meta(file_path, data):
     :param dict data: contents to generate xml
     :return:
     """
-    contents = dicttoxml(data)
+    contents = dicttoxml(data).decode('utf-8')
+    contents = contents.replace(
+        '<root>', '<root xmlns="http://jisc.ac.uk/#rdss/schema">',
+    )
     with open(file_path, 'w') as f:
-        f.write(contents.decode('utf-8'))
+        f.write(contents)

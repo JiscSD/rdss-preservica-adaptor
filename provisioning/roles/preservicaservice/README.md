@@ -18,9 +18,9 @@ Role Variables
 
     # packages required + extra
     preservicaservice_packages:
-     - python3.6-dev
-     - python3.6-venv
-     - python3.6
+     - python3.5-dev
+     - python3.5-venv
+     - python3.5
      - git
      - build-essential
      - libffi-dev
