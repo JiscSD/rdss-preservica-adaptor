@@ -16,8 +16,8 @@ resource "aws_security_group" "bastion-sg" {
   }
 
   tags {
-    "Name"        = "${var.project}-${terraform.env}-bastion-sg"
-    "Environment" = "${terraform.env}"
+    "Name"        = "${var.project}-${terraform.workspace}-bastion-sg"
+    "Environment" = "${terraform.workspace}"
     "Project"     = "${var.project}"
     "Service"     = "${var.service}"
     "CostCentre"  = "${var.cost_centre}"
@@ -44,8 +44,8 @@ resource "aws_security_group" "app-sg" {
   }
 
   tags {
-    "Name"        = "${var.project}-${terraform.env}-app-sg"
-    "Environment" = "${terraform.env}"
+    "Name"        = "${var.project}-${terraform.workspace}-app-sg"
+    "Environment" = "${terraform.workspace}"
     "Project"     = "${var.project}"
     "Service"     = "${var.service}"
     "CostCentre"  = "${var.cost_centre}"

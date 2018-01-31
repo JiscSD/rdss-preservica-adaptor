@@ -1,5 +1,5 @@
 resource "aws_iam_role" "role" {
-  name = "${var.project}-${terraform.env}-role"
+  name = "${var.project}-${terraform.workspace}-role"
 
   assume_role_policy = <<EOF
 {
@@ -18,7 +18,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "input_stream" {
-  name = "${var.project}-${terraform.env}-input-stream-policy"
+  name = "${var.project}-${terraform.workspace}-input-stream-policy"
   role = "${aws_iam_role.role.id}"
 
   policy = <<EOF
@@ -42,7 +42,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "error_stream" {
-  name = "${var.project}-${terraform.env}-error-stream-policy"
+  name = "${var.project}-${terraform.workspace}-error-stream-policy"
   role = "${aws_iam_role.role.id}"
 
   policy = <<EOF
@@ -67,7 +67,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "dynamodb" {
-  name = "${var.project}-${terraform.env}-dynamodb"
+  name = "${var.project}-${terraform.workspace}-dynamodb"
   role = "${aws_iam_role.role.id}"
 
   policy = <<EOF
@@ -90,7 +90,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "upload" {
-  name   = "${var.project}-${terraform.env}-upload-buckets"
+  name   = "${var.project}-${terraform.workspace}-upload-buckets"
   role   = "${aws_iam_role.role.id}"
   policy = "${data.aws_iam_policy_document.upload_buckets_policy.json}"
 }
@@ -120,7 +120,7 @@ data "aws_iam_policy_document" "upload_buckets_policy" {
 }
 
 resource "aws_iam_role_policy" "cloudwatch" {
-  name = "${var.project}-${terraform.env}-cloudwatch"
+  name = "${var.project}-${terraform.workspace}-cloudwatch"
   role = "${aws_iam_role.role.id}"
 
   policy = <<EOF
@@ -152,7 +152,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "objects" {
-  name = "${var.project}-${terraform.env}-objects"
+  name = "${var.project}-${terraform.workspace}-objects"
   role = "${aws_iam_role.role.id}"
 
   policy = <<EOF

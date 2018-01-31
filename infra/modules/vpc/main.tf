@@ -4,8 +4,8 @@ resource "aws_vpc" "vpc" {
   enable_dns_hostnames = "${var.enable_dns_hostnames}"
 
   tags {
-    "Name"        = "${var.project}-${terraform.env}-vpc"
-    "Environment" = "${terraform.env}"
+    "Name"        = "${var.project}-${terraform.workspace}-vpc"
+    "Environment" = "${terraform.workspace}"
     "Project"     = "${var.project}"
     "Service"     = "${var.service}"
     "CostCentre"  = "${var.cost_centre}"
@@ -22,8 +22,8 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = "${aws_vpc.vpc.id}"
 
   tags {
-    "Name"        = "${var.project}-${terraform.env}-igw"
-    "Environment" = "${terraform.env}"
+    "Name"        = "${var.project}-${terraform.workspace}-igw"
+    "Environment" = "${terraform.workspace}"
     "Project"     = "${var.project}"
     "Service"     = "${var.service}"
     "CostCentre"  = "${var.cost_centre}"
@@ -38,8 +38,8 @@ resource "aws_subnet" "igw" {
   map_public_ip_on_launch = true
 
   tags {
-    "Name"        = "${var.project}-${terraform.env}-igw"
-    "Environment" = "${terraform.env}"
+    "Name"        = "${var.project}-${terraform.workspace}-igw"
+    "Environment" = "${terraform.workspace}"
     "Project"     = "${var.project}"
     "Service"     = "${var.service}"
     "CostCentre"  = "${var.cost_centre}"
@@ -57,8 +57,8 @@ resource "aws_route_table" "igw" {
   }
 
   tags {
-    "Name"        = "${var.project}-${terraform.env}-igw"
-    "Environment" = "${terraform.env}"
+    "Name"        = "${var.project}-${terraform.workspace}-igw"
+    "Environment" = "${terraform.workspace}"
     "Project"     = "${var.project}"
     "Service"     = "${var.service}"
     "CostCentre"  = "${var.cost_centre}"
@@ -84,8 +84,8 @@ resource "aws_subnet" "private" {
   map_public_ip_on_launch = false
 
   tags {
-    "Name"        = "${var.project}-${terraform.env}-private-${count.index}"
-    "Environment" = "${terraform.env}"
+    "Name"        = "${var.project}-${terraform.workspace}-private-${count.index}"
+    "Environment" = "${terraform.workspace}"
     "Project"     = "${var.project}"
     "Service"     = "${var.service}"
     "CostCentre"  = "${var.cost_centre}"
@@ -103,8 +103,8 @@ resource "aws_route_table" "private" {
   }
 
   tags {
-    "Name"        = "${var.project}-${terraform.env}-private"
-    "Environment" = "${terraform.env}"
+    "Name"        = "${var.project}-${terraform.workspace}-private"
+    "Environment" = "${terraform.workspace}"
     "Project"     = "${var.project}"
     "Service"     = "${var.service}"
     "CostCentre"  = "${var.cost_centre}"
@@ -131,8 +131,8 @@ resource "aws_subnet" "nat" {
   map_public_ip_on_launch = false
 
   tags {
-    "Name"        = "${var.project}-${terraform.env}-nat-${count.index}"
-    "Environment" = "${terraform.env}"
+    "Name"        = "${var.project}-${terraform.workspace}-nat-${count.index}"
+    "Environment" = "${terraform.workspace}"
     "Project"     = "${var.project}"
     "Service"     = "${var.service}"
     "CostCentre"  = "${var.cost_centre}"
@@ -150,8 +150,8 @@ resource "aws_route_table" "nat" {
   }
 
   tags {
-    "Name"        = "${var.project}-${terraform.env}-nat"
-    "Environment" = "${terraform.env}"
+    "Name"        = "${var.project}-${terraform.workspace}-nat"
+    "Environment" = "${terraform.workspace}"
     "Project"     = "${var.project}"
     "Service"     = "${var.service}"
     "CostCentre"  = "${var.cost_centre}"

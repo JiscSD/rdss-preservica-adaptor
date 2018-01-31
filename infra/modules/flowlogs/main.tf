@@ -6,11 +6,11 @@ resource "aws_flow_log" "flowlog" {
 }
 
 resource "aws_cloudwatch_log_group" "flowlog_log_group" {
-  name = "preservicaservice-${terraform.env}-flowlogs"
+  name = "preservicaservice-${terraform.workspace}-flowlogs"
 
   tags {
-    "Name"        = "${var.project}-${terraform.env}-flowlogs"
-    "Environment" = "${terraform.env}"
+    "Name"        = "${var.project}-${terraform.workspace}-flowlogs"
+    "Environment" = "${terraform.workspace}"
     "Project"     = "${var.project}"
     "Service"     = "${var.service}"
     "CostCentre"  = "${var.cost_centre}"
@@ -20,7 +20,7 @@ resource "aws_cloudwatch_log_group" "flowlog_log_group" {
 }
 
 resource "aws_iam_role" "flowlog_role" {
-  name = "${var.project}-${terraform.env}-flowlogs-role"
+  name = "${var.project}-${terraform.workspace}-flowlogs-role"
 
   assume_role_policy = <<EOF
 {
@@ -40,7 +40,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "flowlog_policy" {
-  name = "${var.project}-${terraform.env}-flowlogs-policy"
+  name = "${var.project}-${terraform.workspace}-flowlogs-policy"
   role = "${aws_iam_role.flowlog_role.id}"
 
   policy = <<EOF

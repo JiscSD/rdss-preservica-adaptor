@@ -5,7 +5,7 @@ resource "aws_kinesis_stream" "stream" {
 
   tags {
     "Name"        = "${var.name}"
-    "Environment" = "${terraform.env}"
+    "Environment" = "${terraform.workspace}"
     "Project"     = "${var.project}"
     "Service"     = "${var.service}"
     "CostCentre"  = "${var.cost_centre}"
