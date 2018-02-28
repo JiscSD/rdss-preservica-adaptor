@@ -8,6 +8,7 @@
     sha: 46251c9523506b68419aefdf5ff6ff2fbc4506a4
     hooks:
     -   id: autopep8-wrapper
+        args: [--max-line-length=100, --in-place]
     -   id: check-added-large-files
     -   id: check-case-conflict
     -   id: check-json
