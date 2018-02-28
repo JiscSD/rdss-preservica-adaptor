@@ -2,6 +2,10 @@ import logging
 import os
 import requests
 import sys
+import uuid
+from lxml import (
+    etree,
+)
 
 
 stream_handler = logging.StreamHandler(sys.stdout)
@@ -19,6 +23,7 @@ base_url = os.environ['BASE_URL']
 tenant = os.environ['TENANT']
 username = os.environ['USERNAME']
 password = os.environ['PASSWORD']
+namespace_xip = 'http://www.tessella.com/XIP/v4'
 
 logging.info('Fetching token...')
 token_response = requests.post(
@@ -29,3 +34,43 @@ token_response = requests.post(
     },
 )
 logging.info(token_response.json())
+
+token = token_response.json()['token']
+
+logging.info('Creating root collection...')
+root_collection_code = str(uuid.uuid4())
+root_collection_title = str(uuid.uuid4())
+create_root_collection_response = requests.post(
+    base_url + 'api/entity/collections/',
+    headers={
+        'Preservica-Access-Token': token,
+    },
+    params={
+        'parentRef': '@root@',
+        'collectionCode': root_collection_code,
+        'title': root_collection_title,
+        'securityTag': 'open',
+    },
+)
+logging.info(create_root_collection_response.text)
+
+root_collection_ref = etree.fromstring(create_root_collection_response.text.encode('utf-8')).find(
+    './/{{{0}}}CollectionRef'.format(namespace_xip),
+).text
+
+logging.info('Creating child collection...')
+child_collection_code = str(uuid.uuid4())
+child_collection_title = str(uuid.uuid4())
+create_child_collection_response = requests.post(
+    base_url + 'api/entity/collections/',
+    headers={
+        'Preservica-Access-Token': token,
+    },
+    params={
+        'parentRef': root_collection_ref,
+        'collectionCode': child_collection_code,
+        'title': child_collection_title,
+        'securityTag': 'open',
+    },
+)
+logging.info(create_child_collection_response.text)
