@@ -37,6 +37,18 @@ logging.info(token_response.json())
 
 token = token_response.json()['token']
 
+logging.info('Finding root collections before creation...')
+find_collections_before_create_response = requests.get(
+    base_url + 'api/entity/collections/',
+    headers={
+        'Preservica-Access-Token': token,
+    },
+)
+collections_before_create = etree.fromstring(find_collections_before_create_response.text.encode('utf-8')).findall(
+    './/{{{0}}}Collection'.format(namespace_xip),
+)
+logging.info('Found %s collections', len(collections_before_create))
+
 logging.info('Creating root collection...')
 root_collection_code = str(uuid.uuid4())
 root_collection_title = str(uuid.uuid4())
@@ -74,3 +86,16 @@ create_child_collection_response = requests.post(
     },
 )
 logging.info(create_child_collection_response.text)
+
+logging.info('Finding root collections after creation...')
+find_collections_after_create_response = requests.get(
+    base_url + 'api/entity/collections/',
+    headers={
+        'Preservica-Access-Token': token,
+    },
+)
+collections_after_create = etree.fromstring(find_collections_after_create_response.text.encode('utf-8')).findall(
+    './/{{{0}}}Collection'.format(namespace_xip),
+)
+logging.info('Found %s root collections', len(collections_after_create))
+assert len(collections_after_create) == len(collections_before_create) + 1
