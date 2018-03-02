@@ -4,7 +4,7 @@ The aim of this is to ensure the following is supported by the new Preservica AP
 
 - [x] Creation of new collection.
 - [x] Monitoring for workflow progress.
-- [ ] Updating of metadata for records in Preservica.
+- [x] Updating of metadata for records in Preservica.
 
 ## Running
 
