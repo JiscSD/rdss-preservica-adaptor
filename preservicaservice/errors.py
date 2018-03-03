@@ -46,11 +46,10 @@ class BaseError(Exception):
         return {
             'messageHeader': {
                 'messageType': 'Error',
+                'errorCode': self.code,
+                'errorDescription': _errors[self.code] + ' ' + (self.details or ''),
             },
             'messageBody': {
-                'code': self.code,
-                'message': _errors[self.code],
-                'details': self.details,
             },
         }
 
