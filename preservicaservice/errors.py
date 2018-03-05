@@ -1,3 +1,5 @@
+import base64
+import binascii
 import json
 from rdsslib.kinesis.decorators import (
     RouterHistoryDecorator,
@@ -47,8 +49,13 @@ class BaseError(Exception):
     def __init__(self, details=None):
         self.details = details
 
-    def export(self):
-        decorated = json.loads(RouterHistoryDecorator().process('{}'))
+    def export(self, original_record):
+        try:
+            rdss_message = base64.b64decode(original_record.data).decode('utf-8')
+        except (AttributeError, binascii.Error):
+            rdss_message = '{}'
+
+        decorated = json.loads(RouterHistoryDecorator().process(rdss_message))
         decorated_header_with_error = dict(
             decorated['messageHeader'], **{
                 'messageType': 'Error',
@@ -59,7 +66,6 @@ class BaseError(Exception):
         return dict(
             decorated, **{
                 'messageHeader': decorated_header_with_error,
-                'messageBody': {},
             }
         )
 

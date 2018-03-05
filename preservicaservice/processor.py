@@ -63,7 +63,7 @@ class RecordProcessor(kcl.RecordProcessorBase):
                 logger.warning('no task out of message')
         except BaseError as e:
             logger.exception('error handling record')
-            self.error_stream.put(e.export())
+            self.error_stream.put(e.export(record))
         except Exception as e:
             logger.exception('unexpected error handling error')
-            self.error_stream.put(UnknownErrorError(str(e)).export())
+            self.error_stream.put(UnknownErrorError(str(e)).export(record))

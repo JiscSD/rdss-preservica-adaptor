@@ -114,5 +114,8 @@ def test_record_unable_to_download_sends_messages_to_error_stream():
     assert message['messageHeader']['errorCode'] == 'GENERR009'
     assert 'Connection refused' in message['messageHeader']['errorDescription']
     assert set(message['messageHeader'].keys()) == {
-        'errorCode', 'errorDescription', 'errorDescription', 'messageHistory', 'messageType',
+        'errorCode', 'errorDescription', 'errorDescription', 'messageClass', 'messageId', 'messageHistory', 'messageType',
+    }
+    assert set(message['messageBody'].keys()) == {
+        'objectFile', 'objectUuid', 'objectOrganisationRole', 'objectTitle',
     }
