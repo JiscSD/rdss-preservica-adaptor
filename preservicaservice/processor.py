@@ -2,7 +2,14 @@ import logging
 
 from amazon_kclpy import kcl
 
-from .errors import BaseError, UnknownErrorError
+from .errors import (
+    BaseError,
+    ExpiredMessageError,
+    MalformedBodyError,
+    MalformedHeaderError,
+    UnknownErrorError,
+    UnsupportedMessageTypeError,
+)
 from .put_stream import PutStream
 from .tasks_parser import record_to_task
 
@@ -20,6 +27,10 @@ class RecordProcessor(kcl.RecordProcessorBase):
         :type config: preservicaservice.config.Config
         """
         self.config = config
+        self.invalid_stream = PutStream(
+            config.invalid_stream_name,
+            config.invalid_stream_region,
+        )
         self.error_stream = PutStream(
             config.error_stream_name,
             config.error_stream_region,
@@ -61,6 +72,9 @@ class RecordProcessor(kcl.RecordProcessorBase):
                 task.run()
             else:
                 logger.warning('no task out of message')
+        except (MalformedBodyError, UnsupportedMessageTypeError, ExpiredMessageError, MalformedHeaderError) as e:
+            logger.exception('invalid message')
+            self.invalid_stream.put(e.export(record))
         except BaseError as e:
             logger.exception('error handling record')
             self.error_stream.put(e.export(record))
