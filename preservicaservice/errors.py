@@ -1,3 +1,8 @@
+import json
+from rdsslib.kinesis.decorators import (
+    RouterHistoryDecorator,
+)
+
 CodeMalformedBody = 'GENERR001'
 CodeUnsupportedMessageType = 'GENERR002'
 CodeExpiredMessage = 'GENERR003'
@@ -43,15 +48,20 @@ class BaseError(Exception):
         self.details = details
 
     def export(self):
-        return {
-            'messageHeader': {
+        decorated = json.loads(RouterHistoryDecorator().process('{}'))
+        decorated_header_with_error = dict(
+            decorated['messageHeader'], **{
                 'messageType': 'Error',
                 'errorCode': self.code,
                 'errorDescription': _errors[self.code] + ' ' + (self.details or ''),
-            },
-            'messageBody': {
-            },
-        }
+            }
+        )
+        return dict(
+            decorated, **{
+                'messageHeader': decorated_header_with_error,
+                'messageBody': {},
+            }
+        )
 
 
 class MalformedBodyError(BaseError):

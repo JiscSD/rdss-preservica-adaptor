@@ -50,6 +50,9 @@ def test_record_with_invalid_json_sends_message_to_error_stream():
     message = json.loads(records[0]['Data'].decode('utf-8'))
     assert message['messageHeader']['errorCode'] == 'GENERR007'
     assert 'Malformed JSON' in message['messageHeader']['errorDescription']
+    assert set(message['messageHeader'].keys()) == {
+        'errorCode', 'errorDescription', 'errorDescription', 'messageHistory', 'messageType',
+    }
 
 
 @moto.mock_kinesis
@@ -76,6 +79,9 @@ def test_record_with_invalid_rdss_message_sends_message_to_error_stream():
     message = json.loads(records[0]['Data'].decode('utf-8'))
     assert message['messageHeader']['errorCode'] == 'GENERR004'
     assert 'Invalid, missing or corrupt headers' in message['messageHeader']['errorDescription']
+    assert set(message['messageHeader'].keys()) == {
+        'errorCode', 'errorDescription', 'errorDescription', 'messageHistory', 'messageType',
+    }
 
 
 @moto.mock_kinesis
@@ -107,3 +113,6 @@ def test_record_unable_to_download_sends_messages_to_error_stream():
     message = json.loads(records[0]['Data'].decode('utf-8'))
     assert message['messageHeader']['errorCode'] == 'GENERR009'
     assert 'Connection refused' in message['messageHeader']['errorDescription']
+    assert set(message['messageHeader'].keys()) == {
+        'errorCode', 'errorDescription', 'errorDescription', 'messageHistory', 'messageType',
+    }
