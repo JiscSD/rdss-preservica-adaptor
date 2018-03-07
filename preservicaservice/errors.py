@@ -44,7 +44,7 @@ _errors = {
 
 
 class BaseError(Exception):
-    code = None
+    code = CodeUnknownError
 
     def __init__(self, details=None):
         self.details = details
