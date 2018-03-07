@@ -65,6 +65,8 @@ class Config:
         self,
         input_stream_name,
         input_stream_region,
+        invalid_stream_name,
+        invalid_stream_region,
         error_stream_name,
         error_stream_region,
         organisation_buckets,
@@ -84,6 +86,14 @@ class Config:
         self.input_stream_region = self.validate_region(
             'input_stream_region',
             input_stream_region,
+        )
+        self.invalid_stream_name = self.validate_stream_name(
+            'invalid_stream_name',
+            invalid_stream_name,
+        )
+        self.invalid_stream_region = self.validate_region(
+            'invalid_stream_region',
+            invalid_stream_region,
         )
         self.error_stream_name = self.validate_stream_name(
             'error_stream_name',
@@ -151,6 +161,8 @@ class Config:
         return cls(
             raw.input_stream_name,
             raw.input_stream_region,
+            raw.invalid_stream_name,
+            raw.invalid_stream_region,
             raw.error_stream_name,
             raw.error_stream_region,
             raw.organisation_buckets,

@@ -46,7 +46,7 @@ def create_supported_tasks(message, config):
     """
     try:
         message_type = message['messageHeader']['messageType']
-    except (NameError, KeyError):
+    except (TypeError, KeyError):
         raise MalformedHeaderError()
 
     if not isinstance(message_type, str):

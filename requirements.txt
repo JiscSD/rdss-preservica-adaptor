@@ -42,6 +42,7 @@ pytest-cov==2.5.1
 python-dateutil==2.6.1
 pytz==2017.2
 PyYAML==3.12
+-e git://github.com/JiscRDSS/rdss-shared-libraries@ae9c92d11969e53437118a2a1aa4318a1c668f8a#egg=rdsslib
 requests==2.18.4
 s3transfer==0.1.11
 six==1.11.0

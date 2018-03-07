@@ -10,4 +10,5 @@ pre-commit
 pytest
 pytest-cov
 PyYAML
+-e git://github.com/JiscRDSS/rdss-shared-libraries@0.0.3#egg=rdsslib
 requests

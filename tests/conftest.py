@@ -27,6 +27,8 @@ def valid_config():
     return Config(
         'input',
         'eu-west-1',
+        'invalid',
+        'eu-west-1',
         'error',
         'eu-west-1',
         organisation_buckets={'1': 's3://upload/to'},

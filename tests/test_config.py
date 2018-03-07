@@ -54,6 +54,8 @@ def valid_config_arguments():
     return dict(
         input_stream_name='in',
         input_stream_region='eu-west-2',
+        invalid_stream_name='invalid',
+        invalid_stream_region='eu-west-2',
         error_stream_name='err',
         error_stream_region='eu-west-2',
         organisation_buckets={
