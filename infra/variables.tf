@@ -107,6 +107,11 @@ variable "autoscaling_env_file_path" {
 # Kinesis streams
 ####################
 
+variable "invalid_stream_name" {
+  description = "Invalid stream name."
+  default     = "message_invalid"
+}
+
 variable "error_stream_name" {
   description = "Error stream name."
   default     = "message_error"

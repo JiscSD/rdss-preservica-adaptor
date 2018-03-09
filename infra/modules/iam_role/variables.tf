@@ -6,6 +6,10 @@ variable "input_stream_arn" {
   description = "Input stream ARN."
 }
 
+variable "invalid_stream_arn" {
+  description = "Invalid stream ARN."
+}
+
 variable "error_stream_arn" {
   description = "Error stream ARN."
 }

@@ -117,9 +117,10 @@ module "security_groups" {
 ####################
 
 module "iam_role" {
-  source           = "./modules/iam_role"
-  input_stream_arn = "${data.aws_kinesis_stream.input_stream.arn}"
-  error_stream_arn = "arn:aws:kinesis:*:*:stream/${var.error_stream_name}_${terraform.workspace}"
+  source             = "./modules/iam_role"
+  input_stream_arn   = "${data.aws_kinesis_stream.input_stream.arn}"
+  invalid_stream_arn = "arn:aws:kinesis:*:*:stream/${var.invalid_stream_name}_${terraform.workspace}"
+  error_stream_arn   = "arn:aws:kinesis:*:*:stream/${var.error_stream_name}_${terraform.workspace}"
 
   # upload_buckets_arns = "${formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.workspace)}"
 

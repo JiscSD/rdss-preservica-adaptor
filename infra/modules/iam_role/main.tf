@@ -66,6 +66,31 @@ resource "aws_iam_role_policy" "error_stream" {
 EOF
 }
 
+resource "aws_iam_role_policy" "invalid_stream" {
+  name = "${var.project}-${terraform.workspace}-invalid-stream-policy"
+  role = "${aws_iam_role.role.id}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "kinesis:Get*",
+        "kinesis:List*",
+        "kinesis:Describe*",
+        "kinesis:Put*"
+      ],
+      "Resource": [
+        "${var.invalid_stream_arn}"
+      ]
+    }
+  ]
+}
+EOF
+}
+
 resource "aws_iam_role_policy" "dynamodb" {
   name = "${var.project}-${terraform.workspace}-dynamodb"
   role = "${aws_iam_role.role.id}"
