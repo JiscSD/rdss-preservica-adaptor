@@ -198,7 +198,7 @@ class FileMetadata(object):
 
 
 class FileTask(object):
-    DEFAULT_FILE_SIZE_LIMIT = 4 * 1000 * 1000 * 1000
+    DEFAULT_FILE_SIZE_LIMIT = 5 * 1024 * 1024 * 1024 + 1
 
     def __init__(
         self, remote_file, metadata, message_id, object_id,
