@@ -31,6 +31,11 @@ resource "aws_launch_configuration" "config" {
   user_data            = "${data.template_cloudinit_config.config.rendered}"
   iam_instance_profile = "${aws_iam_instance_profile.profile.id}"
 
+  root_block_device {
+    volume_type = "gp2"
+    volume_size = "32"
+  }
+
   lifecycle {
     create_before_destroy = true
   }
