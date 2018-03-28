@@ -356,9 +356,12 @@ class BaseMetadataCreateTask(BaseTask):
 
     @classmethod
     def build_file_task(cls, object_file, message_id, object_id):
-        url = object_file.get('fileStorageLocation')
-        if not url:
+        try:
+            url = object_file['fileStorageLocation']
+
+        except (TypeError, KeyError):
             raise MalformedBodyError('fileStorageLocation not specified.')
+
         file_name = object_file.get('fileName')
 
         storage_platform = object_file.get('fileStoragePlatform')
