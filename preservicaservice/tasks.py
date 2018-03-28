@@ -97,14 +97,13 @@ def first_org_id_from_person_roles(person_roles):
         person = role.get('person')
         if not isinstance(person, dict):
             continue
-        person_orgs = person.get('personOrganisation', [])
-        for org in person_orgs:
-            if not isinstance(role, dict):
-                continue
-            org_id = org.get('organisationJiscId')
-            if not org_id:
-                continue
-            return str(org_id).strip()
+        org = person.get('personOrganisationUnit', {})
+        if not isinstance(org, dict):
+            continue
+        org_id = org.get('organisationJiscId')
+        if not org_id:
+            continue
+        return str(org_id).strip()
 
 
 def require_organisation_id(message):

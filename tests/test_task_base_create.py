@@ -151,9 +151,9 @@ def test_upload_no_override(task, temp_file):
                     'objectPersonRole': [
                         {
                             'person': {
-                                'personOrganisation': [{
+                                'personOrganisationUnit': {
                                     'organisationJiscId': 3,
-                                }],
+                                },
                             },
                         },
                     ],
