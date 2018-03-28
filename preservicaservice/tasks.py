@@ -381,15 +381,12 @@ class BaseMetadataCreateTask(BaseTask):
         except ValueError:
             raise MalformedBodyError('invalid value in fileStorageLocation')
 
-        try:
-            return FileTask(
-                remote_file,
-                FileMetadata(**object_file),
-                message_id,
-                object_id,
-            )
-        except Exception as e:
-            raise e
+        return FileTask(
+            remote_file,
+            FileMetadata(**object_file),
+            message_id,
+            object_id,
+        )
 
     def run(self):
         zip_path = get_tmp_file()
