@@ -145,6 +145,21 @@ def test_upload_no_override(task, temp_file):
                 },
             }, '1',
         ),
+        (
+            {
+                'messageBody': {
+                    'objectPersonRole': [
+                        {
+                            'person': {
+                                'personOrganisation': [{
+                                    'organisationJiscId': 3,
+                                }],
+                            },
+                        },
+                    ],
+                },
+            }, '3',
+        ),
     ],
 )
 def test_require_organisation_id_succeeds(message, expected):
