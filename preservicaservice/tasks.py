@@ -360,13 +360,10 @@ class BaseMetadataCreateTask(BaseTask):
             url = object_file['fileStorageLocation']
             file_name = object_file['fileName']
             storage_platform = object_file['fileStoragePlatform']
+            storage_type = storage_platform['storagePlatformType']
 
         except (TypeError, KeyError) as exception:
             raise MalformedBodyError('Unable to parse file: {}'.format(str(exception)))
-
-        if not isinstance(storage_platform, dict):
-            raise MalformedBodyError('storagePlatformType is not present or not a dict')
-        storage_type = storage_platform.get('storagePlatformType')
 
         try:
             if storage_type == 1:  # S3 URI
