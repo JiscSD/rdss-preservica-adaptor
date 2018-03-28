@@ -329,9 +329,10 @@ class BaseMetadataCreateTask(BaseTask):
             message, 'messageHeader', 'messageId',
         ).strip()
 
-        objects = require_non_empty_key(
-            message, 'messageBody', 'objectFile',
-        )
+        try:
+            objects = message['messageBody']['objectFile']
+        except KeyError:
+            raise MalformedBodyError('missing objectFile')
 
         object_id = require_non_empty_key(message, 'messageBody', 'objectUuid')
         if not isinstance(objects, list):
@@ -340,9 +341,6 @@ class BaseMetadataCreateTask(BaseTask):
         file_tasks = []
         for obj in objects:
             file_tasks.append(cls.build_file_task(obj, message_id, object_id))
-
-        if not file_tasks:
-            raise MalformedBodyError('empty objectFile')
 
         return cls(
             message,

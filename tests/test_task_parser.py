@@ -388,17 +388,6 @@ def test_metadata_create_task_skipped(valid_config):
                 'messageHeader': valid_create_header(),
                 'messageBody': {
                     'objectUuid': 'object_uuid',
-                    'objectFile': [],  # Missing objects
-                    'objectOrganisationRole': valid_create_publisher(),
-                },
-            },
-            'empty objectFile',
-        ),
-        (
-            {
-                'messageHeader': valid_create_header(),
-                'messageBody': {
-                    'objectUuid': 'object_uuid',
                     'objectFile': [
                         {
                             'fileStorageLocation': 'http://something/something',
