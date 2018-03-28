@@ -366,14 +366,18 @@ class BaseMetadataCreateTask(BaseTask):
             raise MalformedBodyError('Unable to parse file: {}'.format(str(exception)))
 
         try:
-            if storage_type == 1:  # S3 URI
-                remote_file = S3RemoteUrl.parse(url, file_name)
-            elif storage_type == 2:  # HTTP URL
-                remote_file = HTTPRemoteUrl.parse(url, file_name)
-            else:
-                raise MalformedBodyError(
-                    'Unsupported storagePlatformType ({})'.format(storage_type),
-                )
+            storage_types = {
+                1: S3RemoteUrl,
+                2: HTTPRemoteUrl,
+            }
+            remote_file_class = storage_types[storage_type]
+        except KeyError:
+            raise MalformedBodyError(
+                'Unsupported storagePlatformType ({})'.format(storage_type),
+            )
+
+        try:
+            remote_file = remote_file_class.parse(url, file_name)
         except ValueError:
             raise MalformedBodyError('invalid value in fileStorageLocation')
 
