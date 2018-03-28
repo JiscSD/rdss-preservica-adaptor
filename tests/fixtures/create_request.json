@@ -171,7 +171,9 @@
         "string"
       ],
       "fileStorageLocation": "string",
-      "fileStorageType": 1
+      "fileStoragePlatform": {
+        "storagePlatformType": 1
+      }
     }
   ]
 }

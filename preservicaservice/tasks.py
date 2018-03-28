@@ -360,7 +360,11 @@ class BaseMetadataCreateTask(BaseTask):
         if not url:
             raise MalformedBodyError('fileStorageLocation not specified.')
         file_name = object_file.get('fileName')
-        storage_type = object_file.get('fileStorageType')
+
+        storage_platform = object_file.get('fileStoragePlatform')
+        if not isinstance(storage_platform, dict):
+            raise MalformedBodyError('storagePlatformType is not present or not a dict')
+        storage_type = storage_platform.get('storagePlatformType')
 
         try:
             if storage_type == 1:  # S3 URI
@@ -369,7 +373,7 @@ class BaseMetadataCreateTask(BaseTask):
                 remote_file = HTTPRemoteUrl.parse(url, file_name)
             else:
                 raise MalformedBodyError(
-                    'Unsupported remoteStorageType ({})'.format(storage_type),
+                    'Unsupported storagePlatformType ({})'.format(storage_type),
                 )
         except ValueError:
             raise MalformedBodyError('invalid value in fileStorageLocation')

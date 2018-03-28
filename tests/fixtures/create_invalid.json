@@ -10,12 +10,16 @@
     "objectFile": [
       {
         "fileUuid": "a3290140-18e1-506e-abec-61e31791e749",
-        "fileStorageType": "s3",
+        "fileStoragePlatform": {
+          "storagePlatformType": "s3"
+        },
         "fileName": "Label of this intellectual asset: 1"
       },
       {
         "fileUuid": "9c5f1f7f-39a7-93fc-0327-5ffaa81dee62",
-        "fileStorageType": "s3",
+        "fileStoragePlatform": {
+          "storagePlatformType": "s3"
+        },
         "fileName": "Label of this intellectual asset: 2"
       }
     ]
