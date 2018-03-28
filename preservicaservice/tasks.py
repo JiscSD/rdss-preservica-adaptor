@@ -359,11 +359,11 @@ class BaseMetadataCreateTask(BaseTask):
         try:
             url = object_file['fileStorageLocation']
             file_name = object_file['fileName']
+            storage_platform = object_file['fileStoragePlatform']
 
         except (TypeError, KeyError) as exception:
             raise MalformedBodyError('Unable to parse file: {}'.format(str(exception)))
 
-        storage_platform = object_file.get('fileStoragePlatform')
         if not isinstance(storage_platform, dict):
             raise MalformedBodyError('storagePlatformType is not present or not a dict')
         storage_type = storage_platform.get('storagePlatformType')
