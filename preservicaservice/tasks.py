@@ -358,11 +358,10 @@ class BaseMetadataCreateTask(BaseTask):
     def build_file_task(cls, object_file, message_id, object_id):
         try:
             url = object_file['fileStorageLocation']
+            file_name = object_file['fileName']
 
-        except (TypeError, KeyError):
-            raise MalformedBodyError('fileStorageLocation not specified.')
-
-        file_name = object_file.get('fileName')
+        except (TypeError, KeyError) as exception:
+            raise MalformedBodyError('Unable to parse file: {}'.format(str(exception)))
 
         storage_platform = object_file.get('fileStoragePlatform')
         if not isinstance(storage_platform, dict):
