@@ -37,7 +37,7 @@ autopep8-stats:
 	@pep8 --quiet --statistics .
 
 test:
-	@BOTO_CONFIG=/dev/null pytest
+	@BOTO_CONFIG=/dev/null pytest --cov-branch --cov-report=xml --cov=.
 
 coverage:
 	@BOTO_CONFIG=/dev/null pytest --cov-fail-under $(COVERAGE_MIN) --cov=preservicaservice tests/

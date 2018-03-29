@@ -20,8 +20,12 @@ before_install:
   - sudo chmod +x /usr/bin/terraform
 
 install:
+  - wget -q https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip -O /tmp/sonar-scanner-cli-3.0.3.778-linux.zip
+  - unzip -qq /tmp/sonar-scanner-cli-3.0.3.778-linux.zip
+  - export PATH=$PATH:$PWD/sonar-scanner-3.0.3.778-linux/bin/
   - make deps
 
 script:
   - make lint
   - make test
+  - sonar-scanner -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONARQUBE_TOKEN -Dsonar.projectName=$TRAVIS_REPO_SLUG -Dsonar.projectKey=$(echo "$TRAVIS_REPO_SLUG" | cut -d "/" -f 2) -Dsonar.projectVersion=$TRAVIS_COMMIT
