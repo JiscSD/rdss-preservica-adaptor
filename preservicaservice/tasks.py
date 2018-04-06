@@ -97,14 +97,13 @@ def first_org_id_from_person_roles(person_roles):
         person = role.get('person')
         if not isinstance(person, dict):
             continue
-        person_orgs = person.get('personOrganisation', [])
-        for org in person_orgs:
-            if not isinstance(role, dict):
-                continue
-            org_id = org.get('organisationJiscId')
-            if not org_id:
-                continue
-            return str(org_id).strip()
+        org = person.get('personOrganisationUnit', {})
+        if not isinstance(org, dict):
+            continue
+        org_id = org.get('organisationJiscId')
+        if not org_id:
+            continue
+        return str(org_id).strip()
 
 
 def require_organisation_id(message):
@@ -330,9 +329,10 @@ class BaseMetadataCreateTask(BaseTask):
             message, 'messageHeader', 'messageId',
         ).strip()
 
-        objects = require_non_empty_key(
-            message, 'messageBody', 'objectFile',
-        )
+        try:
+            objects = message['messageBody']['objectFile']
+        except KeyError:
+            raise MalformedBodyError('missing objectFile')
 
         object_id = require_non_empty_key(message, 'messageBody', 'objectUuid')
         if not isinstance(objects, list):
@@ -341,9 +341,6 @@ class BaseMetadataCreateTask(BaseTask):
         file_tasks = []
         for obj in objects:
             file_tasks.append(cls.build_file_task(obj, message_id, object_id))
-
-        if not file_tasks:
-            raise MalformedBodyError('empty objectFile')
 
         return cls(
             message,
@@ -356,33 +353,37 @@ class BaseMetadataCreateTask(BaseTask):
 
     @classmethod
     def build_file_task(cls, object_file, message_id, object_id):
-        url = object_file.get('fileStorageLocation')
-        if not url:
-            raise MalformedBodyError('fileStorageLocation not specified.')
-        file_name = object_file.get('fileName')
-        storage_type = object_file.get('fileStorageType')
+        try:
+            url = object_file['fileStorageLocation']
+            file_name = object_file['fileName']
+            storage_platform = object_file['fileStoragePlatform']
+            storage_type = storage_platform['storagePlatformType']
+
+        except (TypeError, KeyError) as exception:
+            raise MalformedBodyError('Unable to parse file: {}'.format(str(exception)))
 
         try:
-            if storage_type == 1:  # S3 URI
-                remote_file = S3RemoteUrl.parse(url, file_name)
-            elif storage_type == 2:  # HTTP URL
-                remote_file = HTTPRemoteUrl.parse(url, file_name)
-            else:
-                raise MalformedBodyError(
-                    'Unsupported remoteStorageType ({})'.format(storage_type),
-                )
+            storage_types = {
+                1: S3RemoteUrl,
+                2: HTTPRemoteUrl,
+            }
+            remote_file_class = storage_types[storage_type]
+        except KeyError:
+            raise MalformedBodyError(
+                'Unsupported storagePlatformType ({})'.format(storage_type),
+            )
+
+        try:
+            remote_file = remote_file_class.parse(url, file_name)
         except ValueError:
             raise MalformedBodyError('invalid value in fileStorageLocation')
 
-        try:
-            return FileTask(
-                remote_file,
-                FileMetadata(**object_file),
-                message_id,
-                object_id,
-            )
-        except Exception as e:
-            raise e
+        return FileTask(
+            remote_file,
+            FileMetadata(**object_file),
+            message_id,
+            object_id,
+        )
 
     def run(self):
         zip_path = get_tmp_file()
