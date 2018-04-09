@@ -152,7 +152,9 @@ def test_upload_no_override(task, temp_file):
                         {
                             'person': {
                                 'personOrganisationUnit': {
-                                    'organisationJiscId': 3,
+                                    'organisation': {
+                                        'organisationJiscId': 3,
+                                    },
                                 },
                             },
                         },

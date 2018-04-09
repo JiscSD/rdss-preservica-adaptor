@@ -97,9 +97,10 @@ def first_org_id_from_person_roles(person_roles):
         person = role.get('person')
         if not isinstance(person, dict):
             continue
-        org = person.get('personOrganisationUnit', {})
-        if not isinstance(org, dict):
+        org_unit = person.get('personOrganisationUnit', {})
+        if not isinstance(org_unit, dict):
             continue
+        org = org_unit.get('organisation', {})
         org_id = org.get('organisationJiscId')
         if not org_id:
             continue
