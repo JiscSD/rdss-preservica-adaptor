@@ -17,6 +17,7 @@ def file_task1():
         tasks.FileMetadata(fileName='baz.pdf'),
         'this-is-message-uuid',
         'object-uuid',
+        [],
     )
 
 
@@ -27,6 +28,7 @@ def file_task2():
         tasks.FileMetadata(fileName='bam.pdf'),
         'this-is-message-uuid',
         'object-uuid',
+        [],
     )
 
 

@@ -1,5 +1,6 @@
 import base64
 import boto3
+import hashlib
 import json
 import moto
 from preservicaservice.processor import (
@@ -88,6 +89,128 @@ def test_record_with_invalid_rdss_message_sends_message_to_invalid_stream():
     assert set(message['messageHeader'].keys()) == {
         'errorCode', 'errorDescription', 'errorDescription', 'messageHistory', 'messageType',
     }
+
+
+@moto.mock_s3
+@moto.mock_kinesis
+def test_record_with_invalid_checksum_sends_message_to_invalid_stream():
+    s3_resource = boto3.resource('s3', region_name='us-east-1')
+    s3_resource.create_bucket(Bucket='the-download-bucket')
+    obj = s3_resource.Object('the-download-bucket', 'the-download-key')
+    obj.put(Body=b'Some contents')
+
+    client = boto3.client('kinesis', 'eu-west-1')
+    client.create_stream(StreamName='error-stream', ShardCount=1)
+    client.create_stream(StreamName='invalid-stream', ShardCount=1)
+    config = Config(
+        input_stream_name='input-stream',
+        input_stream_region='eu-west-1',
+        invalid_stream_name='invalid-stream',
+        invalid_stream_region='eu-west-1',
+        error_stream_name='error-stream',
+        error_stream_region='eu-west-1',
+        organisation_buckets={
+            '98765': 's3://the-upload-bucket/',
+        },
+    )
+    processor = RecordProcessor(config=config)
+
+    class FakeRecord():
+        data = base64.b64encode(json.dumps({
+            'messageHeader': {
+                'messageType': 'MetadataCreate',
+                'messageId': 'the-message-id',
+            },
+            'messageBody': {
+                'objectUuid': 'the-id',
+                'objectOrganisationRole': [{
+                    'organisation': {
+                        'organisationJiscId': 98765,
+                    },
+                    'role': 'some-role-id',
+                }],
+                'objectFile': [{
+                    # "fileUuid": "a3290140-18e1-506e-abec-61e31791e749",
+                    'fileStorageLocation': 's3://the-download-bucket/the-download-key',
+                    'fileStoragePlatform': {
+                        'storagePlatformType': 1,
+                    },
+                    'fileName': 'the file name',
+                    'fileChecksum': [{
+                        'checksumType': 1,
+                        'checksumValue': 'definitely-not-the-checksum',
+                    }],
+                }],
+            },
+        }).encode('utf-8'))
+
+    processor.process_records([FakeRecord()], None)
+
+    records = _get_records(client, 'invalid-stream')
+    message = json.loads(records[0]['Data'].decode('utf-8'))
+    assert message['messageHeader']['errorCode'] == 'APPERRMET004'
+    assert 'A file did not match its checksum' in message['messageHeader']['errorDescription']
+
+
+@moto.mock_s3
+@moto.mock_kinesis
+def test_record_with_valid_checksum_does_not_send_message_to_invalid_stream():
+    s3_resource = boto3.resource('s3', region_name='us-east-1')
+    s3_resource.create_bucket(Bucket='the-download-bucket')
+    obj = s3_resource.Object('the-download-bucket', 'the-download-key')
+    obj.put(Body=b'Some contents')
+    checksum = hashlib.md5()
+    checksum.update(b'Some contents')
+
+    client = boto3.client('kinesis', 'eu-west-1')
+    client.create_stream(StreamName='error-stream', ShardCount=1)
+    client.create_stream(StreamName='invalid-stream', ShardCount=1)
+    config = Config(
+        input_stream_name='input-stream',
+        input_stream_region='eu-west-1',
+        invalid_stream_name='invalid-stream',
+        invalid_stream_region='eu-west-1',
+        error_stream_name='error-stream',
+        error_stream_region='eu-west-1',
+        organisation_buckets={
+            '98765': 's3://the-upload-bucket/',
+        },
+    )
+    processor = RecordProcessor(config=config)
+
+    class FakeRecord():
+        data = base64.b64encode(json.dumps({
+            'messageHeader': {
+                'messageType': 'MetadataCreate',
+                'messageId': 'the-message-id',
+            },
+            'messageBody': {
+                'objectUuid': 'the-id',
+                'objectOrganisationRole': [{
+                    'organisation': {
+                        'organisationJiscId': 98765,
+                    },
+                    'role': 'some-role-id',
+                }],
+                'objectFile': [{
+                    # "fileUuid": "a3290140-18e1-506e-abec-61e31791e749",
+                    'fileStorageLocation': 's3://the-download-bucket/the-download-key',
+                    'fileStoragePlatform': {
+                        'storagePlatformType': 1,
+                    },
+                    'fileName': 'the file name',
+                    'fileChecksum': [{
+                        'checksumType': 1,
+                        'checksumValue': checksum.hexdigest(),
+                    }],
+                }],
+            },
+        }).encode('utf-8'))
+
+    processor.process_records([FakeRecord()], None)
+
+    records = _get_records(client, 'invalid-stream')
+    assert len(records) == 0
 
 
 @moto.mock_kinesis
