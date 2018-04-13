@@ -22,6 +22,7 @@ def file_task1():
         tasks.FileMetadata(fileName='baz.pdf'),
         'message_id',
         'object_id',
+        [],
     )
 
 
@@ -32,6 +33,7 @@ def file_task2():
         tasks.FileMetadata(fileName='bam.pdf'),
         'message_id',
         'object_id',
+        [],
     )
 
 

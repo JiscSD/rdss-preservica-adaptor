@@ -28,6 +28,7 @@ def task(file_metadata):
         file_metadata,
         'message_id',
         'object_id',
+        [],
     )
 
 
@@ -52,6 +53,7 @@ def test_verify_limit(temp_file, size):
         tasks.FileMetadata(fileName='baz.pdf'),
         'message_id',
         'object_id',
+        [],
         size,
     )
     with pytest.raises(errors.UnderlyingSystemError):

@@ -82,6 +82,7 @@ def valid_create_object_file():
             'fileStorageLocation': 's3://bucket/path/to/file',
             'fileName': 'filename',
             'storagePlatformType': 1,
+            'fileChecksum': [],
         },
     ]
 
@@ -98,6 +99,7 @@ def test_metadata_create_task(valid_config):
                     'fileStoragePlatform': {
                         'storagePlatformType': 1,
                     },
+                    'fileChecksum': [],
                 },
                 {
                     'fileStorageLocation': 's3://bucket/path/to/file2',
@@ -105,6 +107,7 @@ def test_metadata_create_task(valid_config):
                     'fileStoragePlatform': {
                         'storagePlatformType': 1,
                     },
+                    'fileChecksum': [],
                 },
             ],
             'objectOrganisationRole': [{
@@ -148,6 +151,7 @@ def test_metadata_create_task_skipped(valid_config):
                     'fileStoragePlatform': {
                         'storagePlatformType': 1,
                     },
+                    'fileChecksum': [],
                 },
                 {
                     'fileStorageLocation': 's3://bucket/path/to/file2',
@@ -155,6 +159,7 @@ def test_metadata_create_task_skipped(valid_config):
                     'fileStoragePlatform': {
                         'storagePlatformType': 1,
                     },
+                    'fileChecksum': [],
                 },
             ],
             'objectOrganisationRole': [{
@@ -193,6 +198,7 @@ def test_metadata_create_task_skipped(valid_config):
                         'fileStoragePlatform': {
                             'storagePlatformType': 1,
                         },
+                        'fileChecksum': [],
                     },
                     'objectOrganisationRole': valid_create_publisher(),
                 },
@@ -262,6 +268,7 @@ def test_metadata_create_task_skipped(valid_config):
                             'fileStoragePlatform': {
                                 'storagePlatformType': 1,
                             },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -280,6 +287,7 @@ def test_metadata_create_task_skipped(valid_config):
                             'fileStoragePlatform': {
                                 'storagePlatformType': 1,
                             },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -299,6 +307,7 @@ def test_metadata_create_task_skipped(valid_config):
                             'fileStoragePlatform': {
                                 'storagePlatformType': 1,
                             },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -318,6 +327,7 @@ def test_metadata_create_task_skipped(valid_config):
                             'fileStoragePlatform': {
                                 'storagePlatformType': 1,
                             },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -337,6 +347,7 @@ def test_metadata_create_task_skipped(valid_config):
                             'fileStoragePlatform': {
                                 'storagePlatformType': 2,
                             },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -357,6 +368,7 @@ def test_metadata_create_task_skipped(valid_config):
                             'fileStoragePlatform': {
                                 'storagePlatformType': 1,
                             },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -376,6 +388,7 @@ def test_metadata_create_task_skipped(valid_config):
                             'fileStoragePlatform': {
                                 'storagePlatformType': 2,
                             },
+                            'fileChecksum': [],
                         },
                     ],
                     # no role
@@ -395,6 +408,7 @@ def test_metadata_create_task_skipped(valid_config):
                             'fileStoragePlatform': {
                                 'storagePlatformType': 2,
                             },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': [

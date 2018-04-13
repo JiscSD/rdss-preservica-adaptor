@@ -1,5 +1,6 @@
 import abc
 import datetime
+import hashlib
 import logging
 import os
 import tempfile
@@ -9,7 +10,8 @@ import boto3
 from .errors import (
     MalformedBodyError,
     ResourceAlreadyExistsError,
-    UnderlyingSystemError
+    UnderlyingSystemError,
+    InvalidChecksumError,
 )
 from .meta import write_object_meta, write_message_meta
 from .remote_urls import S3RemoteUrl, HTTPRemoteUrl
@@ -201,7 +203,7 @@ class FileTask(object):
     DEFAULT_FILE_SIZE_LIMIT = 5 * 1024 * 1024 * 1024 + 1
 
     def __init__(
-        self, remote_file, metadata, message_id, object_id,
+        self, remote_file, metadata, message_id, object_id, file_checksum,
         file_size_limit=DEFAULT_FILE_SIZE_LIMIT,
     ):
         """
@@ -214,6 +216,7 @@ class FileTask(object):
         self.file_size_limit = file_size_limit
         self.message_id = message_id
         self.archive_base_path = object_id
+        self.file_checksum = file_checksum
 
     def download(self, download_path):
         """ Download given path from s3 to temp destination.
@@ -231,6 +234,63 @@ class FileTask(object):
         size = os.path.getsize(path)
         if size >= self.file_size_limit:
             raise UnderlyingSystemError('')
+
+    def verify_checksums(self, path):
+        """ Check given path checksums sand raise if not valid.
+
+        :param str path: file to check
+        :raise: InvalidChecksumError if file too big
+        """
+
+        # Map from RDSS checksumType, which is an integer designed to not change, to a
+        # string type that is used internally here. The string values here do need to
+        # match the names in hashlib, but are independent of anything in the messsage
+        # API spec
+        CHECKSUM_TYPES = {
+            1: 'md5',
+            2: 'sha256',
+        }
+        checksums = [
+            {
+                'type': CHECKSUM_TYPES[checksum_rdss['checksumType']],
+                'expected': checksum_rdss['checksumValue'],
+                'calculated': getattr(hashlib, CHECKSUM_TYPES[checksum_rdss['checksumType']])(),
+            } for checksum_rdss in self.file_checksum
+        ]
+
+        if not checksums:
+            logger.debug('No checksums received. Skipping verification')
+            return
+
+        # We avoid reading the file into memory at once, and we only
+        # iterate through the file contents once, even if multiple checkums
+        # received
+        def read_chunks(file):
+            while True:
+                chunk = file.read(2048)
+                if not chunk:
+                    break
+                yield chunk
+
+        logger.debug('Opening %s to find its checksums', path)
+
+        with open(path, 'rb') as file:
+            for chunk in read_chunks(file):
+                for checksum in checksums:
+                    checksum['calculated'].update(chunk)
+
+        logger.debug('Calculated checksums %s', checksums)
+
+        non_matching_checksums = [
+            checksum for checksum in checksums
+            if checksum['expected'] != checksum['calculated'].hexdigest()
+        ]
+
+        if non_matching_checksums:
+            logger.debug('Found non matching checksums %s', non_matching_checksums)
+            raise InvalidChecksumError(
+                'Found non matching checksums: {}'.format(non_matching_checksums),
+            )
 
     def zip_bundle(self, zip_path, download_path, meta_path):
         """ Zip bundle of file and meta to given file
@@ -274,6 +334,7 @@ class FileTask(object):
             self.metadata.generate(meta_path)
             self.download(download_path)
             self.verify_file_size(download_path)
+            self.verify_checksums(download_path)
             self.zip_bundle(zip_path, download_path, meta_path)
         finally:
             for path in (download_path, meta_path):
@@ -314,6 +375,7 @@ class BaseMetadataCreateTask(BaseTask):
         :type config: preservicaservice.config.Config
         :return:
         """
+        print('BUILDING')
         organisation_id = require_organisation_id(message)
         role = require_organisation_role(message)
 
@@ -359,6 +421,7 @@ class BaseMetadataCreateTask(BaseTask):
             file_name = object_file['fileName']
             storage_platform = object_file['fileStoragePlatform']
             storage_type = storage_platform['storagePlatformType']
+            file_checksum = object_file['fileChecksum']
 
         except (TypeError, KeyError) as exception:
             raise MalformedBodyError('Unable to parse file: {}'.format(str(exception)))
@@ -384,6 +447,7 @@ class BaseMetadataCreateTask(BaseTask):
             FileMetadata(**object_file),
             message_id,
             object_id,
+            file_checksum,
         )
 
     def run(self):
