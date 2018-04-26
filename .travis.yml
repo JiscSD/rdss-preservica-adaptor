@@ -2,26 +2,22 @@ sudo: required
 language: python
 
 python:
-  - "3.5-dev"
-
-addons:
-  apt:
-    sources:
-      - debian-sid
-    packages:
-      - shellcheck
+  - "3.6"
 
 before_install:
-  - >
-      travis_retry curl
-      "https://releases.hashicorp.com/terraform/0.10.8/terraform_0.10.8_linux_amd64.zip"
-      > /tmp/terraform.zip
-  - sudo unzip /tmp/terraform.zip -d /usr/bin
-  - sudo chmod +x /usr/bin/terraform
+  - sudo apt-get update -yqq
 
 install:
+  - pip install pre-commit
+  - pre-commit install
+
+before_script:
+  - wget https://releases.hashicorp.com/terraform/0.10.8/terraform_0.10.8_linux_amd64.zip -O /tmp/terraform.zip
+  - unzip /tmp/terraform.zip -d terraform/
+  - export PATH=$PATH:$PWD/terraform/
   - make deps
 
 script:
+  - pre-commit run --all-files --verbose
   - make lint
   - make test
