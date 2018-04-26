@@ -197,3 +197,34 @@ resource "aws_iam_role_policy" "objects" {
 }
 EOF
 }
+
+resource "aws_iam_role_policy" "pure" {
+  name = "${var.project}-${terraform.workspace}-pure"
+  role = "${aws_iam_role.role.id}"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::pure-adaptor-*/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListObjects"
+            ],
+            "Resource": [
+                "arn:aws:s3:::pure-adaptor-*"
+            ]
+        }
+    ]
+}
+EOF
+}
