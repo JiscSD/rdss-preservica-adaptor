@@ -22,6 +22,7 @@ def file_task1():
         tasks.FileMetadata(fileName='baz.pdf'),
         'message_id',
         'object_id',
+        [],
     )
 
 
@@ -32,6 +33,7 @@ def file_task2():
         tasks.FileMetadata(fileName='bam.pdf'),
         'message_id',
         'object_id',
+        [],
     )
 
 
@@ -144,6 +146,23 @@ def test_upload_no_override(task, temp_file):
                     ],
                 },
             }, '1',
+        ),
+        (
+            {
+                'messageBody': {
+                    'objectPersonRole': [
+                        {
+                            'person': {
+                                'personOrganisationUnit': {
+                                    'organisation': {
+                                        'organisationJiscId': 3,
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                },
+            }, '3',
         ),
     ],
 )

@@ -81,7 +81,8 @@ def valid_create_object_file():
         {
             'fileStorageLocation': 's3://bucket/path/to/file',
             'fileName': 'filename',
-            'fileStorageType': 1,
+            'storagePlatformType': 1,
+            'fileChecksum': [],
         },
     ]
 
@@ -95,12 +96,18 @@ def test_metadata_create_task(valid_config):
                 {
                     'fileStorageLocation': 's3://bucket/path/to/file',
                     'fileName': 'filename',
-                    'fileStorageType': 1,
+                    'fileStoragePlatform': {
+                        'storagePlatformType': 1,
+                    },
+                    'fileChecksum': [],
                 },
                 {
                     'fileStorageLocation': 's3://bucket/path/to/file2',
                     'fileName': 'filename2',
-                    'fileStorageType': 1,
+                    'fileStoragePlatform': {
+                        'storagePlatformType': 1,
+                    },
+                    'fileChecksum': [],
                 },
             ],
             'objectOrganisationRole': [{
@@ -141,12 +148,18 @@ def test_metadata_create_task_skipped(valid_config):
                 {
                     'fileStorageLocation': 's3://bucket/path/to/file',
                     'fileName': 'filename',
-                    'fileStorageType': 1,
+                    'fileStoragePlatform': {
+                        'storagePlatformType': 1,
+                    },
+                    'fileChecksum': [],
                 },
                 {
                     'fileStorageLocation': 's3://bucket/path/to/file2',
                     'fileName': 'filename2',
-                    'fileStorageType': 1,
+                    'fileStoragePlatform': {
+                        'storagePlatformType': 1,
+                    },
+                    'fileChecksum': [],
                 },
             ],
             'objectOrganisationRole': [{
@@ -182,7 +195,10 @@ def test_metadata_create_task_skipped(valid_config):
                     'objectFile': {
                         # missing s3 path
                         'fileName': 'filename',
-                        'fileStorageType': 1,
+                        'fileStoragePlatform': {
+                            'storagePlatformType': 1,
+                        },
+                        'fileChecksum': [],
                     },
                     'objectOrganisationRole': valid_create_publisher(),
                 },
@@ -249,7 +265,10 @@ def test_metadata_create_task_skipped(valid_config):
                         {
                             # missing s3 path
                             'fileName': 'filename',
-                            'fileStorageType': 1,
+                            'fileStoragePlatform': {
+                                'storagePlatformType': 1,
+                            },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -265,7 +284,10 @@ def test_metadata_create_task_skipped(valid_config):
                         {
                             # no file name
                             'fileStorageLocation': 's3://bucket/path/to/file',
-                            'fileStorageType': 1,
+                            'fileStoragePlatform': {
+                                'storagePlatformType': 1,
+                            },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -282,7 +304,10 @@ def test_metadata_create_task_skipped(valid_config):
                             # wrong s3 path
                             'fileStorageLocation': 'bucket/path/to/file',
                             'fileName': 'filename',
-                            'fileStorageType': 1,
+                            'fileStoragePlatform': {
+                                'storagePlatformType': 1,
+                            },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -299,7 +324,10 @@ def test_metadata_create_task_skipped(valid_config):
                             'fileStorageLocation': 's3://bucket/path/to/file',
                             # empty file name
                             'fileName': '',
-                            'fileStorageType': 1,
+                            'fileStoragePlatform': {
+                                'storagePlatformType': 1,
+                            },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -316,7 +344,10 @@ def test_metadata_create_task_skipped(valid_config):
                             'fileStorageLocation': 's3://something/something',
                             'fileName': 'filename',
                             # http type for s3 url
-                            'fileStorageType': 2,
+                            'fileStoragePlatform': {
+                                'storagePlatformType': 2,
+                            },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -334,7 +365,10 @@ def test_metadata_create_task_skipped(valid_config):
                             'fileStorageLocation': 'http://something/something',
                             'fileName': 'filename',
                             # http type for s3 url
-                            'fileStorageType': 1,
+                            'fileStoragePlatform': {
+                                'storagePlatformType': 1,
+                            },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': valid_create_publisher(),
@@ -351,7 +385,10 @@ def test_metadata_create_task_skipped(valid_config):
                         {
                             'fileStorageLocation': 'http://something/something',
                             'fileName': 'filename',
-                            'fileStorageType': 2,
+                            'fileStoragePlatform': {
+                                'storagePlatformType': 2,
+                            },
+                            'fileChecksum': [],
                         },
                     ],
                     # no role
@@ -368,7 +405,10 @@ def test_metadata_create_task_skipped(valid_config):
                         {
                             'fileStorageLocation': 'http://something/something',
                             'fileName': 'filename',
-                            'fileStorageType': 2,
+                            'fileStoragePlatform': {
+                                'storagePlatformType': 2,
+                            },
+                            'fileChecksum': [],
                         },
                     ],
                     'objectOrganisationRole': [

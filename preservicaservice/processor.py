@@ -9,6 +9,7 @@ from .errors import (
     MalformedHeaderError,
     UnknownErrorError,
     UnsupportedMessageTypeError,
+    InvalidChecksumError,
 )
 from .put_stream import PutStream
 from .tasks_parser import record_to_task
@@ -72,7 +73,7 @@ class RecordProcessor(kcl.RecordProcessorBase):
                 task.run()
             else:
                 logger.warning('no task out of message')
-        except (MalformedBodyError, UnsupportedMessageTypeError, ExpiredMessageError, MalformedHeaderError) as e:
+        except (MalformedBodyError, UnsupportedMessageTypeError, ExpiredMessageError, MalformedHeaderError, InvalidChecksumError) as e:
             logger.exception('invalid message')
             self.invalid_stream.put(e.export(record))
         except BaseError as e:

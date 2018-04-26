@@ -2,22 +2,23 @@ sudo: required
 language: python
 
 python:
-  - "3.6"
+  - "3.5-dev"
 
 before_install:
-  - sudo apt-get update -yqq
+  - >
+      travis_retry curl
+      "https://releases.hashicorp.com/terraform/0.10.8/terraform_0.10.8_linux_amd64.zip"
+      > /tmp/terraform.zip
+  - sudo unzip /tmp/terraform.zip -d /usr/bin
+  - sudo chmod +x /usr/bin/terraform
 
 install:
-  - pip install pre-commit
-  - pre-commit install
-
-before_script:
-  - wget https://releases.hashicorp.com/terraform/0.10.8/terraform_0.10.8_linux_amd64.zip -O /tmp/terraform.zip
-  - unzip /tmp/terraform.zip -d terraform/
-  - export PATH=$PATH:$PWD/terraform/
+  - wget -q https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip -O /tmp/sonar-scanner-cli-3.0.3.778-linux.zip
+  - unzip -qq /tmp/sonar-scanner-cli-3.0.3.778-linux.zip
+  - export PATH=$PATH:$PWD/sonar-scanner-3.0.3.778-linux/bin/
   - make deps
 
 script:
-  - pre-commit run --all-files --verbose
   - make lint
   - make test
+  - sonar-scanner -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONARQUBE_TOKEN -Dsonar.projectName=$TRAVIS_REPO_SLUG -Dsonar.projectKey=$(echo "$TRAVIS_REPO_SLUG" | cut -d "/" -f 2) -Dsonar.projectVersion=$TRAVIS_COMMIT

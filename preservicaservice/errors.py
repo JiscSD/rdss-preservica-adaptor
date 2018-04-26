@@ -18,6 +18,7 @@ CodeMaxMessageSendTries = 'GENERR010'
 CodeResourceNotFound = 'GENERR011'
 CodeResourceAlreadyExists = 'GENERR012'
 CodeSDKLibraryError = 'GENERR013'
+CodeInvalidChecksum = 'APPERRMET004'
 
 _errors = {
     CodeMalformedBody: 'The Message Body is not in the expected format, '
@@ -40,6 +41,7 @@ _errors = {
     CodeResourceNotFound: 'Resource not found',
     CodeResourceAlreadyExists: 'Resource already exists',
     CodeSDKLibraryError: 'SDK level error',
+    CodeInvalidChecksum: 'A file did not match its checksum.',
 }
 
 
@@ -120,3 +122,7 @@ class ResourceAlreadyExistsError(BaseError):
 
 class SDKLibraryError(BaseError):
     code = CodeSDKLibraryError
+
+
+class InvalidChecksumError(BaseError):
+    code = CodeInvalidChecksum

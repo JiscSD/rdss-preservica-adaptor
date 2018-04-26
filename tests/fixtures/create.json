@@ -18,13 +18,19 @@
     "objectFile": [{
       "fileUuid": "a3290140-18e1-506e-abec-61e31791e749",
       "fileStorageLocation": "s3://bucket/unsorted/10.17863/CAM.679/data.zip",
-      "fileStorageType": 1,
-      "fileName": "Label of this intellectual asset: 1"
+      "fileStoragePlatform": {
+        "storagePlatformType": 1
+      },
+      "fileName": "Label of this intellectual asset: 1",
+       "fileChecksum": []
     }, {
       "fileUuid": "9c5f1f7f-39a7-93fc-0327-5ffaa81dee62",
       "fileStorageLocation": "s3://bucket/unsorted/10.17863/CAM.679/readme.txt",
-      "fileStorageType": 1,
-      "fileName": "Label of this intellectual asset: 2"
+      "fileStoragePlatform": {
+        "storagePlatformType": 1
+      },
+      "fileName": "Label of this intellectual asset: 2",
+      "fileChecksum": []
     }]
   }
 }
