@@ -3,6 +3,7 @@ import datetime
 import dateutil.parser
 import moto
 import pytest
+import subprocess
 
 from preservicaservice import errors
 from preservicaservice import tasks
@@ -43,6 +44,10 @@ def task(file_task1, file_task2):
         'object-uuid',
     )
 
+def open_ssl_md5_checksum(file_path):
+    cmd = 'openssl md5 -binary {} | base64'.format(file_path)
+    output = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
+    return output.stdout.decode('utf-8').strip()
 
 @moto.mock_s3
 def test_run_succeeds(temp_file, task):
@@ -89,12 +94,14 @@ def test_run_succeeds(temp_file, task):
 
     bundle = upload_bucket.Object('this-is-message-uuid')
     metadata = bundle.metadata
+    checksum = open_ssl_md5_checksum(temp_file)
 
-    assert len(metadata.keys()) == 8
+    assert len(metadata.keys()) == 9
     assert metadata['key'] == 'this-is-message-uuid'
     assert metadata['bucket'] == 'upload'
     assert metadata['status'] == 'ready'
     assert metadata['name'] == 'this-is-message-uuid.zip'
+    assert metadata['md5chksum'] == checksum 
     assert int(metadata['size_uncompressed']) > int(metadata['size'])
     assert (
         datetime.datetime.now() -
