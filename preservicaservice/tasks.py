@@ -512,7 +512,7 @@ class BaseMetadataCreateTask(BaseTask):
         bucket = get_bucket(upload_url.host)
         key = os.path.join(upload_url.path, self.bundle_name)
         md5_checksum = self._generate_md5_checksum(zip_path)
-        metadata['md5chksum'] = md5_checksum 
+        metadata['md5chksum'] = md5_checksum
 
         if not override:
             if list(bucket.objects.filter(Prefix=key)):
@@ -523,8 +523,8 @@ class BaseMetadataCreateTask(BaseTask):
             bucket.put_object(
                 Body=data,
                 Key=key,
-                ContentMD5=md5_checksum, 
-                Metadata=metadata
+                ContentMD5=md5_checksum,
+                Metadata=metadata,
             )
 
     @property

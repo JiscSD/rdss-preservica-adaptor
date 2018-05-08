@@ -44,10 +44,12 @@ def task(file_task1, file_task2):
         'object-uuid',
     )
 
+
 def open_ssl_md5_checksum(file_path):
     cmd = 'openssl md5 -binary {} | base64'.format(file_path)
     output = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
     return output.stdout.decode('utf-8').strip()
+
 
 @moto.mock_s3
 def test_run_succeeds(temp_file, task):
@@ -101,7 +103,7 @@ def test_run_succeeds(temp_file, task):
     assert metadata['bucket'] == 'upload'
     assert metadata['status'] == 'ready'
     assert metadata['name'] == 'this-is-message-uuid.zip'
-    assert metadata['md5chksum'] == checksum 
+    assert metadata['md5chksum'] == checksum
     assert int(metadata['size_uncompressed']) > int(metadata['size'])
     assert (
         datetime.datetime.now() -
