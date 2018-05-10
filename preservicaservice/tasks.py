@@ -1,6 +1,7 @@
 import abc
 import datetime
 import hashlib
+import base64
 import logging
 import os
 import tempfile
@@ -236,7 +237,7 @@ class FileTask(object):
             raise UnderlyingSystemError('')
 
     def verify_checksums(self, path):
-        """ Check given path checksums sand raise if not valid.
+        """ Check given path checksums and raise if not valid.
 
         :param str path: file to check
         :raise: InvalidChecksumError if file too big
@@ -488,6 +489,16 @@ class BaseMetadataCreateTask(BaseTask):
                     '{0}/{0}.metadata'.format(self.object_id),
                 )
 
+    def _generate_md5_checksum(self, file_path, buf_size=4096):
+        """ Generates a MD5 checksum for inclusion in the upload to s3.
+            Uses an iterator over file contents for consistent memory usage.
+            """
+        md5_checksum = hashlib.md5()
+        with open(file_path, 'rb') as f_in:
+            for file_chunk in iter(lambda: f_in.read(buf_size), b''):
+                md5_checksum.update(file_chunk)
+        return base64.b64encode(md5_checksum.digest()).decode('utf-8')
+
     def upload_bundle(self, upload_url, zip_path, metadata, override):
         """ Upload given zip to target
 
@@ -499,18 +510,21 @@ class BaseMetadataCreateTask(BaseTask):
         :return:
         """
         bucket = get_bucket(upload_url.host)
-
         key = os.path.join(upload_url.path, self.bundle_name)
+        md5_checksum = self._generate_md5_checksum(zip_path)
+        metadata['md5chksum'] = md5_checksum
 
         if not override:
             if list(bucket.objects.filter(Prefix=key)):
                 # TODO: clarify exception
                 raise ResourceAlreadyExistsError('object already exists is s3')
 
-        with open(zip_path, 'rb') as f:
-            bucket.upload_fileobj(
-                f, key,
-                ExtraArgs={'Metadata': metadata},
+        with open(zip_path, 'rb') as data:
+            bucket.put_object(
+                Body=data,
+                Key=key,
+                ContentMD5=md5_checksum,
+                Metadata=metadata,
             )
 
     @property
