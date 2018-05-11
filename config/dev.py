@@ -17,5 +17,4 @@ organisation_buckets = {
     '476': 's3://uk.ac.jisc.alpha.researchdata.s3.uoj.autoupload',
     '471': 's3://uk.ac.jisc.alpha.researchdata.s3.uoj.autoupload',
     '480': 's3://uk.ac.jisc.alpha.researchdata.s3.uoj.autoupload',
-    '99999': 's3://uk.ac.jisc.alpha.researchdata.s3.uoj.autoupload',
 }
