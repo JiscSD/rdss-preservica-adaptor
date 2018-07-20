@@ -11,6 +11,6 @@ galaxy_info:
      - xenial
 
 dependencies:
-  - { role: tersmitten.locales, locales_present: 'en_US.UTF-8', locales_default: { lang: en_US.UTF-8 } }
+  - { role: Oefenweb.locales, locales_present: 'en_US.UTF-8', locales_default: { lang: en_US.UTF-8 } }
   - { role: adriagalin.timezone, ag_timezone: Etc/UTC }
-  - { role: tersmitten.ntp }
+  - { role: Oefenweb.ntp }

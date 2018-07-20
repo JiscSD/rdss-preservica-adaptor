@@ -1,7 +1,7 @@
 ---
-- src: tersmitten.ntp
+- src: Oefenweb.ntp
   version: v1.0.2
 - src: adriagalin.timezone
   version: 1.0.1
-- src: tersmitten.locales
+- src: Oefenweb.locales
   version: v1.0.3

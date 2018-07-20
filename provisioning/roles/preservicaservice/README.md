@@ -56,14 +56,14 @@ Role Variables
 Dependencies
 ------------
 
-    - role: tersmitten.locales
+    - role: Oefenweb.locales
     locales_present:
       - en_US.UTF-8
     locales_default:
       lang: en_US.UTF-8
     - role: adriagalin.timezone
     ag_timezone: Etc/UTC
-    - tersmitten.ntp
+    - Oefenweb.ntp
 
 
 Example Playbook
