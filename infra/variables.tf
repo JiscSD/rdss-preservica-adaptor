@@ -152,8 +152,3 @@ variable "uat_dev_uoj_workaround_bucket" {
   description = "Buckets to upload to for temp workaround until Preservica is available in UAT and DEV"
   default     = ["arn:aws:s3:::uk.ac.jisc.alpha.researchdata.s3.uoj.autoupload"]
 }
-
-variable "jisc_repository_bucket_arn_template" {
-  description = "Jisc Repoository bucket ARN "
-  default     = "arn:aws:s3:::repository-TERRAFORM-WORKSPACE-files"
-}
