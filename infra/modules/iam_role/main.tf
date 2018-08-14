@@ -156,6 +156,7 @@ data "aws_iam_policy_document" "jisc_repository_bucket_policy" {
 
     actions = [
       "s3:Get*",
+      "s3:ListObjects",
     ]
 
     resources = ["${var.jisc_repository_bucket_arn}"]
