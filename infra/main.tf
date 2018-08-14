@@ -127,11 +127,11 @@ module "iam_role" {
   # NOTE: The below is a temporary workaround until a `dev` and `uat` preservica
   # becomes available. Once that happens the bellow line can be removed and above
   # uncommented.
-  upload_buckets_arns         = ["${split(",", terraform.workspace == "prod" ? join(",", formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.workspace)) : join(",", var.uat_dev_uoj_workaround_bucket))}"]
-  objects_bucket_arn          = "arn:aws:s3:::${var.objects_bucket}"
-  jisc_repository_bucket_arn  = "arn:aws:s3:::repository-${terraform.workspace}-files"
-  dynamodb_arn                = "*"
-  project                     = "${var.project}"
+  upload_buckets_arns = ["${split(",", terraform.workspace == "prod" ? join(",", formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.workspace)) : join(",", var.uat_dev_uoj_workaround_bucket))}"]
+  objects_bucket_arn         = "arn:aws:s3:::${var.objects_bucket}"
+  jisc_repository_bucket_arn = "arn:aws:s3:::repository-${terraform.workspace}-files"
+  dynamodb_arn               = "*"
+  project                    = "${var.project}"
 }
 
 ####################

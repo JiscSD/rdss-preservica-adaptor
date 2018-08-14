@@ -21,7 +21,7 @@ variable "upload_buckets_arns" {
 }
 
 variable "jisc_repository_bucket_arn" {
-  description = "Jisc Repository s3 bucket ARN."
+  description = "Jisc Repository S3 bucket ARN."
 }
 
 variable "objects_bucket_arn" {
