@@ -158,7 +158,7 @@ data "aws_iam_policy_document" "jisc_repository_bucket_policy" {
       "s3:Get*",
     ]
 
-    resources = "${var.jisc_repository_bucket_arn}"
+    resources = ["${var.jisc_repository_bucket_arn}"]
   }
 }
 

@@ -129,7 +129,7 @@ module "iam_role" {
   # uncommented.
   upload_buckets_arns         = ["${split(",", terraform.workspace == "prod" ? join(",", formatlist("arn:aws:s3:::preservica-%s-api-%s-autoupload", var.upload_buckets_ids, terraform.workspace)) : join(",", var.uat_dev_uoj_workaround_bucket))}"]
   objects_bucket_arn          = "arn:aws:s3:::${var.objects_bucket}"
-  jisc_repository_bucket_arn  = "${var.jisc_repository_bucket_arn}"
+  jisc_repository_bucket_arn  = "${replace(var.jisc_repository_bucket_arn_template, "TERRAFORM-WORKSPACE", terraform.workspace)}"
   dynamodb_arn                = "*"
   project                     = "${var.project}"
 }
