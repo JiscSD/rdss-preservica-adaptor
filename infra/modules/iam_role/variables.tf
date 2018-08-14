@@ -20,6 +20,10 @@ variable "upload_buckets_arns" {
   default     = []
 }
 
+variable "jisc_repository_bucket_arn" {
+  description = "Jisc Repository S3 bucket ARN."
+}
+
 variable "objects_bucket_arn" {
   description = "Object bucket ARN."
 }

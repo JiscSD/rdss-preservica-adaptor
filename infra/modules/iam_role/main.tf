@@ -144,6 +144,24 @@ data "aws_iam_policy_document" "upload_buckets_policy" {
   }
 }
 
+resource "aws_iam_role_policy" "jisc-repository-bucket" {
+  name   = "${var.project}-${terraform.workspace}-jisc-repository-bucket"
+  role   = "${aws_iam_role.role.id}"
+  policy = "${data.aws_iam_policy_document.jisc_repository_bucket_policy.json}"
+}
+
+data "aws_iam_policy_document" "jisc_repository_bucket_policy" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:Get*",
+    ]
+
+    resources = "${var.jisc_repository_bucket_arn}"
+  }
+}
+
 resource "aws_iam_role_policy" "cloudwatch" {
   name = "${var.project}-${terraform.workspace}-cloudwatch"
   role = "${aws_iam_role.role.id}"
