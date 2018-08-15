@@ -154,12 +154,12 @@ data "aws_iam_policy_document" "jisc_repository_bucket_policy" {
   statement {
     effect = "Allow"
 
-    actions = [
-      "s3:Get*",
-      "s3:ListObjects",
-    ]
+    actions = ["s3:Get*"]
 
-    resources = ["${var.jisc_repository_bucket_arn}"]
+    resources = [
+      "${var.jisc_repository_bucket_arn}",
+      "${var.jisc_repository_bucket_arn}/*",
+    ]
   }
 }
 
