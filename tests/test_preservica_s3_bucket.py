@@ -1,4 +1,5 @@
 import random
+import boto3
 import pytest
 import mock
 import moto
@@ -67,12 +68,34 @@ def test_get_bucket_details(mock_get, mock_preservica_bucketdetails):
 
 
 @moto.mock_ssm
+@moto.mock_kms
 @moto.mock_s3
-def test_get_bucket():
+@mock.patch('requests.get', side_effect=mock_preservica_bucketdetails_api_response)
+def test_get_bucket(mock_get):
+    kms_client = boto3.client('kms', region_name='eu-west-2')
+    kms_key_id = kms_client.create_key()['KeyMetadata']['KeyId']
     ssm_client = boto3.client('ssm', region_name='eu-west-2')
+
     ssm_client.put_parameter(
-        Name='',
-        Value='',
+        Name='preservica-adaptor-test-api-decryption-key',
+        Value=test_preservica_aes_key,
         Type='SecureString',
         KeyId=kms_key_id,
     )
+
+    ssm_client.put_parameter(
+        Name='preservica-adaptor-test-999999-preservica-user',
+        Value='test@user.com',
+        Type='SecureString',
+        KeyId=kms_key_id,
+    )
+
+    ssm_client.put_parameter(
+        Name='preservica-adaptor-test-999999-preservica-password',
+        Value='test_password',
+        Type='SecureString',
+        KeyId=kms_key_id,
+    )
+
+    bucket_builder = PreservicaS3BucketBuilder(test_preservica_url, 'test')
+    print(bucket_builder.get_bucket('999999'))

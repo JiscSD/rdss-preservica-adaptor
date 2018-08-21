@@ -7,9 +7,10 @@ lxml
 moto
 pep8
 pre-commit
+pycrypto
 pylint
 pytest
 pytest-cov
 PyYAML
--e git://github.com/JiscRDSS/rdss-shared-libraries@0.0.3#egg=rdsslib
+-e git://github.com/JiscRDSS/rdss-shared-libraries@v0.0.5#egg=rdsslib
 requests
