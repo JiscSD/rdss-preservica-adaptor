@@ -16,6 +16,7 @@ from .errors import (
 )
 from .meta import write_object_meta, write_message_meta
 from .remote_urls import S3RemoteUrl, HTTPRemoteUrl
+from .preservica_s3_bucket import PreservicaS3BucketBuilder
 
 logger = logging.getLogger(__name__)
 

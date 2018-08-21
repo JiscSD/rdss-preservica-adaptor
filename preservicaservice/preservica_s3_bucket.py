@@ -23,9 +23,10 @@ class PreservicaBucketAPI(object):
     def __init__(
         self,
         preservica_url,
-        preservica_decryption_key,
+        preservica_decryption_key_utf8,
     ):
         self.preservica_url = preservica_url
+        preservica_decryption_key = bytes(preservica_decryption_key_utf8, 'utf-8')
         self.cipher = AES.new(preservica_decryption_key, AES.MODE_ECB)
 
     def _decrypt_string(self, string):
@@ -78,7 +79,6 @@ class PreservicaS3BucketBuilder(object):
         self.ssm_client = boto3.client('ssm')
 
         decryption_key = self._get_ssm_value('api-decryption-key')
-        print(decryption_key)
         self.preservica_bucket_api = PreservicaBucketAPI(
             preservica_url,
             decryption_key,
@@ -96,12 +96,15 @@ class PreservicaS3BucketBuilder(object):
         """ Get this institutions preservica adaptor credentials to query API."""
         preservica_user = self._get_ssm_value(jisc_id, 'preservica-user')
         preservica_password = self._get_ssm_value(jisc_id, 'preservica-password')
-        print(preservica_user, preservica_password)
         return preservica_user, preservica_password
 
     def _select_adaptor_bucket(self, jisc_id, bucket_names):
-
-        return
+        """ """
+        bucket_name = "com.preservica.rdss.{}.preservica_adaptor".format(jisc_id)
+        if bucket_name in bucket_names:
+            return bucket_name
+        else:
+            return
 
     def get_bucket(self, jisc_id):
         credentials = self._fetch_preservica_credentials(jisc_id)

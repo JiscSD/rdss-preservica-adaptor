@@ -20,8 +20,10 @@ def mock_preservica_encrypt(string):
     aes_padding_chars = ['\x01', '\r', '\x0c', '\x08', '\x10']
     padding_size = 16 - (len(string) % 16)
     string += random.choice(aes_padding_chars)*padding_size
-    cipher = AES.new(test_preservica_aes_key, AES.MODE_ECB)
-    encrypted_string = cipher.encrypt(string)
+    bstring = bytes(string, 'utf-8')
+    aes_key = bytes(test_preservica_aes_key, 'utf-8')
+    cipher = AES.new(aes_key, AES.MODE_ECB)
+    encrypted_string = cipher.encrypt(bstring)
     return b64encode(encrypted_string)
 
 
@@ -31,7 +33,11 @@ def mock_preservica_bucketdetails():
         'aws_access_key_id': 'ATESTACCESSKEYID',
         'aws_secret_access_key': 'ATESTSECRETACCESSKEY',
         'aws_session_token': 'ATESTSESSIONTOKEN',
-        'bucket_names': ['a.test.bucket.name', 'a.second.test.bucket.name'],
+        'bucket_names': [
+            'a.test.bucket.name', 
+            'com.preservica.rdss.999999.preservica_adaptor', 
+            'a.second.test.bucket.name'
+            ],
     }
 
 
@@ -73,9 +79,10 @@ def test_get_bucket_details(mock_get, mock_preservica_bucketdetails):
 @mock.patch('requests.get', side_effect=mock_preservica_bucketdetails_api_response)
 def test_get_bucket(mock_get):
     kms_client = boto3.client('kms', region_name='eu-west-2')
-    kms_key_id = kms_client.create_key()['KeyMetadata']['KeyId']
     ssm_client = boto3.client('ssm', region_name='eu-west-2')
+    s3_client = boto3.client('s3', region_name='eu-west-2')
 
+    kms_key_id = kms_client.create_key()['KeyMetadata']['KeyId']
     ssm_client.put_parameter(
         Name='preservica-adaptor-test-api-decryption-key',
         Value=test_preservica_aes_key,
@@ -96,6 +103,9 @@ def test_get_bucket(mock_get):
         Type='SecureString',
         KeyId=kms_key_id,
     )
+    bucket_name = 'com.preservica.rdss.999999.preservica_adaptor'
+    test_bucket = s3_client.create_bucket(Bucket=bucket_name)
 
     bucket_builder = PreservicaS3BucketBuilder(test_preservica_url, 'test')
-    print(bucket_builder.get_bucket('999999'))
+    preservica_bucket = bucket_builder.get_bucket('999999')
+    assert bucket_name == preservica_bucket.name

@@ -7,7 +7,7 @@ lxml
 moto
 pep8
 pre-commit
-pycrypto
+pycryptodome
 pylint
 pytest
 pytest-cov
