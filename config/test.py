@@ -1,3 +1,4 @@
+environment = 'test'
 input_stream_name = 'shared_services_output_test'
 input_stream_region = 'eu-west-2'
 invalid_stream_name = 'message_invalid_test'

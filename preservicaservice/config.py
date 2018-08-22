@@ -63,6 +63,7 @@ class Config:
 
     def __init__(
         self,
+        environment,
         input_stream_name,
         input_stream_region,
         invalid_stream_name,
@@ -72,6 +73,7 @@ class Config:
         organisation_buckets,
     ):
         """
+        :param str environment: name of the environment (dev/uat/prod)
         :param str input_stream_name: kinesis input stream name
         :param str input_stream_region: kinesis input stream region
         :param str error_stream_name: kinesis error stream name
@@ -79,6 +81,7 @@ class Config:
         :param organisation_buckets: mapping of S3 buckets
         :type organisation_buckets: dict of (str => str)
         """
+        self.environment = environment
         self.input_stream_name = self.validate_stream_name(
             'input_stream_name',
             input_stream_name,
@@ -159,6 +162,7 @@ class Config:
         :param raw:
         """
         return cls(
+            raw.environment,
             raw.input_stream_name,
             raw.input_stream_region,
             raw.invalid_stream_name,
