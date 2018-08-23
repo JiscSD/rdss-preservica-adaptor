@@ -1,5 +1,6 @@
 import datetime
 import zipfile
+import boto3
 
 import dateutil.parser
 import moto
@@ -39,14 +40,17 @@ def file_task2():
 
 @pytest.fixture
 def task(file_task1, file_task2):
-    yield tasks.BaseMetadataCreateTask(
-        {'foo': 'bar'},
-        [file_task1, file_task2],
-        S3RemoteUrl('s3://upload/to'),
-        'message_id',
-        'role',
-        'object_id',
-    )
+    with moto.mock_s3():
+        client = boto3.resource('s3')
+        s3_bucket = client.Bucket('upload')
+        yield tasks.BaseMetadataCreateTask(
+            {'foo': 'bar'},
+            [file_task1, file_task2],
+            s3_bucket,
+            'message_id',
+            'role',
+            'object_id',
+        )
 
 
 def test_bundle_meta(temp_file, task):
@@ -94,26 +98,26 @@ def test_upload_override(task, temp_file, temp_file2):
         f.write('bundle')
 
     task.upload_bundle(
-        S3RemoteUrl('s3://bucket/path'),
+        bucket,
         temp_file, {'foo': 'bar'},
         True,
     )
 
-    bucket.download_file('path/message_id', temp_file2)
+    bucket.download_file('message_id', temp_file2)
     assert_file_contents(temp_file2, 'bundle')
 
 
 @moto.mock_s3
 def test_upload_no_override(task, temp_file):
-    bucket = create_bucket('bucket')
-    bucket.put_object(Key='prefix/foo/message_id', Body='value')
+    bucket = create_bucket()
+    bucket.put_object(Key='message_id', Body='value')
 
     with open(temp_file, 'w') as f:
         f.write('bundle')
 
     with pytest.raises(errors.ResourceAlreadyExistsError):
         task.upload_bundle(
-            S3RemoteUrl('s3://bucket/prefix/foo'), temp_file, {}, False,
+            bucket, temp_file, {}, False,
         )
 
 

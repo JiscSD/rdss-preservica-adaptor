@@ -64,6 +64,7 @@ class Config:
     def __init__(
         self,
         environment,
+        preservica_base_url,
         input_stream_name,
         input_stream_region,
         invalid_stream_name,
@@ -82,6 +83,7 @@ class Config:
         :type organisation_buckets: dict of (str => str)
         """
         self.environment = environment
+        self.preservica_base_url = preservica_base_url
         self.input_stream_name = self.validate_stream_name(
             'input_stream_name',
             input_stream_name,
@@ -163,6 +165,7 @@ class Config:
         """
         return cls(
             raw.environment,
+            raw.preservica_base_url,
             raw.input_stream_name,
             raw.input_stream_region,
             raw.invalid_stream_name,

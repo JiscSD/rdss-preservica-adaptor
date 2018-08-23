@@ -25,12 +25,6 @@ def get_tmp_file():
     return tempfile.NamedTemporaryFile(delete=False).name
 
 
-def get_bucket(bucket_name):
-    session = boto3.Session()
-    s3 = session.resource('s3')
-    return s3.Bucket(bucket_name)
-
-
 class BaseTask(abc.ABC):
     """
     Task to run for given input message.
@@ -352,19 +346,19 @@ class BaseMetadataCreateTask(BaseTask):
     UPLOAD_OVERRIDE = False
 
     def __init__(
-        self, message, file_tasks, upload_url, message_id, role, object_id,
+        self, message, file_tasks, destination_bucket, message_id, role, object_id,
     ):
         """
         :param dict message: source message
         :param file_tasks: files to include in bundle wrapped in tasks
         :type file_tasks: list of FileTask
-        :param S3Url upload_url: upload url
+        :param boto3.S3.Bucket: destination_bucket
         :param str message_id: message header id
         :param str role: tag role
         """
         self.message = message
         self.file_tasks = file_tasks
-        self.upload_url = upload_url
+        self.destination_bucket = destination_bucket
         self.message_id = message_id
         self.object_id = object_id
         self.role = role
@@ -377,18 +371,28 @@ class BaseMetadataCreateTask(BaseTask):
         :type config: preservicaservice.config.Config
         :return:
         """
-        print('BUILDING')
         organisation_id = require_organisation_id(message)
         role = require_organisation_role(message)
 
         upload_url = config.organisation_buckets.get(organisation_id)
-        if not upload_url:
-            logger.warning(
-                'Provided organisation id {} has no configured upload url',
-                organisation_id,
+        if upload_url:
+            session = boto3.Session()
+            s3 = session.resource('s3')
+            destination_bucket = s3.Bucket(upload_url)
+        else:
+            if config.environment != 'prod':
+                bucket_jisc_id = 'jisc'
+            else:
+                bucket_jisc_id = organisation_id
+            bucket_builder = PreservicaS3BucketBuilder(
+                config.preservica_base_url, config.environment,
             )
-            # do nothing to message for unknown organisation
-            return None
+            destination_bucket = bucket_builder.get_bucket(bucket_jisc_id)
+            if not destination_bucket:
+                logger.warning(
+                    'No Preservica S3 bucket available for %s', bucket_jisc_id,
+                )
+                return None
 
         message_id = require_non_empty_key(
             message, 'messageHeader', 'messageId',
@@ -410,7 +414,7 @@ class BaseMetadataCreateTask(BaseTask):
         return cls(
             message,
             file_tasks,
-            upload_url,
+            destination_bucket,
             message_id,
             role,
             object_id,
@@ -464,7 +468,7 @@ class BaseMetadataCreateTask(BaseTask):
 
             # target s3 upload
             self.upload_bundle(
-                self.upload_url,
+                self.destination_bucket,
                 zip_path,
                 self.collect_meta(zip_path),
                 self.UPLOAD_OVERRIDE,
@@ -500,30 +504,28 @@ class BaseMetadataCreateTask(BaseTask):
                 md5_checksum.update(file_chunk)
         return base64.b64encode(md5_checksum.digest()).decode('utf-8')
 
-    def upload_bundle(self, upload_url, zip_path, metadata, override):
+    def upload_bundle(self, destination_bucket, zip_path, metadata, override):
         """ Upload given zip to target
 
-        :param upload_url: target s3 folder
-        :type upload_url: preservicaservice.remote_urls.S3RemoteUrl
+        :param destination_bucket: target s3 bucket
+        :type destination_bucket: boto3.S3.Bucket
         :param str zip_path: source file
         :param dict metadata: metadata to set on s3 object
         :param bool override: don't fail if file exists
         :return:
         """
-        bucket = get_bucket(upload_url.host)
-        key = os.path.join(upload_url.path, self.bundle_name)
         md5_checksum = self._generate_md5_checksum(zip_path)
         metadata['md5chksum'] = md5_checksum
 
         if not override:
-            if list(bucket.objects.filter(Prefix=key)):
+            if list(destination_bucket.objects.filter(Prefix=self.bundle_name)):
                 # TODO: clarify exception
                 raise ResourceAlreadyExistsError('object already exists is s3')
 
         with open(zip_path, 'rb') as data:
-            bucket.put_object(
+            destination_bucket.put_object(
                 Body=data,
-                Key=key,
+                Key=self.bundle_name,
                 ContentMD5=md5_checksum,
                 Metadata=metadata,
             )
@@ -546,7 +548,7 @@ class BaseMetadataCreateTask(BaseTask):
         # make sure all values are strings
         return {
             'key': self.message_id,
-            'bucket': self.upload_url.host,
+            'bucket': self.destination_bucket.name,
             'status': 'ready',
             'name': '{}.zip'.format(self.bundle_name),
             'size': str(os.stat(zip_file_path).st_size),

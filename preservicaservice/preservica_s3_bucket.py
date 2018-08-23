@@ -1,10 +1,13 @@
 import boto3
 import urllib
 import requests
+import logging
 import unicodedata
 from base64 import b64decode
 from lxml import etree
 from Crypto.Cipher import AES
+
+logger = logging.getLogger(__name__)
 
 
 class PreservicaBucketAPI(object):
@@ -78,37 +81,54 @@ class PreservicaS3BucketBuilder(object):
         self.environment = environment
         self.ssm_client = boto3.client('ssm')
 
-        decryption_key = self._get_ssm_value('api-decryption-key')
+        decryption_key = self._get_ssm_value(self.environment, 'api-decryption-key')
         self.preservica_bucket_api = PreservicaBucketAPI(
             preservica_url,
             decryption_key,
         )
 
     def _get_ssm_value(self, *args):
-        prefix = ['preservica-adaptor', self.environment]
+        prefix = ['preservica-adaptor']
         key = '-'.join(prefix + list(args))
+        logger.debug('Retrieving %s from AWS SSM.', key)
         return self.ssm_client.get_parameter(
             Name=key,
             WithDecryption=True,
-            )['Parameter']['Value'].split(':')[-1]
+        )['Parameter']['Value'].split(':')[-1]
 
     def _fetch_preservica_credentials(self, jisc_id):
         """ Get this institutions preservica adaptor credentials to query API."""
-        preservica_user = self._get_ssm_value(jisc_id, 'preservica-user')
-        preservica_password = self._get_ssm_value(jisc_id, 'preservica-password')
+        preservica_user = self._get_ssm_value(jisc_id, self.environment, 'preservica-user')
+        preservica_password = self._get_ssm_value(jisc_id, self.environment,  'preservica-password')
         return preservica_user, preservica_password
 
-    def _select_adaptor_bucket(self, jisc_id, bucket_names):
+    def _select_adaptor_bucket(self, bucket_names, jisc_id, bucket_name=None):
         """ """
-        bucket_name = "com.preservica.rdss.{}.preservica_adaptor".format(jisc_id)
+        if not bucket_name:
+            bucket_name = 'com.preservica.rdss.{}.preservica_adaptor'.format(jisc_id)
         if bucket_name in bucket_names:
+            logger.debug(
+                'Found s3 Bucket %s in Preservica sip sources for institution %s',
+                bucket_name, jisc_id,
+            )
             return bucket_name
         else:
+            logger.debug(
+                's3 Bucket %s in Preservica not among sip sources for institution %s',
+                bucket_name, jisc_id,
+            )
             return
 
-    def get_bucket(self, jisc_id):
+    def get_bucket(self, jisc_id, bucket_name=None):
         credentials = self._fetch_preservica_credentials(jisc_id)
         bucket_details = self.preservica_bucket_api.get_bucket_details(*credentials)
-        bucket_name = self._select_adaptor_bucket(jisc_id, bucket_details.pop('bucket_names', []))
-        client = boto3.resource('s3', **bucket_details)
-        return client.Bucket(bucket_name)
+        bucket_name = self._select_adaptor_bucket(
+            bucket_details.pop('bucket_names', []),
+            jisc_id,
+            bucket_name,
+        )
+        if bucket_name:
+            client = boto3.resource('s3', **bucket_details)
+            return client.Bucket(bucket_name)
+        else:
+            return None

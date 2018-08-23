@@ -34,10 +34,10 @@ def mock_preservica_bucketdetails():
         'aws_secret_access_key': 'ATESTSECRETACCESSKEY',
         'aws_session_token': 'ATESTSESSIONTOKEN',
         'bucket_names': [
-            'a.test.bucket.name', 
-            'com.preservica.rdss.999999.preservica_adaptor', 
-            'a.second.test.bucket.name'
-            ],
+            'a.test.bucket.name',
+            'com.preservica.rdss.999999.preservica_adaptor',
+            'a.second.test.bucket.name',
+        ],
     }
 
 
@@ -91,14 +91,14 @@ def test_get_bucket(mock_get):
     )
 
     ssm_client.put_parameter(
-        Name='preservica-adaptor-test-999999-preservica-user',
+        Name='preservica-adaptor-999999-test-preservica-user',
         Value='test@user.com',
         Type='SecureString',
         KeyId=kms_key_id,
     )
 
     ssm_client.put_parameter(
-        Name='preservica-adaptor-test-999999-preservica-password',
+        Name='preservica-adaptor-999999-test-preservica-password',
         Value='test_password',
         Type='SecureString',
         KeyId=kms_key_id,

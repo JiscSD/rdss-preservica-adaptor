@@ -25,6 +25,8 @@ def temp_file3():
 @pytest.fixture
 def valid_config():
     return Config(
+        'test',
+        'https://test_preservica_url',
         'input',
         'eu-west-1',
         'invalid',

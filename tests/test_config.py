@@ -52,6 +52,8 @@ def test_load_logger_from_yaml_non_yaml(temp_file):
 @pytest.fixture
 def valid_config_arguments():
     return dict(
+        environment='test',
+        preservica_base_url='https://test_preservica_url',
         input_stream_name='in',
         input_stream_region='eu-west-2',
         invalid_stream_name='invalid',

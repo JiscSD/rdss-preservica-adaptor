@@ -87,6 +87,7 @@ def valid_create_object_file():
     ]
 
 
+@moto.mock_s3
 def test_metadata_create_task(valid_config):
     record = to_record({
         'messageHeader': valid_create_header(),
