@@ -28,10 +28,8 @@ def valid_config():
         'test',
         'https://test_preservica_url',
         'input',
-        'eu-west-1',
         'invalid',
-        'eu-west-1',
         'error',
-        'eu-west-1',
+        'eu-west-2',
         organisation_buckets={},
     )

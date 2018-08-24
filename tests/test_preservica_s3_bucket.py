@@ -144,7 +144,7 @@ def test_get_bucket_details(mock_get):
 
 @mock_preservica_bucket_builder
 def test_get_bucket():
-    bucket_builder = PreservicaS3BucketBuilder(test_preservica_url, 'test')
+    bucket_builder = PreservicaS3BucketBuilder(test_preservica_url, 'test', 'eu-west-2')
     preservica_bucket = bucket_builder.get_bucket('jisc')
     bucket_name = 'com.preservica.rdss.jisc.preservica_adaptor'
     assert bucket_name == preservica_bucket.name
