@@ -33,5 +33,5 @@ def valid_config():
         'eu-west-1',
         'error',
         'eu-west-1',
-        organisation_buckets={'1': 's3://upload/to'},
+        organisation_buckets={},
     )

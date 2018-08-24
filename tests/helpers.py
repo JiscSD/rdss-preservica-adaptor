@@ -1,8 +1,10 @@
 import os
 import tempfile
+import contextlib
 import zipfile
-
+import functools
 import boto3
+import moto
 
 
 def named_temp_file():
@@ -46,3 +48,4 @@ def create_bucket(bucket_name='bucket'):
 
 def key_in_bucket1(bucket, key='prefix/foo', contents='bar'):
     bucket.put_object(Key=key, Body=contents)
+

@@ -74,14 +74,11 @@ class RecordProcessor(kcl.RecordProcessorBase):
             else:
                 logger.warning('no task out of message')
         except (MalformedBodyError, UnsupportedMessageTypeError, ExpiredMessageError, MalformedHeaderError, InvalidChecksumError) as e:
-            print('invalid')
             logger.exception('invalid message')
             self.invalid_stream.put(e.export(record))
         except BaseError as e:
-            print('error')
             logger.exception('error handling record')
             self.error_stream.put(e.export(record))
         except Exception as e:
-            print('unknown')
             logger.exception('unexpected error handling error')
             self.error_stream.put(UnknownErrorError(str(e)).export(record))

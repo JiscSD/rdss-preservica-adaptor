@@ -1,6 +1,9 @@
 import base64
 import json
 from collections import namedtuple
+import moto 
+import mock
+import boto3
 
 import pytest
 
@@ -8,6 +11,8 @@ from preservicaservice import errors
 from preservicaservice import tasks
 from preservicaservice import tasks_parser
 from preservicaservice.remote_urls import S3RemoteUrl
+from preservicaservice.preservica_s3_bucket import PreservicaS3BucketBuilder
+from .test_preservica_s3_bucket import mock_preservica_bucket_builder
 
 Record = namedtuple('Record', 'data')
 
@@ -86,8 +91,7 @@ def valid_create_object_file():
         },
     ]
 
-
-@moto.mock_s3
+@mock_preservica_bucket_builder
 def test_metadata_create_task(valid_config):
     record = to_record({
         'messageHeader': valid_create_header(),
@@ -125,8 +129,7 @@ def test_metadata_create_task(valid_config):
     task = tasks_parser.record_to_task(record, valid_config)
 
     assert isinstance(task, tasks.MetadataCreateTask)
-    assert isinstance(task.upload_url, S3RemoteUrl)
-    assert task.upload_url.url == 's3://upload/to'
+    assert task.destination_bucket.name == 'com.preservica.rdss.jisc.preservica_adaptor'
     assert task.message_id == 'message_id'
     assert task.role == '3'
 
@@ -141,6 +144,7 @@ def test_metadata_create_task(valid_config):
     assert file_task.metadata.fileName == 'filename2'
 
 
+@mock_preservica_bucket_builder
 def test_metadata_create_task_skipped(valid_config):
     record = to_record({
         'messageHeader': valid_create_header(),
