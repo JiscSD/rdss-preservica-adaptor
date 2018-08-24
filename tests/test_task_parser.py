@@ -176,8 +176,8 @@ def test_metadata_create_task_skipped(valid_config):
             }],
         },
     })
-    task = tasks_parser.record_to_task(record, valid_config)
-    assert task is None
+    with pytest.raises(errors.MalformedBodyError):
+        tasks_parser.record_to_task(record, valid_config)
 
 
 @pytest.mark.parametrize(
@@ -441,6 +441,7 @@ def test_metadata_create_task_skipped(valid_config):
         ),
     ],
 )
+@mock_preservica_bucket_builder
 def test_metadata_create_task_error(message, error, valid_config):
     with pytest.raises(errors.MalformedBodyError, match=error):
         tasks_parser.record_to_task(to_record(message), valid_config)

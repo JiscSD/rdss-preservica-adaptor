@@ -133,7 +133,7 @@ def mock_preservica_bucket_builder(func, jisc_id='jisc', environment='test'):
     return wrapper
 
 
-@mock.patch('requests.get', side_effect=mock_preservica_bucketdetails_api_response)
+@mock.patch('requests.get', side_effect=mock_preservica_bucketdetails_api_response())
 def test_get_bucket_details(mock_get):
     bucket_api = PreservicaBucketAPI(test_preservica_url, test_preservica_aes_key)
     bucket_details = bucket_api.get_bucket_details('test@user.com', 'test_password')
