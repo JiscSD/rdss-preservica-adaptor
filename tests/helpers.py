@@ -48,4 +48,3 @@ def create_bucket(bucket_name='bucket'):
 
 def key_in_bucket1(bucket, key='prefix/foo', contents='bar'):
     bucket.put_object(Key=key, Body=contents)
-

@@ -44,6 +44,7 @@ def mock_preservica_bucketdetails(jisc_id='jisc'):
         ],
     }
 
+
 def mock_preservica_bucketdetails_api_response(jisc_id='jisc'):
     """ Mocks a `requests` response object with the `.content` property
         as a recreation of the responses from preservica's bucketdetails endpoint. 
@@ -108,19 +109,23 @@ def mock_preservica_bucket_builder(func, jisc_id='jisc', environment='test'):
         test_bucket = s3_client.create_bucket(Bucket=bucket_name)
 
     mocking_managers = [
-            (moto.mock_s3, [], {}),
-            (moto.mock_ssm, [], {}),
-            (moto.mock_kms, [], {}),
-            (mock.patch, 
-                ['preservicaservice.preservica_s3_bucket.PreservicaBucketAPI._get_encrypted_bucket_details'], 
-                {'side_effect': mock_preservica_bucketdetails_api_response(jisc_id)}
-                )
-            ]
+        (moto.mock_s3, [], {}),
+        (moto.mock_ssm, [], {}),
+        (moto.mock_kms, [], {}),
+        (
+            mock.patch,
+            ['preservicaservice.preservica_s3_bucket.PreservicaBucketAPI._get_encrypted_bucket_details'],
+            {'side_effect': mock_preservica_bucketdetails_api_response(jisc_id)},
+        ),
+    ]
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         with contextlib.ExitStack() as stack:
-            [stack.enter_context(f(*f_args, **f_kwargs)) for f, f_args, f_kwargs in mocking_managers]
+            [
+                stack.enter_context(f(*f_args, **f_kwargs))
+                for f, f_args, f_kwargs in mocking_managers
+            ]
             setup_ssm()
             setup_s3()
             return func(*args, **kwargs)
@@ -133,6 +138,7 @@ def test_get_bucket_details(mock_get):
     bucket_api = PreservicaBucketAPI(test_preservica_url, test_preservica_aes_key)
     bucket_details = bucket_api.get_bucket_details('test@user.com', 'test_password')
     assert bucket_details == mock_preservica_bucketdetails()
+
 
 @mock_preservica_bucket_builder
 def test_get_bucket():

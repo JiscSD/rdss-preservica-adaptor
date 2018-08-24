@@ -1,7 +1,7 @@
 import base64
 import json
 from collections import namedtuple
-import moto 
+import moto
 import mock
 import boto3
 
@@ -90,6 +90,7 @@ def valid_create_object_file():
             'fileChecksum': [],
         },
     ]
+
 
 @mock_preservica_bucket_builder
 def test_metadata_create_task(valid_config):
