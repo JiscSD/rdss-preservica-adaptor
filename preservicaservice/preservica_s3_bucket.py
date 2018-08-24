@@ -77,9 +77,9 @@ class PreservicaBucketAPI(object):
 
 class PreservicaS3BucketBuilder(object):
 
-    def __init__(self, preservica_url, environment):
+    def __init__(self, preservica_url, environment, region):
         self.environment = environment
-        self.ssm_client = boto3.client('ssm')
+        self.ssm_client = boto3.client('ssm', region_name=region)
 
         decryption_key = self._get_ssm_value(self.environment, 'api-decryption-key')
         self.preservica_bucket_api = PreservicaBucketAPI(

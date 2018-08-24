@@ -385,7 +385,9 @@ class BaseMetadataCreateTask(BaseTask):
             else:
                 bucket_jisc_id = organisation_id
             bucket_builder = PreservicaS3BucketBuilder(
-                config.preservica_base_url, config.environment,
+                config.preservica_base_url,
+                config.environment,
+                config.adaptor_aws_region,
             )
             destination_bucket = bucket_builder.get_bucket(bucket_jisc_id)
             if not destination_bucket:

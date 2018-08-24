@@ -119,8 +119,10 @@ def mock_preservica_bucket_builder(func, jisc_id='jisc', environment='test'):
         ),
     ]
 
+    # `wraps` preserves function info for decorated function e.g. __name__
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
+        # This allows the setup of multiple context managers without lots of nested `withs`
         with contextlib.ExitStack() as stack:
             [
                 stack.enter_context(f(*f_args, **f_kwargs))

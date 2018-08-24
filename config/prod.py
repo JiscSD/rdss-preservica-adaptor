@@ -1,11 +1,9 @@
 environment = 'prod'
 preservica_base_url = 'https://jisc.preservica.com'
 input_stream_name = 'shared_services_output_prod'
-input_stream_region = 'eu-west-2'
 invalid_stream_name = 'message_invalid_prod'
-invalid_stream_region = 'eu-west-2'
 error_stream_name = 'message_error_prod'
-error_stream_region = 'eu-west-2'
+adaptor_aws_region = 'eu-west-2'
 
 organisation_buckets = {
     '1288': 's3://preservica-1288-api-prod-autoupload',

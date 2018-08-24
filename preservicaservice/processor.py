@@ -30,11 +30,11 @@ class RecordProcessor(kcl.RecordProcessorBase):
         self.config = config
         self.invalid_stream = PutStream(
             config.invalid_stream_name,
-            config.invalid_stream_region,
+            config.adaptor_aws_region,
         )
         self.error_stream = PutStream(
             config.error_stream_name,
-            config.error_stream_region,
+            config.adaptor_aws_region,
         )
 
     def initialize(self, shard_id):
