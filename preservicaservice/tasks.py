@@ -378,7 +378,7 @@ class BaseMetadataCreateTask(BaseTask):
         if upload_url:
             session = boto3.Session()
             s3 = session.resource('s3')
-            destination_bucket = s3.Bucket(upload_url)
+            destination_bucket = s3.Bucket(upload_url.host)
         else:
             if config.environment != 'prod':
                 bucket_jisc_id = 'jisc'

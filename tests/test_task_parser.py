@@ -11,8 +11,10 @@ from preservicaservice import errors
 from preservicaservice import tasks
 from preservicaservice import tasks_parser
 from preservicaservice.remote_urls import S3RemoteUrl
+from preservicaservice.config import Config
 from preservicaservice.preservica_s3_bucket import PreservicaS3BucketBuilder
 from .test_preservica_s3_bucket import mock_preservica_bucket_builder
+from .helpers import create_bucket
 
 Record = namedtuple('Record', 'data')
 
@@ -92,7 +94,7 @@ def valid_create_object_file():
     ]
 
 
-@mock_preservica_bucket_builder
+@mock_preservica_bucket_builder()
 def test_metadata_create_task(valid_config):
     record = to_record({
         'messageHeader': valid_create_header(),
@@ -145,7 +147,7 @@ def test_metadata_create_task(valid_config):
     assert file_task.metadata.fileName == 'filename2'
 
 
-@mock_preservica_bucket_builder
+@mock_preservica_bucket_builder()
 def test_metadata_create_task_skipped(valid_config):
     record = to_record({
         'messageHeader': valid_create_header(),
@@ -441,7 +443,172 @@ def test_metadata_create_task_skipped(valid_config):
         ),
     ],
 )
-@mock_preservica_bucket_builder
+@mock_preservica_bucket_builder()
 def test_metadata_create_task_error(message, error, valid_config):
     with pytest.raises(errors.MalformedBodyError, match=error):
         tasks_parser.record_to_task(to_record(message), valid_config)
+
+
+@mock_preservica_bucket_builder(jisc_id='jisc', environment='dev')
+def test_jisc_tenancy_bucket_selected_in_dev():
+    config = Config(
+        'dev',
+        'https://test_preservica_url',
+        'input',
+        'invalid',
+        'error',
+        'eu-west-2',
+        organisation_buckets={},
+    )
+    record = to_record({
+        'messageHeader': valid_create_header(),
+        'messageBody': {
+            'objectUuid': 'object_uuid',
+            'objectFile': [
+                {
+                    'fileStorageLocation': 's3://bucket/path/to/file',
+                    'fileName': 'filename',
+                    'fileStoragePlatform': {
+                        'storagePlatformType': 1,
+                    },
+                    'fileChecksum': [],
+                },
+            ],
+            'objectOrganisationRole': [{
+                'organisation': {
+                    'organisationJiscId': 999,
+                    'organisationName': 'string',
+                    'organisationType': 2,
+                    'organisationAddress': 'string',
+                },
+                'role': 3,
+            }],
+        },
+    })
+    task = tasks_parser.record_to_task(record, config)
+
+    assert task.destination_bucket.name == 'com.preservica.rdss.jisc.preservica_adaptor'
+
+
+@mock_preservica_bucket_builder(jisc_id='jisc', environment='uat')
+def test_jisc_tenancy_bucket_selected_in_uat():
+    config = Config(
+        'uat',
+        'https://test_preservica_url',
+        'input',
+        'invalid',
+        'error',
+        'eu-west-2',
+        organisation_buckets={},
+    )
+    record = to_record({
+        'messageHeader': valid_create_header(),
+        'messageBody': {
+            'objectUuid': 'object_uuid',
+            'objectFile': [
+                {
+                    'fileStorageLocation': 's3://bucket/path/to/file',
+                    'fileName': 'filename',
+                    'fileStoragePlatform': {
+                        'storagePlatformType': 1,
+                    },
+                    'fileChecksum': [],
+                },
+            ],
+            'objectOrganisationRole': [{
+                'organisation': {
+                    'organisationJiscId': 999,
+                    'organisationName': 'string',
+                    'organisationType': 2,
+                    'organisationAddress': 'string',
+                },
+                'role': 3,
+            }],
+        },
+    })
+    task = tasks_parser.record_to_task(record, config)
+    assert task.destination_bucket.name == 'com.preservica.rdss.jisc.preservica_adaptor'
+
+
+@mock_preservica_bucket_builder(jisc_id='999', environment='prod')
+def test_institution_tenancy_bucket_selected_in_prod():
+    config = Config(
+        'prod',
+        'https://test_preservica_url',
+        'input',
+        'invalid',
+        'error',
+        'eu-west-2',
+        organisation_buckets={},
+    )
+    record = to_record({
+        'messageHeader': valid_create_header(),
+        'messageBody': {
+            'objectUuid': 'object_uuid',
+            'objectFile': [
+                {
+                    'fileStorageLocation': 's3://bucket/path/to/file',
+                    'fileName': 'filename',
+                    'fileStoragePlatform': {
+                        'storagePlatformType': 1,
+                    },
+                    'fileChecksum': [],
+                },
+            ],
+            'objectOrganisationRole': [{
+                'organisation': {
+                    'organisationJiscId': 999,
+                    'organisationName': 'string',
+                    'organisationType': 2,
+                    'organisationAddress': 'string',
+                },
+                'role': 3,
+            }],
+        },
+    })
+    task = tasks_parser.record_to_task(record, config)
+    assert task.destination_bucket.name == 'com.preservica.rdss.999.preservica_adaptor'
+
+
+@moto.mock_s3
+def test_config_defined_institution_bucket_selected_in_prod():
+    bucket_name = 'a.test.bucket'
+    create_bucket(bucket_name)
+    config = Config(
+        'prod',
+        'https://test_preservica_url',
+        'input',
+        'invalid',
+        'error',
+        'eu-west-2',
+        organisation_buckets={
+            '999': 's3://' + bucket_name,
+        },
+    )
+    record = to_record({
+        'messageHeader': valid_create_header(),
+        'messageBody': {
+            'objectUuid': 'object_uuid',
+            'objectFile': [
+                {
+                    'fileStorageLocation': 's3://bucket/path/to/file',
+                    'fileName': 'filename',
+                    'fileStoragePlatform': {
+                        'storagePlatformType': 1,
+                    },
+                    'fileChecksum': [],
+                },
+            ],
+            'objectOrganisationRole': [{
+                'organisation': {
+                    'organisationJiscId': 999,
+                    'organisationName': 'string',
+                    'organisationType': 2,
+                    'organisationAddress': 'string',
+                },
+                'role': 3,
+            }],
+        },
+    })
+    task = tasks_parser.record_to_task(record, config)
+    assert task.destination_bucket.name == bucket_name

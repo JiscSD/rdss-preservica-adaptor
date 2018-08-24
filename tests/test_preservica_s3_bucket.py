@@ -73,7 +73,7 @@ def mock_preservica_bucketdetails_api_response(jisc_id='jisc'):
     return lambda *args, **kwargs: MockResponse(content=response_template % response_data)
 
 
-def mock_preservica_bucket_builder(func, jisc_id='jisc', environment='test'):
+def mock_preservica_bucket_builder(jisc_id='jisc', environment='test'):
     """ A decorator that spins up mocking for the AWS and Preservica API's that 
         the PreservicaS3BucketBuilder class calls upon. 
         """
@@ -119,20 +119,21 @@ def mock_preservica_bucket_builder(func, jisc_id='jisc', environment='test'):
         ),
     ]
 
-    # `wraps` preserves function info for decorated function e.g. __name__
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        # This allows the setup of multiple context managers without lots of nested `withs`
-        with contextlib.ExitStack() as stack:
-            [
-                stack.enter_context(f(*f_args, **f_kwargs))
-                for f, f_args, f_kwargs in mocking_managers
-            ]
-            setup_ssm()
-            setup_s3()
-            return func(*args, **kwargs)
-
-    return wrapper
+    def decorator(func, *args, **kwargs):
+        # `wraps` preserves function info for decorated function e.g. __name__
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            # This allows the setup of multiple context managers without lots of nested `withs`
+            with contextlib.ExitStack() as stack:
+                [
+                    stack.enter_context(f(*f_args, **f_kwargs))
+                    for f, f_args, f_kwargs in mocking_managers
+                ]
+                setup_ssm()
+                setup_s3()
+                return func(*args, **kwargs)
+        return wrapper
+    return decorator
 
 
 @mock.patch('requests.get', side_effect=mock_preservica_bucketdetails_api_response())
@@ -142,7 +143,7 @@ def test_get_bucket_details(mock_get):
     assert bucket_details == mock_preservica_bucketdetails()
 
 
-@mock_preservica_bucket_builder
+@mock_preservica_bucket_builder()
 def test_get_bucket():
     bucket_builder = PreservicaS3BucketBuilder(test_preservica_url, 'test', 'eu-west-2')
     preservica_bucket = bucket_builder.get_bucket('jisc')
