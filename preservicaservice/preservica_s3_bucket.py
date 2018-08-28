@@ -105,7 +105,7 @@ class PreservicaS3BucketBuilder(object):
     def _select_adaptor_bucket(self, bucket_names, jisc_id, bucket_name=None):
         """ """
         if not bucket_name:
-            bucket_name = 'com.preservica.rdss.{}.preservica_adaptor'.format(jisc_id)
+            bucket_name = 'com.preservica.rdss.{}.preservicaadaptor'.format(jisc_id)
         if bucket_name in bucket_names:
             logger.debug(
                 'Found s3 Bucket %s in Preservica sip sources for institution %s',
