@@ -244,7 +244,7 @@ resource "aws_iam_role_policy" "ssm" {
                 "ssm:GetParameter"
             ],
             "Resource": [
-              "arn:aws:ssm:::parameter/preservica-adaptor*"
+              "*"
             ]
         },
         {
