@@ -39,7 +39,7 @@ def mock_preservica_bucketdetails(jisc_id='jisc'):
         'aws_session_token': 'ATESTSESSIONTOKEN',
         'bucket_names': [
             'a.test.bucket.name',
-            'com.preservica.rdss.{}.preservica_adaptor'.format(jisc_id),
+            'com.preservica.rdss.{}.preservicaadaptor'.format(jisc_id),
             'a.second.test.bucket.name',
         ],
     }
@@ -105,7 +105,7 @@ def mock_preservica_bucket_builder(jisc_id='jisc', environment='test'):
 
     def setup_s3():
         s3_client = boto3.client('s3', region_name='eu-west-2')
-        bucket_name = 'com.preservica.rdss.{}.preservica_adaptor'.format(jisc_id)
+        bucket_name = 'com.preservica.rdss.{}.preservicaadaptor'.format(jisc_id)
         test_bucket = s3_client.create_bucket(Bucket=bucket_name)
 
     mocking_managers = [
@@ -147,5 +147,5 @@ def test_get_bucket_details(mock_get):
 def test_get_bucket():
     bucket_builder = PreservicaS3BucketBuilder(test_preservica_url, 'test', 'eu-west-2')
     preservica_bucket = bucket_builder.get_bucket('jisc')
-    bucket_name = 'com.preservica.rdss.jisc.preservica_adaptor'
+    bucket_name = 'com.preservica.rdss.jisc.preservicaadaptor'
     assert bucket_name == preservica_bucket.name

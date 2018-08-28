@@ -132,7 +132,7 @@ def test_metadata_create_task(valid_config):
     task = tasks_parser.record_to_task(record, valid_config)
 
     assert isinstance(task, tasks.MetadataCreateTask)
-    assert task.destination_bucket.name == 'com.preservica.rdss.jisc.preservica_adaptor'
+    assert task.destination_bucket.name == 'com.preservica.rdss.jisc.preservicaadaptor'
     assert task.message_id == 'message_id'
     assert task.role == '3'
 
@@ -487,7 +487,7 @@ def test_jisc_tenancy_bucket_selected_in_dev():
     })
     task = tasks_parser.record_to_task(record, config)
 
-    assert task.destination_bucket.name == 'com.preservica.rdss.jisc.preservica_adaptor'
+    assert task.destination_bucket.name == 'com.preservica.rdss.jisc.preservicaadaptor'
 
 
 @mock_preservica_bucket_builder(jisc_id='jisc', environment='uat')
@@ -527,7 +527,7 @@ def test_jisc_tenancy_bucket_selected_in_uat():
         },
     })
     task = tasks_parser.record_to_task(record, config)
-    assert task.destination_bucket.name == 'com.preservica.rdss.jisc.preservica_adaptor'
+    assert task.destination_bucket.name == 'com.preservica.rdss.jisc.preservicaadaptor'
 
 
 @mock_preservica_bucket_builder(jisc_id='999', environment='prod')
@@ -567,7 +567,7 @@ def test_institution_tenancy_bucket_selected_in_prod():
         },
     })
     task = tasks_parser.record_to_task(record, config)
-    assert task.destination_bucket.name == 'com.preservica.rdss.999.preservica_adaptor'
+    assert task.destination_bucket.name == 'com.preservica.rdss.999.preservicaadaptor'
 
 
 @moto.mock_s3
