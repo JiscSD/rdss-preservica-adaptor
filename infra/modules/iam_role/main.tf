@@ -235,7 +235,7 @@ resource "aws_iam_role_policy" "ssm" {
                 "ssm:GetParameter"
             ],
             "Resource": [
-                "arn:aws:ssm:::preservica-adaptor*${terraform.workspace}*"
+              "arn:aws:ssm:::parameterpreservica-adaptor*${terraform.workspace}*"
             ]
         },
         {
