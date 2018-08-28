@@ -235,7 +235,7 @@ resource "aws_iam_role_policy" "ssm" {
                 "ssm:GetParameter"
             ],
             "Resource": [
-              "arn:aws:ssm:::parameter/preservica-adaptor*${terraform.workspace}*"
+              "arn:aws:ssm:::parameter/preservica-adaptor*"
             ]
         },
         {
@@ -244,7 +244,7 @@ resource "aws_iam_role_policy" "ssm" {
               "kms:Decrypt"
             ],
             "Resource": [
-                "${data.aws_kms_alias.ssm.arn}"
+                "${data.aws_kms_alias.ssm.target_key_arn}"
             ]
         }
     ]
