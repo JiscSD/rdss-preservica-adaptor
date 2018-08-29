@@ -50,7 +50,9 @@ find_collections_before_create_response = requests.get(
         'Preservica-Access-Token': token,
     },
 )
-collections_before_create = etree.fromstring(find_collections_before_create_response.text.encode('utf-8')).findall(
+collections_before_create = etree.fromstring(
+    find_collections_before_create_response.text.encode('utf-8'),
+).findall(
     './/{{{0}}}Collection'.format(namespace_xip),
 )
 logging.info('Found %s collections', len(collections_before_create))
@@ -100,7 +102,9 @@ find_collections_after_create_response = requests.get(
         'Preservica-Access-Token': token,
     },
 )
-collections_after_create = etree.fromstring(find_collections_after_create_response.text.encode('utf-8')).findall(
+collections_after_create = etree.fromstring(
+    find_collections_after_create_response.text.encode('utf-8'),
+).findall(
     './/{{{0}}}Collection'.format(namespace_xip),
 )
 logging.info('Found %s root collections', len(collections_after_create))
@@ -108,7 +112,9 @@ assert len(collections_after_create) == len(collections_before_create) + 1
 
 logging.info('Starting workflow...')
 
-child_collection_ref = etree.fromstring(create_child_collection_response.text.encode('utf-8')).find(
+child_collection_ref = etree.fromstring(
+    create_child_collection_response.text.encode('utf-8'),
+).find(
     './/{{{0}}}CollectionRef'.format(namespace_xip),
 ).text
 start_workflow_response = requests.post(
@@ -209,11 +215,16 @@ digital_file_get_response = requests.get(
 )
 logging.info(digital_file_get_response.text)
 
-digital_file_xml = etree.fromstring(digital_file_get_response.text.encode('utf-8'))
+digital_file_xml = etree.fromstring(
+    digital_file_get_response.text.encode('utf-8'),
+)
 file_element = digital_file_xml.find('.//{{{0}}}File'.format(namespace_xip))
 metadata = etree.fromstring('''
     <Metadata schemaURI="http://www.openarchives.org/OAI/2.0/oai_dc/">
-      <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/oai_dc.xsd">
+      <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+      xmlns:dc="http://purl.org/dc/elements/1.1/"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/oai_dc.xsd">
          <dc:title>This is the new title</dc:title>
       </oai_dc:dc>
     </Metadata>
@@ -239,7 +250,9 @@ digital_file_get_response_after_put = requests.get(
     },
 )
 logging.info(digital_file_get_response_after_put.text)
-digital_file_new_title = etree.fromstring(digital_file_get_response_after_put.text.encode('utf-8')).find(
+digital_file_new_title = etree.fromstring(
+    digital_file_get_response_after_put.text.encode('utf-8'),
+).find(
     './/{{{0}}}title'.format(namespace_dc),
 ).text
 assert digital_file_new_title == 'This is the new title'

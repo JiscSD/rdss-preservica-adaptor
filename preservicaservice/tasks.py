@@ -283,9 +283,14 @@ class FileTask(object):
         ]
 
         if non_matching_checksums:
-            logger.debug('Found non matching checksums %s', non_matching_checksums)
+            logger.debug(
+                'Found non matching checksums %s',
+                non_matching_checksums,
+            )
             raise InvalidChecksumError(
-                'Found non matching checksums: {}'.format(non_matching_checksums),
+                'Found non matching checksums: {}'.format(
+                    non_matching_checksums,
+                ),
             )
 
     def zip_bundle(self, zip_path, download_path, meta_path):
@@ -432,7 +437,9 @@ class BaseMetadataCreateTask(BaseTask):
             file_checksum = object_file['fileChecksum']
 
         except (TypeError, KeyError) as exception:
-            raise MalformedBodyError('Unable to parse file: {}'.format(str(exception)))
+            raise MalformedBodyError(
+                'Unable to parse file: {}'.format(str(exception)),
+            )
 
         try:
             storage_types = {

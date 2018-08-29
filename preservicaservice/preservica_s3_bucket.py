@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class PreservicaBucketAPI(object):
 
-    """ Interacts with the Preservica API to get a list of bucket names and 
+    """ Interacts with the Preservica API to get a list of bucket names and
         IAM credentials. """
 
     BUCKET_DETAILS_ENDPOINT = '/api/s3/bucketdetails?source=legitimate'
@@ -29,7 +29,9 @@ class PreservicaBucketAPI(object):
         preservica_decryption_key_utf8,
     ):
         self.preservica_url = preservica_url
-        preservica_decryption_key = bytes(preservica_decryption_key_utf8, 'utf-8')
+        preservica_decryption_key = bytes(
+            preservica_decryption_key_utf8, 'utf-8',
+        )
         self.cipher = AES.new(preservica_decryption_key, AES.MODE_ECB)
 
     def _decrypt_string(self, string):
@@ -39,19 +41,23 @@ class PreservicaBucketAPI(object):
 
     def _strip_control_characters(self, string):
         """ Removes unicode control characters from the decrypted strings.
-            There are lots of these littering the output - 
+            There are lots of these littering the output -
             may be undocumented random padding pre-encryption?
             """
         def not_ctrl_char(char): return unicodedata.category(char)[0] != 'C'
         return ''.join(filter(not_ctrl_char, string))
 
     def _get_encrypted_bucket_details(self, preservica_user, preservica_password):
-        url = urllib.parse.urljoin(self.preservica_url, self.BUCKET_DETAILS_ENDPOINT)
+        url = urllib.parse.urljoin(
+            self.preservica_url, self.BUCKET_DETAILS_ENDPOINT,
+        )
         return requests.get(url, auth=(preservica_user, preservica_password))
 
     def _preservica_xml_to_etree(self, response):
         # Some munging to get the response contents as parseable bytes
-        xml_bytes = response.content.decode('unicode_escape').lstrip('"').rstrip('"').encode()
+        xml_bytes = response.content.decode(
+            'unicode_escape',
+        ).lstrip('"').rstrip('"').encode()
         # The XML has a header stating it's UTF-16, but it needs parsed as UTF-8
         parser = etree.XMLParser(encoding='UTF-8')
         return etree.fromstring(xml_bytes, parser=parser)
@@ -61,7 +67,6 @@ class PreservicaBucketAPI(object):
             preservica_user, preservica_password,
         )
         encrypted_etree = self._preservica_xml_to_etree(encrypted_response)
-        tree = etree.ElementTree(encrypted_etree)
         bucket_details = dict()
         for key, xpath in self.BUCKET_DETAILS_MAP.items():
             dec_strs = [
@@ -81,7 +86,9 @@ class PreservicaS3BucketBuilder(object):
         self.environment = environment
         self.ssm_client = boto3.client('ssm', region_name=region)
 
-        decryption_key = self._get_ssm_value(self.environment, 'api-decryption-key')
+        decryption_key = self._get_ssm_value(
+            self.environment, 'api-decryption-key',
+        )
         self.preservica_bucket_api = PreservicaBucketAPI(
             preservica_url,
             decryption_key,
@@ -98,14 +105,20 @@ class PreservicaS3BucketBuilder(object):
 
     def _fetch_preservica_credentials(self, jisc_id):
         """ Get this institutions preservica adaptor credentials to query API."""
-        preservica_user = self._get_ssm_value(jisc_id, self.environment, 'preservica-user')
-        preservica_password = self._get_ssm_value(jisc_id, self.environment,  'preservica-password')
+        preservica_user = self._get_ssm_value(
+            jisc_id, self.environment, 'preservica-user',
+        )
+        preservica_password = self._get_ssm_value(
+            jisc_id, self.environment,  'preservica-password',
+        )
         return preservica_user, preservica_password
 
     def _select_adaptor_bucket(self, bucket_names, jisc_id, bucket_name=None):
         """ """
         if not bucket_name:
-            bucket_name = 'com.preservica.rdss.{}.preservicaadaptor'.format(jisc_id)
+            bucket_name = 'com.preservica.rdss.{}.preservicaadaptor'.format(
+                jisc_id,
+            )
         if bucket_name in bucket_names:
             logger.debug(
                 'Found s3 Bucket %s in Preservica sip sources for institution %s',
@@ -121,7 +134,9 @@ class PreservicaS3BucketBuilder(object):
 
     def get_bucket(self, jisc_id, bucket_name=None):
         credentials = self._fetch_preservica_credentials(jisc_id)
-        bucket_details = self.preservica_bucket_api.get_bucket_details(*credentials)
+        bucket_details = self.preservica_bucket_api.get_bucket_details(
+            *credentials
+        )
         bucket_name = self._select_adaptor_bucket(
             bucket_details.pop('bucket_names', []),
             jisc_id,

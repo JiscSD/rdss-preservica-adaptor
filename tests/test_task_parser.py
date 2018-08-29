@@ -2,17 +2,13 @@ import base64
 import json
 from collections import namedtuple
 import moto
-import mock
-import boto3
 
 import pytest
 
 from preservicaservice import errors
 from preservicaservice import tasks
 from preservicaservice import tasks_parser
-from preservicaservice.remote_urls import S3RemoteUrl
 from preservicaservice.config import Config
-from preservicaservice.preservica_s3_bucket import PreservicaS3BucketBuilder
 from .test_preservica_s3_bucket import mock_preservica_bucket_builder
 from .helpers import create_bucket
 

@@ -1,10 +1,7 @@
 import os
 import tempfile
-import contextlib
 import zipfile
-import functools
 import boto3
-import moto
 
 
 def named_temp_file():

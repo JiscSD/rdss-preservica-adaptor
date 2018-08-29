@@ -9,7 +9,6 @@ from preservicaservice.processor import (
 from preservicaservice.config import (
     Config,
 )
-from .test_preservica_s3_bucket import mock_preservica_bucketdetails_api_response
 
 
 def _get_records(client, stream_name):
@@ -247,7 +246,8 @@ def test_record_unable_to_download_sends_messages_to_error_stream():
     assert message['messageHeader']['errorCode'] == 'GENERR011'
     assert 'Resource not found' in message['messageHeader']['errorDescription']
     assert set(message['messageHeader'].keys()) == {
-        'errorCode', 'errorDescription', 'errorDescription', 'messageClass', 'messageId', 'messageHistory', 'messageType',
+        'errorCode', 'errorDescription', 'errorDescription',
+        'messageClass', 'messageId', 'messageHistory', 'messageType',
     }
     assert set(message['messageBody'].keys()) == {
         'objectFile', 'objectUuid', 'objectOrganisationRole', 'objectTitle',
