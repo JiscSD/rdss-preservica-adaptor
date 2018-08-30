@@ -232,19 +232,10 @@ resource "aws_iam_role_policy" "ssm" {
         {
             "Effect": "Allow",
             "Action": [
-                "ssm:DescribeParameters"
-            ],
-            "Resource": [
-              "*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
                 "ssm:GetParameter"
             ],
             "Resource": [
-              "*"
+              "arn:aws:ssm:*:*:parameter/preservica-adaptor*${terraform.workspace}*"
             ]
         },
         {
