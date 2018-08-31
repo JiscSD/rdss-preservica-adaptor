@@ -1,5 +1,5 @@
 import datetime
-
+import boto3
 import dateutil.parser
 import moto
 import pytest
@@ -35,14 +35,17 @@ def file_task2():
 
 @pytest.fixture
 def task(file_task1, file_task2):
-    yield tasks.BaseMetadataCreateTask(
-        {'foo': 'bar'},
-        [file_task1, file_task2],
-        S3RemoteUrl('s3://upload'),
-        'this-is-message-uuid',
-        'role',
-        'object-uuid',
-    )
+    with moto.mock_s3():
+        client = boto3.resource('s3')
+        s3_bucket = client.Bucket('upload')
+        yield tasks.BaseMetadataCreateTask(
+            {'foo': 'bar'},
+            [file_task1, file_task2],
+            s3_bucket,
+            'this-is-message-uuid',
+            'role',
+            'object-uuid',
+        )
 
 
 def open_ssl_md5_checksum(file_path):

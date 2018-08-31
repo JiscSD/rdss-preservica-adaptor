@@ -52,12 +52,12 @@ def test_load_logger_from_yaml_non_yaml(temp_file):
 @pytest.fixture
 def valid_config_arguments():
     return dict(
+        environment='test',
+        preservica_base_url='https://test_preservica_url',
         input_stream_name='in',
-        input_stream_region='eu-west-2',
         invalid_stream_name='invalid',
-        invalid_stream_region='eu-west-2',
         error_stream_name='err',
-        error_stream_region='eu-west-2',
+        adaptor_aws_region='eu-west-2',
         organisation_buckets={
             '1': 's3://upload/to/1',
             '2': 's3://upload/to/2',
@@ -69,9 +69,8 @@ def test_valid_config(valid_config_arguments):
     arguments = valid_config_arguments
     c = config.Config(**arguments)
     assert c.input_stream_name == arguments['input_stream_name']
-    assert c.input_stream_region == arguments['input_stream_region']
+    assert c.adaptor_aws_region == arguments['adaptor_aws_region']
     assert c.error_stream_name == arguments['error_stream_name']
-    assert c.error_stream_region == arguments['error_stream_region']
     assert len(c.organisation_buckets) == 2
     assert c.organisation_buckets['1'].url == arguments['organisation_buckets']['1']
     assert c.organisation_buckets['2'].url == arguments['organisation_buckets']['2']
@@ -86,9 +85,8 @@ def test_valid_config(valid_config_arguments):
         ),
         (dict(input_stream_name=' '), 'input_stream_name'),
         (dict(input_stream_name='ßßß'), 'input_stream_name'),
-        (dict(input_stream_region='eu-north-2'), 'input_stream_region'),
+        (dict(adaptor_aws_region='eu-north-2'), 'adaptor_aws_region'),
         (dict(error_stream_name='-3'), 'error_stream_name'),
-        (dict(error_stream_region='eu-1'), 'error_stream_region'),
     ],
 )
 def test_config_validation(valid_config_arguments, arguments, error):

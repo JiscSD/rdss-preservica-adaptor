@@ -33,12 +33,12 @@ def test_record_with_invalid_json_sends_message_to_error_stream():
     client.create_stream(StreamName='error-stream', ShardCount=1)
     client.create_stream(StreamName='invalid-stream', ShardCount=1)
     config = Config(
+        environment='test',
+        preservica_base_url='https://test_preservica_url',
         input_stream_name='input-stream',
-        input_stream_region='eu-west-1',
         invalid_stream_name='invalid-stream',
-        invalid_stream_region='eu-west-1',
         error_stream_name='error-stream',
-        error_stream_region='eu-west-1',
+        adaptor_aws_region='eu-west-1',
         organisation_buckets={},
     )
     processor = RecordProcessor(config=config)
@@ -65,12 +65,12 @@ def test_record_with_invalid_rdss_message_sends_message_to_invalid_stream():
     client.create_stream(StreamName='error-stream', ShardCount=1)
     client.create_stream(StreamName='invalid-stream', ShardCount=1)
     config = Config(
+        environment='test',
+        preservica_base_url='https://test_preservica_url',
         input_stream_name='input-stream',
-        input_stream_region='eu-west-1',
         invalid_stream_name='invalid-stream',
-        invalid_stream_region='eu-west-1',
         error_stream_name='error-stream',
-        error_stream_region='eu-west-1',
+        adaptor_aws_region='eu-west-1',
         organisation_buckets={},
     )
     processor = RecordProcessor(config=config)
@@ -103,12 +103,12 @@ def test_record_with_invalid_checksum_sends_message_to_invalid_stream():
     client.create_stream(StreamName='error-stream', ShardCount=1)
     client.create_stream(StreamName='invalid-stream', ShardCount=1)
     config = Config(
+        environment='test',
+        preservica_base_url='https://test_preservica_url',
         input_stream_name='input-stream',
-        input_stream_region='eu-west-1',
         invalid_stream_name='invalid-stream',
-        invalid_stream_region='eu-west-1',
         error_stream_name='error-stream',
-        error_stream_region='eu-west-1',
+        adaptor_aws_region='eu-west-1',
         organisation_buckets={
             '98765': 's3://the-upload-bucket/',
         },
@@ -166,12 +166,12 @@ def test_record_with_valid_checksum_does_not_send_message_to_invalid_stream():
     client.create_stream(StreamName='error-stream', ShardCount=1)
     client.create_stream(StreamName='invalid-stream', ShardCount=1)
     config = Config(
+        environment='test',
+        preservica_base_url='https://test_preservica_url',
         input_stream_name='input-stream',
-        input_stream_region='eu-west-1',
         invalid_stream_name='invalid-stream',
-        invalid_stream_region='eu-west-1',
         error_stream_name='error-stream',
-        error_stream_region='eu-west-1',
+        adaptor_aws_region='eu-west-1',
         organisation_buckets={
             '98765': 's3://the-upload-bucket/',
         },
@@ -219,12 +219,12 @@ def test_record_unable_to_download_sends_messages_to_error_stream():
     client.create_stream(StreamName='error-stream', ShardCount=1)
     client.create_stream(StreamName='invalid-stream', ShardCount=1)
     config = Config(
+        environment='test',
+        preservica_base_url='https://test_preservica_url',
         input_stream_name='input-stream',
-        input_stream_region='eu-west-1',
         invalid_stream_name='invalid-stream',
-        invalid_stream_region='eu-west-1',
         error_stream_name='error-stream',
-        error_stream_region='eu-west-1',
+        adaptor_aws_region='eu-west-1',
         organisation_buckets={
             44: 's3://some-bucket/',
         },
@@ -243,10 +243,11 @@ def test_record_unable_to_download_sends_messages_to_error_stream():
     assert len(records) == 1
 
     message = json.loads(records[0]['Data'].decode('utf-8'))
-    assert message['messageHeader']['errorCode'] == 'GENERR009'
-    assert 'Connection refused' in message['messageHeader']['errorDescription']
+    assert message['messageHeader']['errorCode'] == 'GENERR011'
+    assert 'Resource not found' in message['messageHeader']['errorDescription']
     assert set(message['messageHeader'].keys()) == {
-        'errorCode', 'errorDescription', 'errorDescription', 'messageClass', 'messageId', 'messageHistory', 'messageType',
+        'errorCode', 'errorDescription', 'errorDescription',
+        'messageClass', 'messageId', 'messageHistory', 'messageType',
     }
     assert set(message['messageBody'].keys()) == {
         'objectFile', 'objectUuid', 'objectOrganisationRole', 'objectTitle',

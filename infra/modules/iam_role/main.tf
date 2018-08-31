@@ -1,3 +1,7 @@
+data "aws_kms_alias" "ssm" {
+  name = "alias/aws/ssm"
+}
+
 resource "aws_iam_role" "role" {
   name = "${var.project}-${terraform.workspace}-role"
 
@@ -213,6 +217,37 @@ resource "aws_iam_role_policy" "objects" {
       ]
     }
   ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "ssm" {
+  name = "${var.project}-${terraform.workspace}-ssm"
+  role = "${aws_iam_role.role.id}"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetParameter"
+            ],
+            "Resource": [
+              "arn:aws:ssm:*:*:parameter/preservica-adaptor*${terraform.workspace}*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+              "kms:Decrypt"
+            ],
+            "Resource": [
+                "${data.aws_kms_alias.ssm.target_key_arn}"
+            ]
+        }
+    ]
 }
 EOF
 }

@@ -81,7 +81,7 @@ class S3RemoteUrl(BaseRemoteUrl):
         try:
             bucket.download_file(self.path, download_path)
         except botocore.exceptions.ClientError as e:
-            error_code = int(e.response['Error']['Code'])
+            error_code = int(e.response['ResponseMetadata']['HTTPStatusCode'])
             if error_code == 404:
                 raise ResourceNotFoundError(
                     'resource not found in S3: {}'.format(e),

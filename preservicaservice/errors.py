@@ -53,7 +53,9 @@ class BaseError(Exception):
 
     def export(self, original_record):
         try:
-            rdss_message = base64.b64decode(original_record.data).decode('utf-8')
+            rdss_message = base64.b64decode(
+                original_record.data,
+            ).decode('utf-8')
         except (AttributeError, binascii.Error):
             rdss_message = '{}'
 

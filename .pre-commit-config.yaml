@@ -5,7 +5,7 @@
     -   id: terraform_validate
 
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    sha: 46251c9523506b68419aefdf5ff6ff2fbc4506a4
+    sha: v1.4.0
     hooks:
     -   id: autopep8-wrapper
         args: [--max-line-length=100, --in-place]
@@ -15,11 +15,23 @@
     -   id: check-merge-conflict
     -   id: check-yaml
     -   id: debug-statements
+        language_version: "python3.5"
     -   id: detect-private-key
     -   id: double-quote-string-fixer
     -   id: end-of-file-fixer
     -   id: forbid-new-submodules
     -   id: requirements-txt-fixer
+    -   id: trailing-whitespace
+    -   id: flake8
+        language_version: "python3.5"
+        args: [--max-line-length=100]
+
+
+-   repo: git://github.com/pre-commit/mirrors-autopep8
+    sha: v1.3.5
+    hooks:
+    -   id: autopep8
+        language_version: "python3.5"
 
 -   repo: https://github.com/asottile/add-trailing-comma
     sha: v0.6.3

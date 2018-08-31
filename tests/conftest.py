@@ -25,11 +25,11 @@ def temp_file3():
 @pytest.fixture
 def valid_config():
     return Config(
+        'test',
+        'https://test_preservica_url',
         'input',
-        'eu-west-1',
         'invalid',
-        'eu-west-1',
         'error',
-        'eu-west-1',
-        organisation_buckets={'1': 's3://upload/to'},
+        'eu-west-2',
+        organisation_buckets={},
     )

@@ -63,45 +63,39 @@ class Config:
 
     def __init__(
         self,
+        environment,
+        preservica_base_url,
         input_stream_name,
-        input_stream_region,
         invalid_stream_name,
-        invalid_stream_region,
         error_stream_name,
-        error_stream_region,
+        adaptor_aws_region,
         organisation_buckets,
     ):
         """
+        :param str environment: name of the environment (dev/uat/prod)
         :param str input_stream_name: kinesis input stream name
-        :param str input_stream_region: kinesis input stream region
         :param str error_stream_name: kinesis error stream name
-        :param str error_stream_region: kinesis error stream region
+        :param str adaptor_aws_region: kinesis error stream region
         :param organisation_buckets: mapping of S3 buckets
         :type organisation_buckets: dict of (str => str)
         """
+        self.environment = environment
+        self.preservica_base_url = preservica_base_url
         self.input_stream_name = self.validate_stream_name(
             'input_stream_name',
             input_stream_name,
-        )
-        self.input_stream_region = self.validate_region(
-            'input_stream_region',
-            input_stream_region,
         )
         self.invalid_stream_name = self.validate_stream_name(
             'invalid_stream_name',
             invalid_stream_name,
         )
-        self.invalid_stream_region = self.validate_region(
-            'invalid_stream_region',
-            invalid_stream_region,
-        )
         self.error_stream_name = self.validate_stream_name(
             'error_stream_name',
             error_stream_name,
         )
-        self.error_stream_region = self.validate_region(
-            'error_stream_region',
-            error_stream_region,
+        self.adaptor_aws_region = self.validate_region(
+            'adaptor_aws_region',
+            adaptor_aws_region,
         )
 
         def prepare_bucket_pair(item):
@@ -159,12 +153,12 @@ class Config:
         :param raw:
         """
         return cls(
+            raw.environment,
+            raw.preservica_base_url,
             raw.input_stream_name,
-            raw.input_stream_region,
             raw.invalid_stream_name,
-            raw.invalid_stream_region,
             raw.error_stream_name,
-            raw.error_stream_region,
+            raw.adaptor_aws_region,
             raw.organisation_buckets,
         )
 
