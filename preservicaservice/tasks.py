@@ -433,7 +433,9 @@ class BaseMetadataCreateTask(BaseTask):
             url = object_file['fileStorageLocation']
             file_name = object_file['fileName']
             storage_platform = object_file['fileStoragePlatform']
-            storage_type = storage_platform['storagePlatformType']
+            #This is missing in prod samvera and figshare messages, defaulting 
+            #to 2 as they'll both have http storage locations. 
+            storage_type = storage_platform.get('storagePlatformType', 2)
             file_checksum = object_file['fileChecksum']
 
         except (TypeError, KeyError) as exception:
