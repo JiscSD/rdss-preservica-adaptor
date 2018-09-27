@@ -432,9 +432,9 @@ class BaseMetadataCreateTask(BaseTask):
         try:
             url = object_file['fileStorageLocation']
             file_name = object_file['fileName']
-            storage_platform = object_file['fileStoragePlatform']
             #This is missing in prod samvera and figshare messages, defaulting 
             #to 2 as they'll both have http storage locations. 
+            storage_platform = object_file.get('fileStoragePlatform', {})
             storage_type = storage_platform.get('storagePlatformType', 2)
             file_checksum = object_file['fileChecksum']
 
