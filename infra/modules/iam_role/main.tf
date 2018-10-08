@@ -282,3 +282,29 @@ resource "aws_iam_role_policy" "pure" {
 }
 EOF
 }
+
+resource "aws_iam_role_policy" "oai-pmh-adaptors" {
+  name = "${var.project}-${terraform.workspace}-pure"
+  role = "${aws_iam_role.role.id}"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListObjects"
+            ],
+            "Resource": [
+                "arn:aws:s3:::eprints-adaptor-*",
+                "arn:aws:s3:::dspace-adaptor-*",
+                "arn:aws:s3:::eprints-adaptor-*/*",
+                "arn:aws:s3:::dspace-adaptor-*/*"
+            ]
+        }
+    ]
+}
+EOF
+}
