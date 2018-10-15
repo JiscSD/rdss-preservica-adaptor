@@ -253,6 +253,7 @@ def test_record_unable_to_download_sends_messages_to_error_stream():
         'objectFile', 'objectUuid', 'objectOrganisationRole', 'objectTitle',
     }
 
+
 @moto.mock_kinesis
 def test_record_samvera_prod_processes():
     client = boto3.client('kinesis', 'eu-west-1')
@@ -281,6 +282,7 @@ def test_record_samvera_prod_processes():
 
     records = _get_records(client, 'error-stream')
     assert len(records) == 0
+
 
 @moto.mock_kinesis
 def test_record_figshare_prod_processes():

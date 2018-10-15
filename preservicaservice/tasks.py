@@ -334,8 +334,8 @@ class FileTask(object):
         try:
             self.metadata.generate(meta_path)
             self.download(download_path)
-            #self.verify_file_size(download_path)
-            #self.verify_checksums(download_path)
+            # self.verify_file_size(download_path)
+            # self.verify_checksums(download_path)
             self.zip_bundle(zip_path, download_path, meta_path)
         finally:
             for path in (download_path, meta_path):
@@ -432,8 +432,8 @@ class BaseMetadataCreateTask(BaseTask):
         try:
             url = object_file['fileStorageLocation']
             file_name = object_file['fileName']
-            #This is missing in prod samvera and figshare messages, defaulting 
-            #to 2 as they'll both have http storage locations. 
+            # This is missing in prod samvera and figshare messages, defaulting
+            # to 2 as they'll both have http storage locations.
             storage_platform = object_file.get('fileStoragePlatform', {})
             storage_type = storage_platform.get('storagePlatformType', 2)
             file_checksum = object_file['fileChecksum']
