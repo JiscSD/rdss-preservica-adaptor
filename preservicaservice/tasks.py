@@ -334,6 +334,7 @@ class FileTask(object):
         try:
             self.metadata.generate(meta_path)
             self.download(download_path)
+            #TODO Remove to re-enable checksum and fsize validation
             # self.verify_file_size(download_path)
             # self.verify_checksums(download_path)
             self.zip_bundle(zip_path, download_path, meta_path)

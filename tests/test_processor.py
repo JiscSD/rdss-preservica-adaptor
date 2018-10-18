@@ -3,6 +3,7 @@ import boto3
 import hashlib
 import json
 import moto
+import pytest
 from preservicaservice.processor import (
     RecordProcessor,
 )
@@ -90,7 +91,8 @@ def test_record_with_invalid_rdss_message_sends_message_to_invalid_stream():
         'errorCode', 'errorDescription', 'errorDescription', 'messageHistory', 'messageType',
     }
 
-
+#TODO Remove to re-enable checksum and fsize validation
+@pytest.mark.skip(reason="checksum validation disabled to allow processing of prod willow messages")
 @moto.mock_s3
 @moto.mock_kinesis
 def test_record_with_invalid_checksum_sends_message_to_invalid_stream():
