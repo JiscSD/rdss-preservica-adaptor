@@ -72,6 +72,19 @@ def require_non_empty_key(message, key1, key2):
     except (KeyError, ValueError, TypeError, AttributeError):
         raise MalformedBodyError('missing {}'.format(key2))
 
+def get_sip_object_uuid(message, environment):
+    """ Extracts objectUUID from a message and prefix it if 
+        environment is not "prod".
+        
+        :param dict message
+        :param str environment
+        :return str value
+        """
+    object_id = require_non_empty_key(message, 'messageBody', 'objectUuid')
+    if environment != "prod":
+        object_id = "{}_{}".format(environment, object_id)
+    return object_id
+
 
 def first_org_id_from_org_roles(org_roles):
     """ Return first Jisc ID found in an objectOrganisationRole."""
@@ -410,7 +423,7 @@ class BaseMetadataCreateTask(BaseTask):
         except KeyError:
             raise MalformedBodyError('missing objectFile')
 
-        object_id = require_non_empty_key(message, 'messageBody', 'objectUuid')
+        object_id = get_sip_object_uuid(message, config.environment)
         if not isinstance(objects, list):
             raise MalformedBodyError('expected objectFile as list')
 
