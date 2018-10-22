@@ -3,6 +3,7 @@ import boto3
 import hashlib
 import json
 import moto
+import pytest
 from preservicaservice.processor import (
     RecordProcessor,
 )
@@ -90,7 +91,10 @@ def test_record_with_invalid_rdss_message_sends_message_to_invalid_stream():
         'errorCode', 'errorDescription', 'errorDescription', 'messageHistory', 'messageType',
     }
 
+# TODO Remove to re-enable checksum and fsize validation
 
+
+@pytest.mark.skip(reason='checksum validation disabled to allow processing of prod willow messages')
 @moto.mock_s3
 @moto.mock_kinesis
 def test_record_with_invalid_checksum_sends_message_to_invalid_stream():
@@ -252,3 +256,66 @@ def test_record_unable_to_download_sends_messages_to_error_stream():
     assert set(message['messageBody'].keys()) == {
         'objectFile', 'objectUuid', 'objectOrganisationRole', 'objectTitle',
     }
+
+
+@moto.mock_s3
+@moto.mock_kinesis
+def test_record_samvera_prod_processes():
+    s3_resource = boto3.resource('s3', region_name='us-east-1')
+    s3_resource.create_bucket(Bucket='some-bucket')
+    client = boto3.client('kinesis', 'eu-west-1')
+    client.create_stream(StreamName='error-stream', ShardCount=1)
+    client.create_stream(StreamName='invalid-stream', ShardCount=1)
+    config = Config(
+        environment='test',
+        preservica_base_url='https://test_preservica_url',
+        input_stream_name='input-stream',
+        invalid_stream_name='invalid-stream',
+        error_stream_name='error-stream',
+        adaptor_aws_region='eu-west-1',
+        organisation_buckets={
+            747: 's3://some-bucket/',
+        },
+    )
+    processor = RecordProcessor(config=config)
+
+    with open('tests/fixtures/create_samvera_0.0.1-SNAPSHOT.json', 'rb') as fixture_file:
+        fixture = fixture_file.read()
+
+    class FakeRecord():
+        data = base64.b64encode(fixture)
+
+    processor.process_records([FakeRecord()], None)
+
+    records = _get_records(client, 'error-stream')
+    assert len(records) == 0
+
+
+@moto.mock_kinesis
+def test_record_figshare_prod_processes():
+    client = boto3.client('kinesis', 'eu-west-1')
+    client.create_stream(StreamName='error-stream', ShardCount=1)
+    client.create_stream(StreamName='invalid-stream', ShardCount=1)
+    config = Config(
+        environment='test',
+        preservica_base_url='https://test_preservica_url',
+        input_stream_name='input-stream',
+        invalid_stream_name='invalid-stream',
+        error_stream_name='error-stream',
+        adaptor_aws_region='eu-west-1',
+        organisation_buckets={
+            89: 's3://some-bucket/',
+        },
+    )
+    processor = RecordProcessor(config=config)
+
+    with open('tests/fixtures/create_figshare_1.json', 'rb') as fixture_file:
+        fixture = fixture_file.read()
+
+    class FakeRecord():
+        data = base64.b64encode(fixture)
+
+    processor.process_records([FakeRecord()], None)
+
+    records = _get_records(client, 'error-stream')
+    assert len(records) == 0
