@@ -129,7 +129,7 @@ def test_metadata_create_task(valid_config):
 
     assert isinstance(task, tasks.MetadataCreateTask)
     assert task.destination_bucket.name == 'com.preservica.rdss.jisc.preservicaadaptor'
-    assert task.message_id == 'message_id'
+    assert task.message_id == 'test-message_id'
     assert task.role == '3'
 
     assert len(task.file_tasks) == 2

@@ -72,20 +72,18 @@ def require_non_empty_key(message, key1, key2):
     except (KeyError, ValueError, TypeError, AttributeError):
         raise MalformedBodyError('missing {}'.format(key2))
 
-def get_sip_object_uuid(message, environment):
-    """ Extracts objectUUID from a message and prefix it if 
+def env_prefix_message_key(message, key1, key2, environment):
+    """ Extracts a value from a message and prefixes it with the environment if the
         environment is not "prod".
         
         :param dict message
         :param str environment
         :return str value
         """
-    object_id = require_non_empty_key(message, 'messageBody', 'objectUuid')
+    value = require_non_empty_key(message, key1, key2)
     if environment != "prod":
-        object_id = "{}-{}".format(environment, object_id)
-
-    logger.debug('Setting %s as zip file name.', object_id)
-    return object_id
+        value = "{}-{}".format(environment, value)
+    return value
 
 
 def first_org_id_from_org_roles(org_roles):
@@ -426,7 +424,8 @@ class BaseMetadataCreateTask(BaseTask):
         except KeyError:
             raise MalformedBodyError('missing objectFile')
 
-        object_id = get_sip_object_uuid(message, config.environment)
+        message_id = env_prefix_message_key(message, 'messageHeader', 'messageId', config.environment)
+        object_id = env_prefix_message_key(message, 'messageBody', 'objectUuid', config.environment)
         if not isinstance(objects, list):
             raise MalformedBodyError('expected objectFile as list')
 
