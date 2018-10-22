@@ -252,8 +252,8 @@ resource "aws_iam_role_policy" "ssm" {
 EOF
 }
 
-resource "aws_iam_role_policy" "pure" {
-  name = "${var.project}-${terraform.workspace}-pure"
+resource "aws_iam_role_policy" "adaptor-buckets" {
+  name = "${var.project}-${terraform.workspace}-adaptor-buckets"
   role = "${aws_iam_role.role.id}"
 
   policy = <<EOF
@@ -263,19 +263,16 @@ resource "aws_iam_role_policy" "pure" {
         {
             "Effect": "Allow",
             "Action": [
-                "s3:GetObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::pure-adaptor-*/*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
+                "s3:GetObject",
                 "s3:ListObjects"
             ],
             "Resource": [
-                "arn:aws:s3:::pure-adaptor-*"
+                "arn:aws:s3:::dspace-adaptor-*",
+                "arn:aws:s3:::eprints-adaptor-*",
+                "arn:aws:s3:::pure-adaptor-*",
+                "arn:aws:s3:::dspace-adaptor-*/*",
+                "arn:aws:s3:::eprints-adaptor-*/*",
+                "arn:aws:s3:::pure-adaptor-*/*"
             ]
         }
     ]

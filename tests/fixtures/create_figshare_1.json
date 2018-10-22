@@ -1,0 +1,195 @@
+{
+    "messageBody": {
+        "objectCategory": [
+            "cat"
+        ],
+        "objectKeywords": [
+            "key"
+        ],
+        "objectRelatedIdentifier": [
+            {
+                "relationType": 21,
+                "identifierValue": "10.2278/abc.6877359",
+                "identifierType": 4
+            }
+        ],
+        "objectDate": [
+            {
+                "dateType": 6,
+                "dateValue": "2018-07-12T09:55:38"
+            },
+            {
+                "dateType": 8,
+                "dateValue": "2018-07-12T09:55:39"
+            },
+            {
+                "dateType": 10,
+                "dateValue": "2018-07-12T09:55:38"
+            }
+        ],
+        "objectUuid": "2b446299-69a9-55d9-bca0-4e0c8ac56d05",
+        "objectIdentifier": [
+            {
+                "identifierValue": "10.22023/mdx.6804359.v1",
+                "identifierType": 4
+            }
+        ],
+        "objectTitle": "title",
+        "objectDescription": "desc",
+        "objectFile": [
+            {
+                "fileDateModified": [
+                    {
+                        "dateType": 8,
+                        "dateValue": "2018-07-11T14:20:36"
+                    }
+                ],
+                "fileStorageType": 2,
+                "fileStorageStatus": 1,
+                "fileChecksum": [
+                    {
+                        "checksumType": 1,
+                        "checksumValue": "8c3f4e893fc2e8acf49446f38b47f7cc"
+                    }
+                ],
+                "fileUploadStatus": 2,
+                "fileSize": 603600,
+                "filePuid": [
+                    ""
+                ],
+                "fileIdentifier": "file_id",
+                "fileName": "title.jpeg",
+                "fileUuid": "7a650d0b-dd97-57f6-b643-080da4e71eaa",
+                "fileDateCreated": {
+                    "dateType": 6,
+                    "dateValue": "2018-07-11T14:20:36"
+                },
+                "fileLabel": "",
+                "fileStorageLocation": "",
+                "fileStoragePlatform": {
+                    "storagePlatformType": 2
+                }
+            },
+            {
+                "fileDateModified": [
+                    {
+                        "dateType": 8,
+                        "dateValue": "2018-07-11T14:38:49"
+                    }
+                ],
+                "fileStorageType": 2,
+                "fileStorageStatus": 1,
+                "fileChecksum": [
+                    {
+                        "checksumType": 1,
+                        "checksumValue": "2eec2035641d42ab1b2678ee4527019b"
+                    }
+                ],
+                "fileUploadStatus": 2,
+                "fileSize": 454457,
+                "filePuid": [
+                    ""
+                ],
+                "fileIdentifier": "https://ndownloader.figshare.com/files/12375542",
+                "fileName": "TIMBERLAKE_Mangled_Metal_detail.jpg",
+                "fileUuid": "c97a31ae-94db-55a2-bd5e-d1da26d79314",
+                "fileDateCreated": {
+                    "dateType": 6,
+                    "dateValue": "2018-07-11T14:38:49"
+                },
+                "fileLabel": "",
+                "fileStorageLocation": "https://ndownloader.figshare.com/files/12375542",
+                "fileStoragePlatform": {
+                    "storagePlatformType": 2
+                }
+            }
+        ],
+        "objectResourceType": 14,
+        "objectRights": [
+            {
+                "access": [
+                    {
+                        "accessType": 1
+                    }
+                ],
+                "rightsHolder": [
+                    "Middlesex University"
+                ],
+                "licence": [
+                    {
+                        "licenceIdentifier": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+                        "licenceName": "CC BY-NC-SA"
+                    }
+                ],
+                "rightsStatement": [
+                    "UNKNOWN"
+                ]
+            }
+        ],
+        "objectPersonRole": [
+            {
+                "person": {
+                    "personMail": "J.Timberlake@mdx.ac.uk",
+                    "personAffiliation": [
+                        5
+                    ],
+                    "personOu": "Middlesex University",
+                    "personSn": "Timberlake",
+                    "personTelephoneNumber": "",
+                    "personGivenName": "John",
+                    "personEntitlement": [
+                        20
+                    ],
+                    "personCn": "John",
+                    "personIdentifier": [
+                        {
+                            "personIdentifierValue": "1r87jlbt3i6uvooba18i2th8di",
+                            "personIdentifierType": 5
+                        }
+                    ],
+                    "personUuid": "673e5987-e045-500e-a771-8f0e8153fe18",
+                    "personOrganisation": [
+                        {
+                            "organisationName": "Middlesex University",
+                            "organisationJiscId": 89,
+                            "organisationType": 8,
+                            "organisationAddress": ""
+                        }
+                    ],
+                    "personOrganisationUnit": {
+                        "organisation": {
+                            "organisationName": "Middlesex University",
+                            "organisationJiscId": 89,
+                            "organisationType": 8,
+                            "organisationAddress": ""
+                        }
+                    }
+                },
+                "role": 20
+            }
+        ],
+        "objectValue": 1
+    },
+    "messageHeader": {
+        "messageSequence": {
+            "position": 1,
+            "total": 1,
+            "sequence": "66d54743-9677-5984-baf4-b4fec5974345"
+        },
+        "messageType": "MetadataCreate",
+        "version": "1",
+        "messageId": "9b800e43-e104-5fb5-a65a-c04a955cc319",
+        "messageTimings": {
+            "publishedTimestamp": "2018-07-12T09:55:39Z"
+        },
+        "messageClass": "Command",
+        "messageHistory": [
+            {
+                "machineId": "rdss-figshare-message-adapter",
+                "machineAddress": "10.11.206.195",
+                "timestamp": "2018-07-12T09:55:42.394710+00:00"
+            }
+        ],
+        "generator": "figshare"
+    }
+}
