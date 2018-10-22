@@ -83,6 +83,8 @@ def get_sip_object_uuid(message, environment):
     object_id = require_non_empty_key(message, 'messageBody', 'objectUuid')
     if environment != "prod":
         object_id = "{}-{}".format(environment, object_id)
+
+    logger.debug('Setting %s as zip file name.', object_id)
     return object_id
 
 
