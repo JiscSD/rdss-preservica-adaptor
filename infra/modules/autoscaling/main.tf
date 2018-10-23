@@ -2,7 +2,7 @@ data "template_file" "init" {
   template = "${file("${path.module}/init.tpl")}"
 
   vars {
-    environment   = "${terraform.env}"
+    environment   = "${terraform.workspace}"
     systemd_unit  = "${var.systemd_unit}"
     env_file_path = "${var.env_file_path}"
   }
@@ -19,18 +19,22 @@ data "template_cloudinit_config" "config" {
 }
 
 resource "aws_iam_instance_profile" "profile" {
-  name = "${var.project}-${terraform.env}-profile"
+  name = "${var.project}-${terraform.workspace}-profile"
   role = "${var.role_name}"
 }
 
 resource "aws_launch_configuration" "config" {
-  image_id                    = "${var.ami}"
-  instance_type               = "${var.type}"
-  key_name                    = "${var.key_name}"
-  security_groups             = ["${var.security_groups}"]
-  user_data                   = "${data.template_cloudinit_config.config.rendered}"
-  associate_public_ip_address = "${var.associate_public_ip_address}"
-  iam_instance_profile        = "${aws_iam_instance_profile.profile.id}"
+  image_id             = "${var.ami}"
+  instance_type        = "${var.type}"
+  key_name             = "${var.key_name}"
+  security_groups      = ["${var.security_groups}"]
+  user_data            = "${data.template_cloudinit_config.config.rendered}"
+  iam_instance_profile = "${aws_iam_instance_profile.profile.id}"
+
+  root_block_device {
+    volume_type = "gp2"
+    volume_size = "32"
+  }
 
   lifecycle {
     create_before_destroy = true
@@ -39,7 +43,7 @@ resource "aws_launch_configuration" "config" {
 
 resource "aws_autoscaling_group" "group" {
   availability_zones        = "${var.availability_zones}"
-  name                      = "${var.project}-${terraform.env}-group"
+  name                      = "${var.project}-${terraform.workspace}-${aws_launch_configuration.config.name}-config"
   min_size                  = "${var.min_size}"
   max_size                  = "${var.max_size}"
   desired_capacity          = "${var.desired_capacity}"
@@ -49,15 +53,19 @@ resource "aws_autoscaling_group" "group" {
   launch_configuration      = "${aws_launch_configuration.config.name}"
   vpc_zone_identifier       = ["${var.vpc_zone_identifier}"]
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tag {
     key                 = "Name"
-    value               = "${var.project}-${terraform.env}-node"
+    value               = "${var.project}-${terraform.workspace}-node"
     propagate_at_launch = true
   }
 
   tag {
     key                 = "Environment"
-    value               = "${terraform.env}"
+    value               = "${terraform.workspace}"
     propagate_at_launch = true
   }
 
@@ -68,26 +76,26 @@ resource "aws_autoscaling_group" "group" {
   }
 
   tag {
+    key                 = "Service"
+    value               = "${var.service}"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "CostCentre"
+    value               = "${var.cost_centre}"
+    propagate_at_launch = true
+  }
+
+  tag {
     key                 = "Owner"
     value               = "${var.owner}"
     propagate_at_launch = true
   }
 
   tag {
-    key                 = "CostCenter"
-    value               = "${var.costcenter}"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "managed_by"
-    value               = "terraform"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "service"
-    value               = "${var.service}"
+    key                 = "ManagedBy"
+    value               = "Terraform"
     propagate_at_launch = true
   }
 }

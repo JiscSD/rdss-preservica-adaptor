@@ -9,6 +9,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+.pytest_cache
+
 # C extensions
 *.so
 
@@ -131,3 +133,46 @@ Temporary Items
 .apdisk
 
 # End of https://www.gitignore.io/api/osx
+
+# runtime
+packer-ip
+packer-ssh-key
+spec/
+junit.xml
+.ruby-version
+
+# Created by https://www.gitignore.io/api/terraform
+
+### Terraform ###
+# Compiled files
+*.tfstate
+*.tfstate.backup
+
+# Module directory
+.terraform/
+
+### Terraform Patch ###
+*.tfvars
+# End of https://www.gitignore.io/api/terraform
+
+# Created by https://www.gitignore.io/api/terraform
+
+### Terraform ###
+# Compiled files
+*.tfstate
+*.tfstate.backup
+
+# Module directory
+.terraform/
+
+### Terraform Patch ###
+*.tfvars
+# End of https://www.gitignore.io/api/terraform
+
+# Created by https://www.gitignore.io/api/vagrant
+
+### Vagrant ###
+.vagrant/
+
+# End of https://www.gitignore.io/api/vagrant
+spec

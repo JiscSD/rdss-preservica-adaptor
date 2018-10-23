@@ -1,13 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-
 buildPacker() {
   (set -o pipefail; packer build \
-      -machine-readable template.json 2>&1 | tee "$packerLogFile" )
+      -machine-readable template.json 2>&1 | tee "$packerLogFile")
 }
-
-
 
 build() {
   local packerLogDir='packer_logs'
@@ -15,8 +12,6 @@ build() {
   local AMI
 
   mkdir -p "$packerLogDir"
-  (set -o pipefail; packer build \
-      -machine-readable template.json 2>&1 | tee "$packerLogFile" )
 
   if ! buildPacker; then
     echo 'Failed to build AMI'

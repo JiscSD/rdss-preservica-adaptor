@@ -31,13 +31,13 @@ def main():
     try:
         conf = load_config(env)
     except Exception as e:
-        sys.stderr.write(e)
+        sys.stderr.write(str(e))
         sys.exit(2)
 
     try:
         load_logger(env)
     except Exception as e:
-        sys.stderr.write(e)
+        sys.stderr.write(str(e))
         sys.exit(2)
 
     logger.info('loaded config for {}'.format(env))

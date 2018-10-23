@@ -18,9 +18,9 @@ Role Variables
 
     # packages required + extra
     preservicaservice_packages:
-     - python3.6-dev
-     - python3.6-venv
-     - python3.6
+     - python3.5-dev
+     - python3.5-venv
+     - python3.5
      - git
      - build-essential
      - libffi-dev
@@ -56,14 +56,14 @@ Role Variables
 Dependencies
 ------------
 
-    - role: tersmitten.locales
+    - role: Oefenweb.locales
     locales_present:
       - en_US.UTF-8
     locales_default:
       lang: en_US.UTF-8
     - role: adriagalin.timezone
     ag_timezone: Etc/UTC
-    - tersmitten.ntp
+    - Oefenweb.ntp
 
 
 Example Playbook

@@ -1,37 +1,51 @@
 -   repo: https://github.com/kintoandar/pre-commit.git
-    sha: v0.0.2
-    hooks:
-    -   id: terraform_validate
-
--   repo: https://github.com/antonbabenko/pre-commit-terraform.git
-    sha: v1.1.0
+    sha: v2.1.0
     hooks:
     -   id: terraform_fmt
+    -   id: terraform_validate
 
--   repo: git://github.com/pre-commit/pre-commit-hooks
-    sha: 46251c9523506b68419aefdf5ff6ff2fbc4506a4
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    sha: v1.4.0
     hooks:
     -   id: autopep8-wrapper
+        args: [--max-line-length=100, --in-place]
     -   id: check-added-large-files
     -   id: check-case-conflict
     -   id: check-json
     -   id: check-merge-conflict
     -   id: check-yaml
     -   id: debug-statements
+        language_version: "python3.5"
     -   id: detect-private-key
     -   id: double-quote-string-fixer
     -   id: end-of-file-fixer
     -   id: forbid-new-submodules
     -   id: requirements-txt-fixer
+    -   id: trailing-whitespace
+    -   id: flake8
+        language_version: "python3.5"
+        args: [--max-line-length=100]
 
--   repo: git@github.com:detailyang/pre-commit-shell.git
-    sha: 1.0.1
+
+-   repo: git://github.com/pre-commit/mirrors-autopep8
+    sha: v1.3.5
+    hooks:
+    -   id: autopep8
+        language_version: "python3.5"
+
+-   repo: https://github.com/asottile/add-trailing-comma
+    sha: v0.6.3
+    hooks:
+    -   id: add-trailing-comma
+
+-   repo: https://github.com/detailyang/pre-commit-shell
+    sha: 1.0.2
     hooks:
         - id: shell-lint
           files: bin\/(?!run)
 
--   repo: git@github.com:willthames/ansible-lint.git
-    sha: v3.4.13
+-   repo: https://github.com/willthames/ansible-lint
+    sha: v3.4.15
     hooks:
     -   id: ansible-lint
         name: Ansible-lint

@@ -2,7 +2,15 @@ import logging
 
 from amazon_kclpy import kcl
 
-from .errors import BaseError, UnknownErrorError
+from .errors import (
+    BaseError,
+    ExpiredMessageError,
+    MalformedBodyError,
+    MalformedHeaderError,
+    UnknownErrorError,
+    UnsupportedMessageTypeError,
+    InvalidChecksumError,
+)
 from .put_stream import PutStream
 from .tasks_parser import record_to_task
 
@@ -20,9 +28,13 @@ class RecordProcessor(kcl.RecordProcessorBase):
         :type config: preservicaservice.config.Config
         """
         self.config = config
+        self.invalid_stream = PutStream(
+            config.invalid_stream_name,
+            config.adaptor_aws_region,
+        )
         self.error_stream = PutStream(
             config.error_stream_name,
-            config.error_stream_region,
+            config.adaptor_aws_region,
         )
 
     def initialize(self, shard_id):
@@ -56,12 +68,20 @@ class RecordProcessor(kcl.RecordProcessorBase):
         """
         try:
             logger.debug('processing record %d', index)
-            tasks = record_to_task(record)
-            for task in tasks:
-                task.run(self.config)
+            task = record_to_task(record, self.config)
+            if task:
+                task.run()
+            else:
+                logger.warning('no task out of message')
+        except (
+            MalformedBodyError, UnsupportedMessageTypeError,
+            ExpiredMessageError, MalformedHeaderError, InvalidChecksumError,
+        ) as e:
+            logger.exception('invalid message')
+            self.invalid_stream.put(e.export(record))
         except BaseError as e:
             logger.exception('error handling record')
-            self.error_stream.put(e.export())
+            self.error_stream.put(e.export(record))
         except Exception as e:
             logger.exception('unexpected error handling error')
-            self.error_stream.put(UnknownErrorError(str(e)).export())
+            self.error_stream.put(UnknownErrorError(str(e)).export(record))

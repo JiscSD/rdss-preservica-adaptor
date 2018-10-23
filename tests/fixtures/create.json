@@ -5,21 +5,32 @@
     "messageClass": "Command"
   },
   "messageBody": {
+    "objectOrganisationRole": [{
+      "organisation": {
+        "organisationJiscId": 44,
+        "organisationName": "Cardiff",
+        "organisationType": 1
+      },
+      "role": 1
+    }],
     "objectUuid": "e9bf8212-b2e8-ead2-c88f-809a21a8ce1b",
     "objectTitle": "Research about birds in the UK.",
-    "objectFile": [
-      {
-        "fileUuid": "a3290140-18e1-506e-abec-61e31791e749",
-        "fileStorageLocation": "s3://testdata.researchdata.alpha.jisc.ac.uk/unsorted/10.17863/CAM.679/data.zip",
-        "fileStorageType": "s3",
-        "fileName": "Label of this intellectual asset: 1"
+    "objectFile": [{
+      "fileUuid": "a3290140-18e1-506e-abec-61e31791e749",
+      "fileStorageLocation": "s3://bucket/unsorted/10.17863/CAM.679/data.zip",
+      "fileStoragePlatform": {
+        "storagePlatformType": 1
       },
-      {
-        "fileUuid": "9c5f1f7f-39a7-93fc-0327-5ffaa81dee62",
-        "fileStorageLocation": "s3://testdata.researchdata.alpha.jisc.ac.uk/unsorted/10.17863/CAM.679/readme.txt",
-        "fileStorageType": "s3",
-        "fileName": "Label of this intellectual asset: 2"
-      }
-    ]
+      "fileName": "Label of this intellectual asset: 1",
+       "fileChecksum": []
+    }, {
+      "fileUuid": "9c5f1f7f-39a7-93fc-0327-5ffaa81dee62",
+      "fileStorageLocation": "s3://bucket/unsorted/10.17863/CAM.679/readme.txt",
+      "fileStoragePlatform": {
+        "storagePlatformType": 1
+      },
+      "fileName": "Label of this intellectual asset: 2",
+      "fileChecksum": []
+    }]
   }
 }

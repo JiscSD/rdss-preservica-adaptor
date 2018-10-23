@@ -1,3 +1,10 @@
+import base64
+import binascii
+import json
+from rdsslib.kinesis.decorators import (
+    RouterHistoryDecorator,
+)
+
 CodeMalformedBody = 'GENERR001'
 CodeUnsupportedMessageType = 'GENERR002'
 CodeExpiredMessage = 'GENERR003'
@@ -11,6 +18,7 @@ CodeMaxMessageSendTries = 'GENERR010'
 CodeResourceNotFound = 'GENERR011'
 CodeResourceAlreadyExists = 'GENERR012'
 CodeSDKLibraryError = 'GENERR013'
+CodeInvalidChecksum = 'APPERRMET004'
 
 _errors = {
     CodeMalformedBody: 'The Message Body is not in the expected format, '
@@ -33,26 +41,37 @@ _errors = {
     CodeResourceNotFound: 'Resource not found',
     CodeResourceAlreadyExists: 'Resource already exists',
     CodeSDKLibraryError: 'SDK level error',
+    CodeInvalidChecksum: 'A file did not match its checksum.',
 }
 
 
 class BaseError(Exception):
-    code = None
+    code = CodeUnknownError
 
     def __init__(self, details=None):
         self.details = details
 
-    def export(self):
-        return {
-            'messageHeader': {
-                'messageType': 'Error'
-            },
-            'messageBody': {
-                'code': self.code,
-                'message': _errors[self.code],
-                'details': self.details
+    def export(self, original_record):
+        try:
+            rdss_message = base64.b64decode(
+                original_record.data,
+            ).decode('utf-8')
+        except (AttributeError, binascii.Error):
+            rdss_message = '{}'
+
+        decorated = json.loads(RouterHistoryDecorator().process(rdss_message))
+        decorated_header_with_error = dict(
+            decorated['messageHeader'], **{
+                'messageType': 'Error',
+                'errorCode': self.code,
+                'errorDescription': _errors[self.code] + ' ' + (self.details or ''),
             }
-        }
+        )
+        return dict(
+            decorated, **{
+                'messageHeader': decorated_header_with_error,
+            }
+        )
 
 
 class MalformedBodyError(BaseError):
@@ -105,3 +124,7 @@ class ResourceAlreadyExistsError(BaseError):
 
 class SDKLibraryError(BaseError):
     code = CodeSDKLibraryError
+
+
+class InvalidChecksumError(BaseError):
+    code = CodeInvalidChecksum

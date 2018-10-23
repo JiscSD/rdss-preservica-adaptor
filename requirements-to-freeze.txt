@@ -2,10 +2,15 @@ amazon_kclpy
 ansible-lint
 autopep8
 boto3
+dicttoxml
 lxml
 moto
 pep8
 pre-commit
+pycryptodome
+pylint
 pytest
 pytest-cov
 PyYAML
+-e git://github.com/JiscRDSS/rdss-shared-libraries@v0.0.5#egg=rdsslib
+requests

@@ -1,5 +1,10 @@
-input_stream_name = 'rdss-preservica-adaptor-input-test'
-input_stream_region = 'eu-west-2'
+environment = 'test'
+preservica_base_url = 'https://test_preservica_url'
+input_stream_name = 'shared_services_output_test'
+invalid_stream_name = 'message_invalid_test'
 error_stream_name = 'message_error_test'
-error_stream_region = 'eu-west-2'
-upload_url = 's3://uk.ac.jisc.alpha.researchdata.s3.uoj.autoupload'
+adaptor_aws_region = 'eu-west-2'
+
+organisation_buckets = {
+    '44': 's3://some_bucket',
+}

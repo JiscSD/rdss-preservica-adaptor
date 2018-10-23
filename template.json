@@ -3,7 +3,7 @@
     "git_branch": "{{env `GIT_BRANCH`}}",
     "git_commit": "{{env `GIT_COMMIT`}}",
     "enviornment": "{{env `ENVIRONMENT`}}",
-    "box": "ubuntu/zesty64",
+    "box": "ubuntu/xenial64",
     "project": "preservica-service",
     "service": "rdss",
     "owner": "alan.mackenzie@digirati.com",
@@ -14,7 +14,7 @@
       "name": "{{user `project`}}",
       "type": "amazon-ebs",
       "region": "eu-west-2",
-      "source_ami": "ami-167f6972",
+      "source_ami": "ami-d7aab2b3",
       "instance_type": "t2.small",
       "ssh_username": "ubuntu",
       "ami_name": "{{user `project`}}-{{isotime | clean_ami_name}}",
@@ -28,7 +28,7 @@
         "costcentre": "{{user `costcentre`}}"
       },
       "run_tags": {
-        "name": "{{user `project`}}-{{user `enviornment`}}-packer-builder",
+        "Name": "{{user `project`}}-{{user `enviornment`}}-packer-builder",
         "owner": "{{user `owner`}}",
         "enviornment": "{{user `enviornment`}}",
         "project": "{{user `project`}}",
@@ -42,8 +42,18 @@
     {
       "type": "shell",
       "inline": [
+        "ssh-keygen -b 2048 -t rsa -f /tmp/packer-ssh-key -q -N \"\"",
+        "cat /tmp/packer-ssh-key.pub >> /home/ubuntu/.ssh/authorized_keys",
+        "chmod 600 /home/ubuntu/.ssh/authorized_keys",
+        "echo InstanceIP:$(curl http://169.254.169.254/latest/meta-data/public-ipv4)",
         "mkdir /tmp/app"
       ]
+    },
+    {
+      "type": "file",
+      "direction": "download",
+      "source": "/tmp/packer-ssh-key",
+      "destination": "packer-ssh-key"
     },
     {
       "type": "file",
@@ -93,6 +103,28 @@
       "playbook_file": "provisioning/setup.yml",
       "playbook_dir": "provisioning/roles",
       "galaxy_file": "provisioning/requirements.yml"
+    },
+    {
+      "type": "shell-local",
+      "command": "test -d spec || ln -s test/integration/default/serverspec ./spec"
+    },
+    {
+      "type": "shell-local",
+      "command": "chmod 600 packer-ssh-key"
+    },
+    {
+      "type": "shell-local",
+      "command": "grep -oP '(?<=InstanceIP:)[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}' packer_logs/build.log > packer-ip && cat packer-ip"
+    },
+    {
+      "type": "shell-local",
+      "command": "export SSH_USER=ubuntu && export SSH_KEY=packer-ssh-key && export TARGET_HOST=`cat packer-ip` && rake spec"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo rm -rf /home/ubuntu/"
+      ]
     }
   ]
 }

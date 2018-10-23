@@ -1,21 +1,17 @@
 variable "project" {
-  description = "Project name."
-}
-
-variable "owner" {
-  description = "Project owner name."
-}
-
-variable "costcenter" {
-  description = "Cost center name."
+  description = "The name of the project to which the VPC belongs."
 }
 
 variable "service" {
-  description = "Service name."
+  description = "The name of the service to which the VPC belongs."
 }
 
-variable "environment" {
-  description = "Environment we are working with."
+variable "cost_centre" {
+  description = "The name of the cost centre to which the VPC belongs."
+}
+
+variable "owner" {
+  description = "The owner of the VPC."
 }
 
 variable "enable_dns_support" {
@@ -31,17 +27,6 @@ variable "enable_dns_hostnames" {
 variable "vpc_cidr" {
   description = "CIDR for VPC."
   default     = "10.0.0.0/16"
-}
-
-variable "public_subnets_cidr" {
-  description = "CIDR for public subnets."
-
-  type = "list"
-
-  default = [
-    "10.0.1.0/24",
-    "10.0.2.0/24",
-  ]
 }
 
 variable "private_subnets_cidr" {
@@ -72,11 +57,6 @@ variable "igw_cidr" {
 }
 
 variable "availability_zones" {
-  description = "Avaialbility Zones for Subnets. Indexes must match `subnets_cidr`"
+  description = "Availability Zones for Subnets. Indexes must match `subnets_cidr`"
   type        = "list"
-}
-
-variable "map_public_ip_on_launch" {
-  description = "Set try if you want to map the public IP on launch."
-  default     = true
 }

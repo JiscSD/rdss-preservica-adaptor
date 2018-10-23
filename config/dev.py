@@ -1,5 +1,8 @@
-input_stream_name = 'rdss-preservica-adaptor-input-dev'
-input_stream_region = 'eu-west-2'
+environment = 'dev'
+preservica_base_url = 'https://jisc.preservica.com'
+input_stream_name = 'shared_services_output_dev'
+invalid_stream_name = 'message_invalid_dev'
 error_stream_name = 'message_error_dev'
-error_stream_region = 'eu-west-2'
-upload_url = 's3://uk.ac.jisc.alpha.researchdata.s3.uoj.autoupload'
+adaptor_aws_region = 'eu-west-2'
+
+organisation_buckets = {}

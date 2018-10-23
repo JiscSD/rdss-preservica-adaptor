@@ -1,0 +1,74 @@
+{
+    "messageHeader": {
+        "version": "0.0.1-SNAPSHOT",
+        "errorCode": "GENERR001",
+        "messageSequence": {
+            "position": 1,
+            "sequence": "75375600-7878-48ec-aa7f-6c9971f30232",
+            "total": 1
+        },
+        "messageHistory": [
+            {
+                "machineId": "rdss-institutional-content-based-router",
+                "timestamp": "2018-09-26T15:32:14.443770+00:00",
+                "machineAddress": "ip-10-128-153-210"
+            },
+            {
+                "machineId": "rdss-message-broker",
+                "timestamp": "2018-09-26T15:32:15.765869+00:00",
+                "machineAddress": "ip-10-128-153-210"
+            },
+            {
+                "machineId": "rdss-institutional-content-based-router",
+                "timestamp": "2018-09-26T15:32:17.566850+00:00",
+                "machineAddress": "10.0.3.77"
+            }
+        ],
+        "messageType": "MetadataCreate",
+        "messageClass": "Event",
+        "messageId": "5f048ba3-88fc-4fe5-9e4a-2f0840665514",
+        "messageTimings": {
+            "publishedTimestamp": "2018-09-26T15:32:13+00:00"
+        },
+        "errorDescription": ""
+    },
+    "messageBody": {
+        "objectIdentifier": [
+            {
+                "identifierType": 0,
+                "identifierValue": "gid://willow/RdssDataset/c247ds08x",
+                "relationType": 0
+            }
+        ],
+        "objectDate": [],
+        "objectPersonRole": [],
+        "objectTitle": "zakTest e2e with Preservica",
+        "objectUuid": "c247ds08x",
+        "objectValue": 0,
+        "objectRelatedIdentifier": [],
+        "objectFile": [],
+        "objectCategory": [],
+        "objectOrganisationRole": [
+            {
+                "organisation": {
+                    "organisationName": "UNKNOWN",
+                    "organisationType": 0,
+                    "organisationJiscId": 747,
+                    "organisationAddress": "UNKNOWN"
+                },
+                "role": 5
+            }
+        ],
+        "objectKeywords": [],
+        "objectResourceType": 7,
+        "objectRights": [],
+        "objectDescription": "",
+        "objectPreservationEvent": [
+            {
+                "preservationEventValue": "MetadataCreate",
+                "preservationEventDetail": "RdssDataset",
+                "preservationEventType": 0
+            }
+        ]
+    }
+}

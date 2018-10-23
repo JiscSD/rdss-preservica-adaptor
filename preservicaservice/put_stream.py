@@ -23,8 +23,10 @@ class PutStream:
     Fails on write after N tries, can raise error on creation.
     """
 
-    def __init__(self, stream_name, region, shard_count=1,
-                 number_of_tries=10):
+    def __init__(
+        self, stream_name, region, shard_count=1,
+        number_of_tries=10,
+    ):
         self.stream_name = stream_name
         self.shard_count = shard_count
         self.number_of_tries = number_of_tries
@@ -46,12 +48,12 @@ class PutStream:
         except Exception as e:
             if 'ResourceNotFoundException' in str(e):
                 message = 'stream {} not found, {}'.format(
-                    self.stream_name, e
+                    self.stream_name, e,
                 )
                 raise ResourceNotFoundError(message)
 
             message = 'can not connect to stream {}, {}'.format(
-                self.stream_name, e
+                self.stream_name, e,
             )
             raise SDKLibraryError(message)
 
@@ -73,9 +75,9 @@ class PutStream:
         sleep_time_gen = self.wait_generator(
             'stream {} not active after {} tries'.format(
                 self.stream_name,
-                self.number_of_tries
+                self.number_of_tries,
             ),
-            MaxConnectionTriesError
+            MaxConnectionTriesError,
         )
         while status != 'ACTIVE':
             interval = next(sleep_time_gen)
@@ -83,8 +85,8 @@ class PutStream:
                 '{} has status: {}, sleeping for {} seconds'.format(
                     self.stream_name,
                     status,
-                    self.number_of_tries
-                )
+                    self.number_of_tries,
+                ),
             )
             time.sleep(interval)
             status = self._get_stream_status()
@@ -111,9 +113,9 @@ class PutStream:
         sleep_time_gen = self.wait_generator(
             'gave up writing data to stream {} after {} tries'.format(
                 self.stream_name,
-                self.number_of_tries
+                self.number_of_tries,
             ),
-            MaxMessageSendTriesError
+            MaxMessageSendTriesError,
         )
         for interval in sleep_time_gen:
             try:
@@ -124,15 +126,15 @@ class PutStream:
                 self.conn.put_record(
                     StreamName=self.stream_name,
                     Data=data,
-                    PartitionKey=partition_key
+                    PartitionKey=partition_key,
                 )
                 break
             except Exception:
                 logger.debug(
                     'failed to write {}, sleeping for {} seconds'.format(
                         self.stream_name,
-                        interval
-                    )
+                        interval,
+                    ),
                 )
                 time.sleep(interval)
 
@@ -141,7 +143,7 @@ class PutStream:
             message,
             error,
             count=self.number_of_tries,
-            multiplier=0.1
+            multiplier=0.1,
         )
 
 

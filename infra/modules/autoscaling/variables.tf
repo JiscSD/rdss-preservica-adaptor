@@ -1,21 +1,17 @@
 variable "project" {
-  description = "Project name."
-}
-
-variable "owner" {
-  description = "Project owner name."
-}
-
-variable "costcenter" {
-  description = "Cost center name."
+  description = "The name of the project to which the auto scaling group belongs."
 }
 
 variable "service" {
-  description = "Service name."
+  description = "The name of the service to which the auto scaling group belongs."
 }
 
-variable "environment" {
-  description = "Environment we are working with."
+variable "cost_centre" {
+  description = "The name of the cost centre to which the auto scaling group belongs."
+}
+
+variable "owner" {
+  description = "The owner of the auto scaling group."
 }
 
 variable "ami" {
@@ -27,7 +23,7 @@ variable "type" {
 }
 
 variable "key_name" {
-  description = "SSh key to use for instance."
+  description = "SSH key to use for instance."
 }
 
 variable "security_groups" {
@@ -78,10 +74,6 @@ variable "env_file_path" {
 
 variable "role_name" {
   description = "Autoscale profile role name."
-}
-
-variable "associate_public_ip_address" {
-  description = "Assign public IP address to ec2 nodes in ASG"
 }
 
 variable "systemd_unit" {

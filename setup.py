@@ -6,22 +6,24 @@ setup(
     description='Provides service service.',
     install_requires=[
         'amazon_kclpy',
-        'boto3'
+        'boto3',
+        'dicttoxml',
+        'lxml',
     ],
     tests_require=[
         'autopep8',
         'pep8',
         'pytest',
         'pre-commit',
-        'moto'
+        'moto',
     ],
     license='Apache',
     author='Andrew Griffiths',
     packages=['preservicaservice'],
     entry_points={
         'console_scripts': [
-            'preservicaservice = preservicaservice.preservicaservice:main'
-        ]
+            'preservicaservice = preservicaservice.preservicaservice:main',
+        ],
     },
     include_package_data=True,
     classifiers=[
@@ -31,6 +33,6 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6'
+        'Programming Language :: Python :: 3.5',
     ],
 )

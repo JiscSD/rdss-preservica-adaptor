@@ -1,4 +1,4 @@
-PYTHON = python3.6
+PYTHON = python3.5
 COVERAGE_MIN = 40
 
 env:
@@ -27,7 +27,6 @@ clean:
 
 lint:
 	@pre-commit run \
-		--allow-unstaged-config \
 		--all-files \
 		--verbose
 
@@ -38,7 +37,7 @@ autopep8-stats:
 	@pep8 --quiet --statistics .
 
 test:
-	@BOTO_CONFIG=/dev/null pytest
+	@BOTO_CONFIG=/dev/null pytest --cov-branch --cov-report=xml --cov=.
 
 coverage:
 	@BOTO_CONFIG=/dev/null pytest --cov-fail-under $(COVERAGE_MIN) --cov=preservicaservice tests/

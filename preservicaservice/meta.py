@@ -1,3 +1,4 @@
+from dicttoxml import dicttoxml
 from lxml import etree
 
 DC_NAMESPACE = 'http://purl.org/dc/elements/1.1/'
@@ -18,7 +19,7 @@ ATTRIB = {
 CONTAINER_ELEMENT = '{http://www.openarchives.org/OAI/2.0/oai_dc/}dc'
 
 
-def write_meta(file_path, data):
+def write_object_meta(file_path, data):
     """ Generate meta xml from inputs
 
     :param str file_path: path to write
@@ -35,5 +36,20 @@ def write_meta(file_path, data):
         root.append(elem)
 
     contents = etree.tostring(root, pretty_print=True).decode('utf-8')
+    with open(file_path, 'w') as f:
+        f.write(contents)
+
+
+def write_message_meta(file_path, data):
+    """ Generate root meta data file
+
+    :param str file_path: path to write
+    :param dict data: contents to generate xml
+    :return:
+    """
+    contents = dicttoxml(data).decode('utf-8')
+    contents = contents.replace(
+        '<root>', '<root xmlns="http://jisc.ac.uk/#rdss/schema">',
+    )
     with open(file_path, 'w') as f:
         f.write(contents)
