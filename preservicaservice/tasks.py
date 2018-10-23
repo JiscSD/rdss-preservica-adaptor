@@ -72,17 +72,18 @@ def require_non_empty_key(message, key1, key2):
     except (KeyError, ValueError, TypeError, AttributeError):
         raise MalformedBodyError('missing {}'.format(key2))
 
+
 def env_prefix_message_key(message, key1, key2, environment):
     """ Extracts a value from a message and prefixes it with the environment if the
         environment is not "prod".
-        
+
         :param dict message
         :param str environment
         :return str value
         """
     value = require_non_empty_key(message, key1, key2)
-    if environment != "prod":
-        value = "{}-{}".format(environment, value)
+    if environment != 'prod':
+        value = '{}-{}'.format(environment, value)
     return value
 
 
@@ -424,8 +425,12 @@ class BaseMetadataCreateTask(BaseTask):
         except KeyError:
             raise MalformedBodyError('missing objectFile')
 
-        message_id = env_prefix_message_key(message, 'messageHeader', 'messageId', config.environment)
-        object_id = env_prefix_message_key(message, 'messageBody', 'objectUuid', config.environment)
+        message_id = env_prefix_message_key(
+            message, 'messageHeader', 'messageId', config.environment,
+        )
+        object_id = env_prefix_message_key(
+            message, 'messageBody', 'objectUuid', config.environment,
+        )
         if not isinstance(objects, list):
             raise MalformedBodyError('expected objectFile as list')
 
