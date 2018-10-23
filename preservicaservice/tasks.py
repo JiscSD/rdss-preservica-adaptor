@@ -73,6 +73,20 @@ def require_non_empty_key(message, key1, key2):
         raise MalformedBodyError('missing {}'.format(key2))
 
 
+def env_prefix_message_key(message, key1, key2, environment):
+    """ Extracts a value from a message and prefixes it with the environment if the
+        environment is not "prod".
+
+        :param dict message
+        :param str environment
+        :return str value
+        """
+    value = require_non_empty_key(message, key1, key2)
+    if environment != 'prod':
+        value = '{}-{}'.format(environment, value)
+    return value
+
+
 def first_org_id_from_org_roles(org_roles):
     """ Return first Jisc ID found in an objectOrganisationRole."""
     for role in org_roles:
@@ -411,7 +425,12 @@ class BaseMetadataCreateTask(BaseTask):
         except KeyError:
             raise MalformedBodyError('missing objectFile')
 
-        object_id = require_non_empty_key(message, 'messageBody', 'objectUuid')
+        message_id = env_prefix_message_key(
+            message, 'messageHeader', 'messageId', config.environment,
+        )
+        object_id = env_prefix_message_key(
+            message, 'messageBody', 'objectUuid', config.environment,
+        )
         if not isinstance(objects, list):
             raise MalformedBodyError('expected objectFile as list')
 
