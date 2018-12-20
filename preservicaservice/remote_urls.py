@@ -111,6 +111,7 @@ class HTTPRemoteUrl(BaseRemoteUrl):
         """ Download remote file via HTTP to the provided download path."""
         try:
             r = requests.get(self.url, stream=True)
+            r.raise_for_status()
             with open(download_path, 'wb') as f:
                 for chunk in r.iter_content(chunk_size=1024):
                     if chunk:
