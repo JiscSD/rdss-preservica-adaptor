@@ -59,7 +59,7 @@ pytest-cov==2.5.1
 python-dateutil==2.7.3
 python-jose==2.0.2
 pytz==2018.5
-PyYAML==3.13
+PyYAML==5.4
 -e git://github.com/JiscRDSS/rdss-shared-libraries@cf07cad3f176ef8be1410fc29b240fb4791e607a#egg=rdsslib
 requests==2.19.1
 responses==0.9.0
