@@ -46,7 +46,7 @@ pbr==4.2.0
 pep8==1.7.1
 pluggy==0.7.1
 pre-commit==1.10.5
-py==1.5.4
+py==1.10.0
 pyaml==17.12.1
 pyasn1==0.4.4
 pycodestyle==2.4.0
