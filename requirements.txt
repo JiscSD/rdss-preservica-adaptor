@@ -1,5 +1,5 @@
 amazon-kclpy==1.5.0
-ansible==2.6.3
+ansible==4.2.0
 ansible-lint==3.4.23
 asn1crypto==0.24.0
 aspy.yaml==1.1.1
