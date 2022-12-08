@@ -13,7 +13,7 @@ boto==2.49.0
 boto3==1.7.81
 botocore==1.10.81
 cached-property==1.4.3
-certifi==2018.8.13
+certifi==2022.12.7
 cffi==1.11.5
 cfgv==1.1.0
 chardet==3.0.4
